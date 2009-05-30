@@ -16,38 +16,45 @@ if (window.rcmail) {
 
 		if ((rcmail.env.action == 'plugin.sieverules' || rcmail.env.action == 'plugin.sieverules.add' || rcmail.env.action == 'plugin.sieverules.edit') && !rcmail.env.sieveruleserror) {
 			if (rcmail.gui_objects.sieverules_list) {
-				rcmail.sieverules_list = new rcube_list_widget(rcmail.gui_objects.sieverules_list, {multiselect:false, draggable:false, keyboard:false});
+				rcmail.sieverules_list = new rcube_list_widget(rcmail.gui_objects.sieverules_list, {multiselect:false, draggable:true, keyboard:true});
 				rcmail.sieverules_list.addEventListener('select', function(o){ rcmail.sieverules_select(o); });
+				rcmail.sieverules_list.addEventListener('keypress', function(o){ rcmail.sieverules_keypress(o); });
+          		rcmail.sieverules_list.addEventListener('dragstart', function(o){ rcmail.sieverules_drag_start(o); });
+          		rcmail.sieverules_list.addEventListener('dragmove', function(o, e){ rcmail.sieverules_drag_move(e); });
+          		rcmail.sieverules_list.addEventListener('dragend', function(o, e){ rcmail.sieverules_drag_end(e); });
+          		document.onmouseup = function(e){ return rcmail.sieverules_mouse_up(e); };
 				rcmail.sieverules_list.init();
 				rcmail.sieverules_list.focus();
 
-				if (!isNaN(rcmail.env.iid))
-					rcmail.sieverules_list.highlight_row(rcmail.env.iid);
+				if (rcmail.env.iid && rcmail.env.iid < rcmail.sieverules_list.rows.length && !rcmail.env.eid)
+					rcmail.sieverules_list.select_row(rcmail.env.iid, false, false);
 			}
 
 			if (rcmail.gui_objects.sieverules_examples) {
-				rcmail.sieverules_examples = new rcube_list_widget(rcmail.gui_objects.sieverules_examples, {multiselect:false, draggable:false, keyboard:false});
-				rcmail.sieverules_examples.addEventListener('select', function(o){ rcmail.sieverules_select(o); });
+				rcmail.sieverules_examples = new rcube_list_widget(rcmail.gui_objects.sieverules_examples, {multiselect:true, draggable:true, keyboard:true});
+				rcmail.sieverules_examples.addEventListener('select', function(o){ rcmail.sieverules_ex_select(o); });
+          		rcmail.sieverules_examples.addEventListener('dragstart', function(o){ rcmail.sieverules_ex_drag_start(o); });
+          		rcmail.sieverules_examples.addEventListener('dragmove', function(o, e){ rcmail.sieverules_drag_move(e); });
+          		rcmail.sieverules_examples.addEventListener('dragend', function(o, e){ rcmail.sieverules_drag_end(e); });
 				rcmail.sieverules_examples.init();
 
 				if (rcmail.env.eid)
 					rcmail.sieverules_examples.highlight_row(rcmail.env.eid);
+
+				rcmail.register_command('plugin.sieverules.import_ex', function() {
+					if (rcmail.sieverules_examples.get_selection().length > 0) {
+						rcmail.set_busy(true, 'sieverules.movingfilter');
+			    		rcmail.goto_url('plugin.sieverules.import', '_ruleset=_example_&_pos='+ rcmail.env.sieverules_last_target +'&_eids=' + rcmail.sieverules_examples.get_selection(), true);
+		    		}
+				}, true);
 			}
 
-			rcmail.register_command('plugin.sieverules.moveup', function(id){
-				if (id > 0) {
+			rcmail.register_command('plugin.sieverules.move', function(props){
+				var args = props.split(",");
+				if (args[1] > -1 && args[1] <= rcmail.sieverules_list.rows.length) {
 					rcmail.set_busy(true, 'sieverules.movingfilter');
-		    		rcmail.http_request('plugin.sieverules.move', '_operation=up&_iid=' + rcmail.sieverules_list.rows[id].uid, true);
+		    		rcmail.http_request('plugin.sieverules.move', '_src=' + args[0] + '&_dst=' +args[1], true);
 	    		}
-			}, true);
-
-			rcmail.register_command('plugin.sieverules.movedown', function(id){
-				var rows = rcmail.sieverules_list.rows;
-
-				if (id < rows.length - 1) {
-					rcmail.set_busy(true, 'sieverules.movingfilter');
-			    	rcmail.http_request('plugin.sieverules.move', '_operation=down&_iid=' + rcmail.sieverules_list.rows[id].uid, true);
-		    	}
 			}, true);
 
 			rcmail.register_command('plugin.sieverules.add', function(id){ rcmail.goto_url('plugin.sieverules.add', '', true); }, true);
@@ -182,7 +189,7 @@ if (window.rcmail) {
 				var nmethods = document.getElementsByName('_nmethod[]');
 				var nmsgs = document.getElementsByName('_nmsg[]');
 				var size_test = new RegExp('^[0-9]+$');
-				var header_test = new RegExp('^[a-zA-Z0-9\-]+$');
+				var header_test = new RegExp('^[a-zA-Z0-9\-]+(, [a-zA-Z0-9\-]+)*$');
 
 				if (input_name && input_name.value == '') {
 					alert(rcmail.gettext('norulename','sieverules'));
@@ -310,12 +317,156 @@ if (window.rcmail) {
 	})
 }
 
-rcmail.sieverules_select = function(rule) {
-    var id;
+rcmail.sieverules_select = function(list) {
+	var id;
 
-    if (id = rule.get_single_selection())
-		rcmail.sieverules_load(id, 'plugin.sieverules.edit');
+    if (this.sieverules_timer)
+    	clearTimeout(rcmail.sieverules_timer);
+
+	if (id = list.get_single_selection())
+		rcmail.sieverules_timer = window.setTimeout(function(){ rcmail.sieverules_load(id, 'plugin.sieverules.edit'); }, 200);
 }
+
+rcmail.sieverules_keypress = function(list) {
+	if (list.key_pressed == list.DELETE_KEY)
+      rcmail.command('plugin.sieverules.delete');
+    else if (list.key_pressed == list.BACKSPACE_KEY)
+      rcmail.command('plugin.sieverules.delete');
+}
+
+rcmail.sieverules_ex_select = function(list) {
+    if (list.multi_selecting)
+    	return false;
+
+    if (this.sieverules_timer)
+    	clearTimeout(this.sieverules_timer);
+
+    var id;
+    if (id = list.get_single_selection())
+		rcmail.sieverules_timer = window.setTimeout(function(){ rcmail.sieverules_load(id, 'plugin.sieverules.add'); }, 200);
+}
+
+rcmail.sieverules_mouse_up = function(e) {
+	if (rcmail.sieverules_list) {
+		if (!rcube_mouse_is_over(e, rcmail.sieverules_list.list))
+			rcmail.sieverules_list.blur();
+    }
+
+    if (rcmail.sieverules_examples) {
+		if (!rcube_mouse_is_over(e, rcmail.sieverules_examples.list))
+			rcmail.sieverules_examples.blur();
+    }
+
+	// handle mouse release when dragging
+	if (rcmail.sieverules_ex_drag_active && rcmail.sieverules_list && rcmail.env.sieverules_last_target) {
+		rcmail.command('plugin.sieverules.import_ex');
+		rcmail.sieverules_examples.draglayer.hide();
+	}
+	else if (rcmail.sieverules_drag_active && rcmail.sieverules_list && rcmail.env.sieverules_last_target) {
+		var _src = rcmail.sieverules_list.get_single_selection();
+		if (rcmail.env.sieverules_last_target == 'end') {
+			var _dst = rcmail.sieverules_list.rows.length;
+			$(rcmail.gui_objects.sieverules_list).removeClass('droptargetend');
+		}
+		else {
+			var _dst = rcmail.env.sieverules_last_target.substr(6);
+			$('#' + rcmail.env.sieverules_last_target + ' td:eq(0)').removeClass('droptarget');
+			$('#' + rcmail.env.sieverules_last_target + ' td:eq(1)').removeClass('droptarget');
+		}
+
+		rcmail.command('plugin.sieverules.move', _src + ',' + _dst);
+		rcmail.sieverules_list.draglayer.hide();
+	}
+};
+
+rcmail.sieverules_ex_drag_start = function(list) {
+	rcmail.sieverules_ex_drag_active = true;
+	rcmail.sieverules_list.drag_active = true;
+	rcmail.sieverules_drag_start(list);
+};
+
+rcmail.sieverules_drag_start = function(list) {
+	rcmail.sieverules_drag_active = true;
+
+    if (this.sieverules_timer)
+     	clearTimeout(this.sieverules_timer);
+
+	if (rcmail.gui_objects.sieverules_list) {
+		rcmail.initialBodyScrollTop = bw.ie ? 0 : window.pageYOffset;
+		rcmail.initialListScrollTop = rcmail.gui_objects.sieverules_list.parentNode.scrollTop;
+
+		var pos, list, rulesTable;
+		list = $(rcmail.gui_objects.sieverules_list.parentNode);
+		pos = list.offset();
+		rcmail.env.sieveruleslist_coords = { x1:pos.left, y1:pos.top, x2:pos.left + list.width(), y2:pos.top + list.height() };
+
+		rows = rcmail.sieverules_list.rows;
+		rcmail.env.sieverules_coords = new Array();
+		for (var i = 0; i < rows.length; i++) {
+			pos = $('#' + rows[i].id).offset();
+			rcmail.env.sieverules_coords[rows[i].id] = { x1:pos.left, y1:pos.top, x2:pos.left + $('#' + rows[i].id).width(), y2:pos.top + $('#' + rows[i].id).height() };
+		}
+	}
+};
+
+rcmail.sieverules_drag_move = function(e) {
+	if (rcmail.gui_objects.sieverules_list && rcmail.env.sieveruleslist_coords) {
+		// offsets to compensate for scrolling while dragging a message
+		var boffset = bw.ie ? -document.documentElement.scrollTop : rcmail.initialBodyScrollTop;
+		var moffset = rcmail.initialListScrollTop-rcmail.gui_objects.sieverules_list.parentNode.scrollTop;
+		var toffset = -moffset-boffset;
+
+		var li, pos, mouse;
+		mouse = rcube_event.get_mouse_pos(e);
+		pos = rcmail.env.sieveruleslist_coords;
+
+		mouse.y += toffset;
+
+		// if mouse pointer is outside of folderlist
+		if (mouse.x < pos.x1 || mouse.x >= pos.x2 || mouse.y < pos.y1 || mouse.y >= pos.y2) {
+			$(rcmail.gui_objects.sieverules_list).removeClass('droptargetend');
+			rcmail.env.sieverules_last_target = null;
+		}
+		else {
+			$(rcmail.gui_objects.sieverules_list).addClass('droptargetend');
+			rcmail.env.sieverules_last_target = 'end';
+		}
+
+		// over the folders
+		for (var k in rcmail.env.sieverules_coords) {
+			pos = rcmail.env.sieverules_coords[k];
+			if ((mouse.x >= pos.x1) && (mouse.x < pos.x2) && (mouse.y >= pos.y1) && (mouse.y < pos.y2)) {
+				$(rcmail.gui_objects.sieverules_list).removeClass('droptargetend');
+				$('#' + k + ' td:eq(0)').addClass('droptarget');
+				$('#' + k + ' td:eq(1)').addClass('droptarget');
+				rcmail.env.sieverules_last_target = k;
+			}
+			else {
+				$('#' + k + ' td:eq(0)').removeClass('droptarget');
+				$('#' + k + ' td:eq(1)').removeClass('droptarget');
+				if (k == rcmail.env.sieverules_last_target)
+					rcmail.env.sieverules_last_target = null;
+			}
+		}
+	}
+};
+
+rcmail.sieverules_drag_end = function(e) {
+	rcmail.sieverules_drag_active = false;
+	rcmail.sieverules_ex_drag_active = false;
+
+	// over the rules
+	if (rcmail.gui_objects.sieverules_list && rcmail.env.sieverules_coords) {
+		for (var k in rcmail.env.sieverules_coords) {
+			if (k == rcmail.env.sieverules_last_target) {
+				$('#' + k + ' td:eq(0)').removeClass('droptarget');
+				$('#' + k + ' td:eq(1)').removeClass('droptarget');
+				rcmail.env.sieverules_last_target = null;
+			}
+		}
+	}
+	$(rcmail.gui_objects.sieverules_list).removeClass('droptargetend');
+};
 
 rcmail.sieverules_load = function(id, action) {
     if (action == 'plugin.sieverules.edit' && (!id || id==rcmail.env.iid))
@@ -337,67 +488,63 @@ rcmail.sieverules_load = function(id, action) {
     return true;
 }
 
-rcmail.sieverules_update_list = function(action, name, id) {
+rcmail.sieverules_update_list = function(_src, _dst) {
 	var sid = rcmail.sieverules_list.get_single_selection();
-	id = parseInt(id);
+	var selection;
+	var rows = rcmail.sieverules_list.rows;
+	var rules = Array();
 
-	if (action == 'moveup') {
-		var rows = rcmail.sieverules_list.rows;
-		var from;
+	// create array of rules
+	for (var i = 0; i < rows.length; i++) {
+		rules[i] = rows[i].obj.cells[0].innerHTML;
 
-		// we need only to replace filter names...
-		for (var i = 0; i < rows.length; i++)
-		{
-			if (rows[i] == null) { // removed row
-				continue;
-			}
-			else if (rows[i].uid == id - 1) {
-				from = rows[i].obj.cells[0];
-			}
-			else if (rows[i].uid == id) {
-				name = rows[i].obj.cells[0].innerHTML;
-				rows[i].obj.cells[0].innerHTML = from.innerHTML;
-				from.innerHTML = name;
-				break;
-			}
-		}
-
-		if (sid == id)
-			rcmail.sieverules_list.highlight_row(id - 1);
-		else if (sid == id - 1)
-			rcmail.sieverules_list.highlight_row(id);
+		if (sid == i) selection = rules[i];
 	}
-	else if (action == 'movedown') {
-		var rows = rcmail.sieverules_list.rows;
-		var from;
 
-		// we need only to replace filter names...
-		for (var i = 0; i < rows.length; i++) {
-			if (rows[i] == null) { // removed row
-				continue;
-			}
-			else if (rows[i].uid == id) {
-				from = rows[i].obj.cells[0];
-			}
-			else if (rows[i].uid == id + 1){
-				name = rows[i].obj.cells[0].innerHTML;
-				rows[i].obj.cells[0].innerHTML = from.innerHTML;
-				from.innerHTML = name;
-				break;
-			}
-		}
+	// assign order
+	rules.splice(_dst, 0, rules[_src]);
 
-		if (sid == id)
-			rcmail.sieverules_list.highlight_row(id + 1);
-		else if (sid == id + 1)
-			rcmail.sieverules_list.highlight_row(id);
+	if (parseInt(_src) < parseInt(_dst))
+		rules.splice(_src, 1);
+	else
+		rules.splice(parseInt(_src) + 1, 1);
+
+	// update table
+	for (var i = 0; i < rows.length; i++) {
+		rows[i].obj.cells[0].innerHTML = rules[i];
+
+		if (rules[i] == selection) sid = i;
 	}
 
 	// update iid of rule being editied
 	var iid;
 	if (iid = rcube_find_object('_iid')) {
-		if (iid.value != "")
-			iid.value = rcmail.sieverules_list.get_single_selection();
+		if (iid.value != _src && iid.value != "") {
+			if (iid.value > _src && iid.value < _dst) {
+				sid = parseInt(iid.value) - 1;
+				rcmail.sieverules_list.highlight_row(sid);
+				rcmail.sieverules_list.select_row(sid);
+				iid.value = sid;
+			}
+			else if (iid.value < _src && iid.value > _dst) {
+				sid = parseInt(iid.value) + 1;
+				rcmail.sieverules_list.highlight_row(sid);
+				rcmail.sieverules_list.select_row(sid);
+				iid.value = sid;
+			}
+			else {
+				rcmail.sieverules_list.select_row(iid.value);
+			}
+		}
+		else if (iid.value != "") {
+			rcmail.sieverules_list.highlight_row(sid);
+			rcmail.sieverules_list.select_row(sid);
+			iid.value = sid;
+		}
+	}
+	else if (sid) {
+		rcmail.sieverules_list.highlight_row(sid);
+		rcmail.sieverules_list.select_row(sid);
 	}
 }
 

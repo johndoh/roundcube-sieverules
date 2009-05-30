@@ -1,6 +1,6 @@
 /***** RoundCube|Mail sieverules plugin styles *****/
 
-#pagecontent
+#mainscreen
 {
   position: absolute;
   top: 95px;
@@ -17,7 +17,6 @@
   position: absolute;
   top: 0px;
   bottom: 0px;
-  background-color: #F6F6F6;
   /* css hack for IE */
   height: expression(parseInt(this.parentNode.offsetHeight)+'px');
   width: 240px;
@@ -58,7 +57,6 @@
   bottom: 0px;
   border: 1px solid #999999;
   overflow: auto;
-  background: #F6F6F6;
   /* css hack for IE */
   height: expression(parseInt(this.parentNode.offsetHeight)+'px');
   width: expression((parseInt(this.parentNode.offsetWidth)-250)+'px');
@@ -175,7 +173,7 @@ img.nohtc
 #listbuttons
 {
   position: absolute;
-  bottom: 30px;
+  bottom: 18px;
   left: 20px;
 }
 
@@ -212,4 +210,12 @@ img.nohtc
   /* css hack for IE */
   height: expression((parseInt(document.documentElement.clientHeight)-179)+'px');
   width: expression((parseInt(document.documentElement.clientWidth)-48)+'px');
+}
+
+.droptarget {
+  border-top: 2px solid #000000;
+}
+
+.droptargetend {
+  border-bottom: 2px solid #000000;
 }

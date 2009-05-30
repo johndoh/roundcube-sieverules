@@ -76,8 +76,11 @@ $sieverules_config['predefined_rules'] = array();
 // 2 - Option shown in the UI and used by default
 $sieverules_config['adveditor'] = '0';
 
-// Default sieve rule file
+// Default (or global) sieve rule file
 $sieverules_config['default_file'] = '/etc/dovecot/sieve/default';
+
+// Auto load default sieve rule file if no rules exist and no import filters match
+$sieverules_config['auto_load_default'] = TRUE;
 
 // Example sieve rule file
 $sieverules_config['example_file'] = '/etc/dovecot/sieve/example';

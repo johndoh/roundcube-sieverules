@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title><roundcube:object name="pagetitle" /></title>
+<roundcube:include file="/includes/links.html" />
+<link rel="stylesheet" type="text/css" href="/settings.css" />
+<link rel="stylesheet" type="text/css" href="/this/sieverules.css" />
+<script type="text/javascript" src="/functions.js"></script>
+<script type="text/javascript" src="/splitter.js"></script>
+
+<style type="text/css">
+
+#sieverules-list { width: <roundcube:exp expression="!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter-5 : 240" />px; }
+<roundcube:if condition="env:examples" />
+#sieverules-list-filters {
+	bottom: <roundcube:exp expression="!empty(cookie:sievefiltersviewsplitter) ? cookie:sievefiltersviewsplitter+5 : 0" />px;
+	height: expression(parseInt(this.parentNode.offsetHeight - <roundcube:exp expression="!empty(cookie:sievefiltersviewsplitter) ? cookie:sievefiltersviewsplitter+5 : 0" />)+'px');
+}
+<roundcube:else />
+#sieverules-list-filters { bottom: 0px; height: expression(parseInt(this.parentNode.offsetHeight)+'px'); }
+<roundcube:endif />
+#sieverules-details {
+    left: <roundcube:exp expression="!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter+5 : 250" />px;
+    /* IE hack */
+    width:expression((parseInt(mainscreen.offsetWidth)-<roundcube:exp expression="!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter+5 : 250" />)+'px')
+}
+
+</style>
+
+</head>
+<body>
+
+<roundcube:include file="/includes/taskbar.html" />
+<roundcube:include file="/includes/header.html" />
+<roundcube:include file="/includes/settingstabs.html" />
+
+<div id="mainscreen">
+
+<div id="sieverules-list">
+<roundcube:object name="sieveruleslist" upicon="/this/up_arrow.png" downicon="/this/down_arrow.png" />
+<roundcube:object name="sieverulesexamplelist" />
+</div>
+
+<script type="text/javascript">
+	var rulesviewsplit = new rcube_splitter({id:'sieverulesviewsplitter', p1: 'sieverules-list', p2: 'sieverules-details', orientation: 'v', relative: true, start: 245});
+	rcmail.add_onload('rulesviewsplit.init()');
+
+	if ($('#sieverules-list-examples').length > 0) {
+		var filtersHeight = parseInt($('#sieverules-list').height() - 210);
+		var filtersviewsplit = new rcube_splitter({id:'sievefiltersviewsplitter', p1: 'sieverules-list-filters', p2: 'sieverules-list-examples', orientation: 'h', relative: true, start: filtersHeight});
+		rcmail.add_onload('filtersviewsplit.init()');
+	}
+</script>
+
+<div id="sieverules-details">
+  <roundcube:object name="sieverulessetup" />
+</div>
+
+</div>
+
+<p id="listbuttons">
+<roundcube:button command="plugin.sieverules.add" type="input" label="sieverules.newfilter" class="button" />
+<roundcube:object name="advswitch" />
+</p>
+
+</body>
+</html>

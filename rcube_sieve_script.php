@@ -43,7 +43,9 @@ class rcube_sieve_script {
 						'discard',
 						'vacation',
 						'imapflags',
+						'imap4flags',
 						'notify',
+						'enotify',
 						'stop'
 						);
 	public $raw = '';
@@ -91,19 +93,24 @@ class rcube_sieve_script {
 		}
 	}
 
-	public function add_rule($content) {
+	public function add_rule($content, $pos = null) {
 		foreach ($content['actions'] as $action) {
 			if (!in_array($action['type'], $this->supported))
 				return false;
 		}
 
-		array_push($this->content, $content);
+		if ($pos != null)
+			array_splice($this->content, $pos, 0, array($content));
+		else
+			array_push($this->content, $content);
+
 		return sizeof($this->content)-1;
 	}
 
 	public function delete_rule($index) {
 		if(isset($this->content[$index])) {
 			unset($this->content[$index]);
+			$this->content = array_values($this->content);
 			return true;
 		}
 
@@ -126,6 +133,15 @@ class rcube_sieve_script {
 		}
 
 		return false;
+	}
+
+	public function move_rule($source, $destination) {
+		$this->add_rule($this->content[$source], $destination);
+
+		if ($source < $destination)
+			$this->delete_rule($source);
+		else
+			$this->delete_rule($source + 1);
 	}
 
 	public function as_text() {
@@ -266,7 +282,8 @@ class rcube_sieve_script {
 
 							break;
 						case 'imapflags':
-							array_push($exts, 'imapflags');
+						case 'imap4flags':
+							array_push($exts, $action['type']);
 
 							if (strpos($actions, "setflag") !== false)
 								$actions .= "\taddflag \"" . $this->_escape_string($action['target']) . "\";\r\n";
@@ -275,7 +292,8 @@ class rcube_sieve_script {
 
 							break;
 						case 'notify':
-							array_push($exts, 'notify');
+						case 'enotify':
+							array_push($exts, $action['type']);
 							$actions .= "\tnotify\r\n";
 							$actions .= "\t\t:method \"" . $this->_escape_string($action['method']) . "\"\r\n";
 							if (!empty($action['options'])) $actions .= "\t\t:options [\"" . str_replace(",", "\",\"", $this->_escape_string($action['options'])) . "\"]\r\n";

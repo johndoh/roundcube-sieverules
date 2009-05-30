@@ -13,7 +13,7 @@
  | Requires: common.js                                                   |
  +-----------------------------------------------------------------------+
 
-  $Id: list.js 2420 2009-04-24 06:58:19Z alec $
+  $Id: list.js 2538 2009-05-26 07:28:42Z alec $
 */
 
 
@@ -27,13 +27,13 @@ function rcube_list_widget(list, p)
   this.ENTER_KEY = 13;
   this.DELETE_KEY = 46;
   this.BACKSPACE_KEY = 8;
-  
+
   this.list = list ? list : null;
   this.frame = null;
   this.rows = [];
   this.selection = [];
   this.rowcount = 0;
-  
+
   this.subject_col = -1;
   this.shiftkey = false;
   this.multiselect = false;
@@ -41,7 +41,7 @@ function rcube_list_widget(list, p)
   this.draggable = false;
   this.keyboard = false;
   this.toggleselect = false;
-  
+
   this.dont_select = false;
   this.drag_active = false;
   this.last_selected = 0;
@@ -51,7 +51,7 @@ function rcube_list_widget(list, p)
   this.drag_mouse_start = null;
   this.dblclick_time = 600;
   this.row_init = function(){};
-  
+
   // overwrite default paramaters
   if (p && typeof(p)=='object')
     for (var n in p)
@@ -132,7 +132,7 @@ clear: function(sel)
   this.list.removeChild(this.list.tBodies[1]);
   this.rows = new Array();
   this.rowcount = 0;
-  
+
   if (sel) this.clear_selection();
 },
 
@@ -219,11 +219,11 @@ drag_row: function(e, id)
   var evtarget = rcube_event.get_target(e);
   if (this.dont_select || (evtarget && (evtarget.tagName == 'INPUT' || evtarget.tagName == 'IMG')))
     return true;
-    
+
   // accept right-clicks
   if (rcube_event.get_button(e) == 2)
     return true;
-  
+
   this.in_selection_before = this.in_selection(id) ? id : false;
 
   // selects currently unselected row
@@ -293,7 +293,7 @@ click_row: function(e, id)
     this.dont_select = false;
     return false;
     }
-    
+
   var dblclicked = now - this.rows[id].clicked < this.dblclick_time;
 
   // unselects currently selected row
@@ -369,7 +369,7 @@ select_row: function(id, mod_key, with_mouse)
   var select_before = this.selection.join(',');
   if (!this.multiselect)
     mod_key = 0;
-    
+
   if (!this.shift_start)
     this.shift_start = id
 
@@ -390,7 +390,7 @@ select_row: function(id, mod_key, with_mouse)
       case CONTROL_KEY:
         if (!with_mouse)
           this.highlight_row(id, true);
-        break; 
+        break;
 
       case CONTROL_SHIFT_KEY:
         this.shift_select(id, true);
@@ -446,7 +446,7 @@ select_next: function()
   var prev_row = this.get_prev_row();
   var new_row = (next_row) ? next_row : prev_row;
   if (new_row)
-    this.select_row(new_row.uid, false, false);  
+    this.select_row(new_row.uid, false, false);
 },
 
 
@@ -490,7 +490,7 @@ in_selection: function(id)
     if (this.selection[n]==id)
       return true;
 
-  return false;    
+  return false;
 },
 
 
@@ -505,7 +505,7 @@ select_all: function(filter)
   // reset but remember selection first
   var select_before = this.selection.join(',');
   this.selection = new Array();
-  
+
   for (var n in this.rows)
   {
     if (!filter || (this.rows[n] && this.rows[n][filter] == true))
@@ -552,7 +552,7 @@ clear_selection: function(id)
       if (this.rows[this.selection[n]]) {
         $(this.rows[this.selection[n]].obj).removeClass('selected').removeClass('unfocused');
         }
-    
+
     this.selection = new Array();
     }
 
@@ -625,10 +625,11 @@ key_press: function(e)
 
   var keyCode = rcube_event.get_keycode(e);
   var mod_key = rcube_event.get_modifier(e);
+
   switch (keyCode)
   {
     case 40:
-    case 38: 
+    case 38:
     case 63233: // "down", in safari keypress
     case 63232: // "up", in safari keypress
       // Stop propagation so that the browser doesn't scroll
@@ -638,11 +639,11 @@ key_press: function(e)
       this.shiftkey = e.shiftKey;
       this.key_pressed = keyCode;
       this.triggerEvent('keypress');
-      
+
       if (this.key_pressed == this.BACKSPACE_KEY)
         return rcube_event.cancel(e);
   }
-  
+
   return true;
 },
 
@@ -653,16 +654,19 @@ key_down: function(e)
 {
   switch (rcube_event.get_keycode(e))
   {
+    case 27:
+      if (this.drag_active)
+	this.drag_mouse_up(e);
     case 40:
-    case 38: 
+    case 38:
     case 63233:
     case 63232:
       if (!rcube_event.get_modifier(e) && this.focused)
         return rcube_event.cancel(e);
-        
+
     default:
   }
-  
+
   return true;
 },
 
@@ -720,7 +724,7 @@ drag_mouse_move: function(e)
 
     if (!this.drag_mouse_start || (Math.abs(m.x - this.drag_mouse_start.x) < 3 && Math.abs(m.y - this.drag_mouse_start.y) < 3))
       return false;
-  
+
     if (!this.draglayer)
       this.draglayer = $('<div>').attr('id', 'rcmdraglayer').css({ position:'absolute', display:'none', 'z-index':2000 }).appendTo(document.body);
 
@@ -809,7 +813,7 @@ drag_mouse_up: function(e)
   var iframes = document.getElementsByTagName('IFRAME');
   for (var n in iframes) {
     var iframedoc;
-    
+
     if (iframes[n].contentDocument)
       iframedoc = iframes[n].contentDocument;
     else if (iframes[n].contentWindow)

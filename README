@@ -10,8 +10,8 @@ Supported Extensions
 comparators
 envelope
 fileinto
-imapflags
-notify
+imapflags/imap4flags
+notify/enotify
 regex
 reject/ereject
 relational

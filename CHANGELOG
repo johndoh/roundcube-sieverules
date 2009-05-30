@@ -1,6 +1,26 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 05 30
+==========
+ * Added config var to auto load default rules when no user ones exist and skip setup screen
+ * Added support ESC key to stop dragging
+ * Added support for enotify and imap4flags
+ * Added delete icon
+ * Fixed JS bug when adding second rule
+
+2009 05 25
+==========
+ * Fixed bug in rule moving
+
+2009 05 24
+==========
+ * Added support for plugin template system
+ * Added up/down/delete key support on the filters list
+ * Added ability to drag examples to filters list
+ * Added ability to drag rules within the filter list to change the order
+ * Fixed display bug when deleting penultimate rule
+
 2009 05 19
 ==========
  * Swapped decrypt_passwd for decrypt
