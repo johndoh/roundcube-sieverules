@@ -189,7 +189,7 @@ if (window.rcmail) {
 				var nmethods = document.getElementsByName('_nmethod[]');
 				var nmsgs = document.getElementsByName('_nmsg[]');
 				var size_test = new RegExp('^[0-9]+$');
-				var header_test = new RegExp('^[a-zA-Z0-9\-]+(, [a-zA-Z0-9\-]+)*$');
+				var header_test = new RegExp('^[a-zA-Z0-9\-]+( ?, ?[a-zA-Z0-9\-]+)*$');
 
 				if (input_name && input_name.value == '') {
 					alert(rcmail.gettext('norulename','sieverules'));
