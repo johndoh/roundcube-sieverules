@@ -1,0 +1,85 @@
+<?php
+
+/*
+ +-----------------------------------------------------------------------+
+ | SieveRules configuration file                                         |
+ |                                                                       |
+ | This file is part of the RoundCube Webmail client                     |
+ | Copyright (C) 2005-2009, RoundCube Dev. - Switzerland                 |
+ | Licensed under the GNU GPL                                            |
+ |                                                                       |
+ +-----------------------------------------------------------------------+
+
+*/
+
+$sieverules_config = array();
+
+// managesieve server address
+$sieverules_config['managesieve_host'] = 'localhost';
+
+// managesieve server port
+$sieverules_config['managesieve_port'] = 2000;
+
+// enable TLS for managesieve server connection
+$sieverules_config['usetls'] = FALSE;
+
+// folder delimiter - if your sieve system uses a different folder delimiter to
+// your IMAP server set it here, otherwise leave as null to use IMAP delimiter
+$sieverules_config['folder_delimiter'] = null;
+
+// include the IMAP root in the folder path when creating the rules
+$sieverules_config['include_imap_root'] = FALSE;
+
+// ruleset name
+$sieverules_config['ruleset_name'] = 'roundcube';
+
+// allow multiple actions
+$sieverules_config['multiple_actions'] = TRUE;
+
+// allowed actions
+$sieverules_config['allowed_actions'] = array(
+											'fileinto' => TRUE,
+											'vacation' => TRUE,
+											'reject' => TRUE,
+											'redirect' => TRUE,
+											'keep' => TRUE,
+											'discard' => TRUE,
+											'imapflags' => TRUE,
+											'notify' => TRUE,
+											'stop' => TRUE
+											);
+
+// headers listed as examples of "Other headers"
+$sieverules_config['other_headers'] = array(
+											'Reply-To', 'List-Id', 'MailingList', 'Mailing-List',
+											'X-ML-Name', 'X-List', 'X-List-Name', 'X-Mailing-List',
+											'Resent-From', 'Resent-To', 'X-Mailer', 'X-MailingList',
+											'X-Spam-Status', 'X-Priority', 'Importance', 'X-MSMail-Priority',
+											'Precedence', 'Return-Path', 'Received', 'Auto-Submitted',
+											'X-Spam-Flag', 'X-Spam-Tests'
+											);
+
+// Predefined rules
+// each rule should be in it own array - examples provided in README
+// 'name' => name of the rule, displayed in the rule type select box
+// 'type' => one of: header, address, envelope, size
+// 'header' => name of the header to test
+// 'operator' => operator to use, for all possible values please see README
+// 'extra' => extra information needed for the rule in some cases
+// 'target' => value that the header is tested against
+$sieverules_config['predefined_rules'] = array();
+
+// Advanced editor
+// allows the user to edit the sieve file directly, without the restrictions of the normal UI
+// 0 - Disabled, option not shown in the UI
+// 1 - Enabled, option shown in the UI
+// 2 - Option shown in the UI and used by default
+$sieverules_config['adveditor'] = '0';
+
+// Default sieve rule file
+$sieverules_config['default_file'] = '/etc/dovecot/sieve/default';
+
+// Example sieve rule file
+$sieverules_config['example_file'] = '/etc/dovecot/sieve/example';
+
+?>

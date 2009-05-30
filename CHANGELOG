@@ -1,0 +1,33 @@
+Roundcube Webmail SieveRules
+============================
+
+2009 05 19
+==========
+ * Swapped decrypt_passwd for decrypt
+
+2009 05 12
+==========
+ * Improved INGO rule filter
+
+2009 05 09
+==========
+ * Added basic import system
+ * Added Advanced editor - allows for editing of sieve file directly
+ * Moved example rules to more obvious position
+ * Updated list.js to latest version
+
+2009 05 03
+==========
+ * Set busy while moving filter
+
+2009 04 27
+==========
+ * Updated de_DE
+ * Small changes to init functions for when labels are added to UI
+
+Version 1.0-BETA
+=================
+ * Translated from sieverules patch
+ * Added support for default rules file
+ * Added support for example rules file
+ * Expanded pre-defined rules to include comparator option

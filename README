@@ -1,0 +1,143 @@
+Roundcube Webmail SieveRules
+============================
+This plugin adds the ability for users to manage their sieve mail filter rules.
+Inspiration and most of the code for this plugin was taken from:
+Aleksander Machniak <alec@alec.pl> - original RoundCube managesieve patch
+Tested with Dovecot-managesieve
+
+Supported Extensions
+====================
+comparators
+envelope
+fileinto
+imapflags
+notify
+regex
+reject/ereject
+relational
+subaddress
+vacation
+
+Install
+=======
+* Place this plugin folder into plugins directory of RoundCube
+* Add sieverules to $rcmail_config['plugins'] in your RoundCube config
+
+Config
+======
+The default config file is plugins/sieverules/config.inc.php.dist
+Rename this to plugins/sieverules/config.inc.php
+* Set the host where managesieve is listening
+* Set the port managesieve is listening on
+* (Optional) Set the folder delimiter (if your managesieve implementation uses a different one to your IMAP server
+* Set the name of the ruleset in which your sieve rules are stored
+* Enable/disable the actions you want
+* (Optional) Define any predefined rules you wish to use
+* (Optional) Define a default sieve rule file
+* (Optional) Define an example sieve rule file
+
+Predefined rules
+================
+The predefined rules option allows you specify a set of simple rules which are available in the UI identified by their name.
+All other rule options are hidden when a predefined rule is selected.
+
+The following options are available in each field:
+
+type:
+  header
+  address
+  envelope
+  size
+operator:
+  for rules of type header, address, envelope one of:
+    'contains' : contains
+    'notcontains' : does not contain
+    'is' : is equal to
+    'notis' : is not equal to
+    'exists' : exists
+    'notexists' : does not exist
+    'regex' : matches regular expression
+    'notregex' : does not match regular expression
+    'count "gt"': count is greater than
+    'count "ge"': count is greater than or equal to
+    'count "lt"': count is less than
+    'count "le"': count is less than or equal to
+    'count "eq"': count is equal to
+    'count "ne"': count does not equal
+    'value "gt"': value is greater than
+    'value "ge"': value is greater than or equal to
+    'value "lt"': value is less than
+    'value "le"': value is less than or equal to
+    'value "eq"': value is equal to
+    'value "ne"': value does not equal
+    'user': user part equals
+    'notuser': user part does not equal
+    'detail': detail part equals
+    'notdetail': detail part does not equal
+    'domain': domain part equals
+    'notdomain': domain part does not equal
+  for rules of type size one of:
+    'over' : is more than
+    'under' : is less than
+extra:
+  with count or value operators a comparator can be specified, this can be any comparator supported by your server (i;ascii-casemap is default, to use this comparator the field should be left blank)
+
+The name, header, and target fields do not have set values
+
+Examples:
+
+1) Simple spam filter:
+   array(
+    'name' => 'Is Spam',
+    'type' => 'header',
+    'header' => 'X-Spam-Flag',
+    'operator' => 'exists',
+    'extra' => '',
+    'target' => '')
+
+2) Big message filter:
+   array(
+    'name' => 'Big messages',
+    'type' => 'size',
+    'header' => '',
+    'operator' => 'over',
+    'extra' => '',
+    'target' => '5M')
+
+3) Spam score filter:
+   array(
+    'name' => 'Definitely spam',
+    'type' => 'header',
+    'header' => 'X-Spam-Score',
+    'operator' => 'value "ge"',
+    'extra' => 'i;ascii-numeric',
+    'target' => '10')
+
+Advanced editor
+===============
+The advanced editor allows users to edit the sieve file directly, without the restrictions of the UI. Please note any changes made to the file directly which cannot be parsed by the script will be lost if rules are saved in the normal mode.
+There is no validation of the script, please be careful when editing it directly or you could break all your filtering!
+
+Default sieve rule file
+=======================
+If a default sieve rule file is specified then when a user has no sieve rules defined this file is loaded instead and the rules are displayed just as if they belong to the user.
+The file can be stored any where on your server and the user under which your web server runs must have permission to read it.
+
+Example sieve rule file
+=======================
+If an example sieve rule file is specified then the filters from this script are loaded and displayed in a drop down in the bottom right of the screen. Users can select one of these example rules, it will load in the just as one of their rules, edit it and then save it to their rule set.
+The file can be stored any where on your server and the user under which your web server runs must have permission to read it.
+
+Import existing rulesets
+========================
+The plugin contains a basic import system and 2 basic import filters. These example import filters are not perfect, use them with care you may loose some rule data! You can create your own filter (or modify existing ones), if you do please consider sharing it.
+To create an import filter you must add a file in the importFilters directory. The file must contain a class named 'srimport_[filename]'.
+Each import filter must have:
+  An attribute called name - this should be the user friendly name of the import e.g. `Squirrelmail (Avelsieve)`
+  A pubic function called detector - used to detect of if current rule file was genereted with the software
+  A pubic function called importer - converts the rule file to SieveRules format
+The importer function can return either a string to be parsed by the SieveRules parser or an array, similar to the one created by the SieveRules parser.
+
+The structure of the rule file
+==============================
+By default this plugin generates rules in the form `if ... elsif` if you would rather each rule was a seperate if statement then change `$elsif` to false at the top of rcube_sieve_script.php. You may also want to change the text for $messages['sieveruleexp'] in your localisation. This is displayed at the top of the filter rules fieldset.

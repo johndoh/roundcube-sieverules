@@ -1,0 +1,215 @@
+/***** RoundCube|Mail sieverules plugin styles *****/
+
+#pagecontent
+{
+  position: absolute;
+  top: 95px;
+  right: 20px;
+  bottom: 60px;
+  left: 20px;
+  /* css hack for IE */
+  width: expression((parseInt(document.documentElement.clientWidth)-40)+'px');
+  height: expression((parseInt(document.documentElement.clientHeight)-155)+'px');
+}
+
+#sieverules-list
+{
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  background-color: #F6F6F6;
+  /* css hack for IE */
+  height: expression(parseInt(this.parentNode.offsetHeight)+'px');
+  width: 240px;
+}
+
+#sieverules-list-filters
+{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0;
+  border: 1px solid #999999;
+  overflow: auto;
+  /* css hack for IE */
+  height: expression(parseInt(this.parentNode.offsetHeight)+'px');
+  width: expression(parseInt(this.parentNode.offsetWidth)+'px');
+}
+
+#sieverules-list-examples
+{
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  border: 1px solid #999999;
+  overflow: auto;
+  /* css hack for IE */
+  width: expression(parseInt(this.parentNode.offsetWidth)+'px');
+}
+
+#sieverules-details
+{
+  position: absolute;
+  top: 0px;
+  left: 250px;
+  right: 0px;
+  bottom: 0px;
+  border: 1px solid #999999;
+  overflow: auto;
+  background: #F6F6F6;
+  /* css hack for IE */
+  height: expression(parseInt(this.parentNode.offsetHeight)+'px');
+  width: expression((parseInt(this.parentNode.offsetWidth)-250)+'px');
+}
+
+#sieverules-advanced
+{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+  overflow: hidden;
+  border: 1px solid #999999;
+  /* css hack for IE */
+  height: expression((parseInt(document.documentElement.clientHeight)-155)+'px');
+  width: expression((parseInt(document.documentElement.clientWidth)-40)+'px');
+}
+
+span.disableLink {
+  float: right;
+  width: 110px;
+  text-align: right;
+}
+
+#sieverules-table, #sieverules-examples
+{
+  width: 100%;
+  table-layout: fixed;
+  /* css hack for IE */
+  width: expression('auto');
+}
+
+#sieverules-table tbody td
+{
+  cursor: pointer;
+}
+
+#sieverules-table tbody td.control, #rules-table tbody td.control, #actions-table tbody td.control
+{
+  text-align: right;
+}
+
+#rules-table tbody td.control, #actions-table tbody td.control
+{
+  vertical-align: top;
+}
+
+#rules-table, #actions-table
+{
+  width: 100%;
+}
+
+#rules-table td.selheader
+{
+  width: 120px;
+}
+
+#rules-table td.op
+{
+  width: 130px;
+}
+
+#rules-table td.header
+{
+  width: 140px;
+}
+
+#rules-table td.target
+{
+  width: 160px;
+}
+
+#rules-table td.control
+{
+  /* css hack for IE */
+  width: expression((parseInt(document.documentElement.clientWidth)-800)+'px');
+}
+
+#actions-table td.action
+{
+  width: 165px;
+  vertical-align: top;
+}
+
+#actions-table td.folder
+{
+  width: 380px;
+  vertical-align: top;
+}
+
+table.records-table td.msg
+{
+  vertical-align: top;
+}
+
+table.records-table td.vacdaysexp
+{
+  width: 398px;
+  white-space: -moz-pre-wrap !important;
+  white-space: -o-pre-wrap !important;
+  white-space: pre-wrap !important;
+  white-space: pre;
+  word-wrap: break-word; /* IE (and Safari) */
+}
+
+/* IE6 PNG fix */
+img.nohtc
+{
+  behavior: none;
+  border: 0;
+}
+
+#listbuttons
+{
+  position: absolute;
+  bottom: 30px;
+  left: 20px;
+}
+
+#advancedmode
+{
+  white-space: nowrap;
+  text-align: right;
+  position: absolute;
+  bottom: 30px;
+  right: 20px;
+  width: 460px;
+}
+
+#sieverules-advancedbox
+{
+  position: absolute;
+  top: 20px;
+  left: 0px;
+  bottom: 3px;
+  right: 4px;
+  /* css hack for IE */
+  height: expression((parseInt(document.documentElement.clientHeight)-179)+'px');
+  width: expression((parseInt(document.documentElement.clientWidth)-48)+'px');
+}
+
+#sieverules-advanced textarea
+{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  border: 0;
+  width: 100%;
+  height: 100%;
+  /* css hack for IE */
+  height: expression((parseInt(document.documentElement.clientHeight)-179)+'px');
+  width: expression((parseInt(document.documentElement.clientWidth)-48)+'px');
+}
