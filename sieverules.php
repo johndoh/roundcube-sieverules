@@ -82,8 +82,12 @@ class sieverules extends rcube_plugin
 		'advswitch' => array($this, 'gen_advswitch'),
 		));
 
-		$this->include_script('list.js');
-		if (sizeof($this->examples) > 0) $this->api->output->set_env('examples', 'true');
+		if ($this->action != 'plugin.sieverules.advanced')
+			$this->api->output->include_script('list.js');
+
+		if (sizeof($this->examples) > 0)
+			$this->api->output->set_env('examples', 'true');
+
 		if($this->action == 'plugin.sieverules.add') {
 			$this->api->output->set_pagetitle($this->gettext('newfilter'));
 			$this->api->output->send('sieverules.editsieverule');

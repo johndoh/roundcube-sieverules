@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 05 31
+==========
+ * Use list.js from the core
+
 2009 05 30
 ==========
  * Added config var to auto load default rules when no user ones exist and skip setup screen
