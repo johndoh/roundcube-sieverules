@@ -1,6 +1,9 @@
 Roundcube Webmail SieveRules
 ============================
 
+ * Add possibility to easily switch between \r\n and \n in sieve file and also change indent
+ * Swap split() for explode(), PHP 5.3 compatibility
+
 2009 05 31
 ==========
  * Use list.js from the core

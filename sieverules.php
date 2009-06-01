@@ -634,7 +634,7 @@ class sieverules extends rcube_plugin
 		} elseif ($ruleset == '_example_') {
 			if (get_input_value('_eids', RCUBE_INPUT_GET)) {
 				$pos = get_input_value('_pos', RCUBE_INPUT_GET);
-				$eids = split(",", get_input_value('_eids', RCUBE_INPUT_GET));
+				$eids = explode(",", get_input_value('_eids', RCUBE_INPUT_GET));
 
 				if ($pos == 'end')
 					$pos = null;
@@ -1149,7 +1149,7 @@ class sieverules extends rcube_plugin
 		$vacs_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 3, 'style' => $vac_style));
 
 		$to_addresses = "";
-		$vacto_arr = split(",", $vacto);
+		$vacto_arr = explode(",", $vacto);
 		$sql_result = $rcmail->user->list_identities();
 		if ($rcmail->db->num_rows($sql_result)) {
 			$field_id = 'rcmfd_sievevacfrom_'. $rowid;
@@ -1330,7 +1330,7 @@ class sieverules extends rcube_plugin
 
 	private function _in_headerarray($needle, $haystack) {
 		foreach ($haystack as $data) {
-			$args = split("::", $data);
+			$args = explode("::", $data);
 			if ($args[1] == $needle)
 				return $args[0];
 		}

@@ -31,6 +31,10 @@
 
 */
 
+// define constants for sieve file
+define('RCUBE_SIEVE_NEWLINE', "\r\n");
+define('RCUBE_SIEVE_INDENT', "\t");
+
 class rcube_sieve_script {
 	private $elsif = true;
 	private $content = array();
@@ -155,12 +159,12 @@ class rcube_sieve_script {
 			$i = 0;
 
 			if ($rule['disabled'] == 1) {
-				$script .= '# rule:[' . $rule['name'] . "]\r\n";
-				$script .= '# disabledRule:[' . $this->_safe_serial(serialize($rule)) . "]\r\n";
+				$script .= '# rule:[' . $rule['name'] . "]" . RCUBE_SIEVE_NEWLINE;
+				$script .= '# disabledRule:[' . $this->_safe_serial(serialize($rule)) . "]" . RCUBE_SIEVE_NEWLINE;
 			}
 			else {
 				// header
-				$script .= '# rule:[' . $rule['name'] . "]\r\n";
+				$script .= '# rule:[' . $rule['name'] . "]" . RCUBE_SIEVE_NEWLINE;
 
 				// constraints expressions
 				foreach ($rule['tests'] as $test) {
@@ -224,13 +228,14 @@ class rcube_sieve_script {
 				$activeRules++;
 
 				if (sizeof($tests) > 1)
-					$script .= implode(",\r\n\t", $tests);
+					$script .= implode("," . RCUBE_SIEVE_NEWLINE . RCUBE_SIEVE_INDENT, $tests);
 				elseif (sizeof($tests))
 					$script .= $tests[0];
 				else
 					$script .= 'true';
 
-				$script .= ")\r\n{\r\n";
+
+				$script .= ")". RCUBE_SIEVE_NEWLINE ."{" . RCUBE_SIEVE_NEWLINE;
 
 				// action(s)
 				$actions = '';
@@ -238,19 +243,19 @@ class rcube_sieve_script {
 					switch ($action['type']) {
 						case 'fileinto':
 							array_push($exts, 'fileinto');
-							$actions .= "\tfileinto \"" . $this->_escape_string($action['target']) . "\";\r\n";
+							$actions .= RCUBE_SIEVE_INDENT . "fileinto \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
 							break;
 						case 'redirect':
-							$actions .= "\tredirect \"" . $this->_escape_string($action['target']) . "\";\r\n";
+							$actions .= RCUBE_SIEVE_INDENT . "redirect \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
 							break;
 						case 'reject':
 						case 'ereject':
 							array_push($exts, $action['type']);
 
 							if (strpos($action['target'], "\n")!==false)
-								$actions .= "\t".$action['type']." text:\r\n" . $action['target'] . "\r\n.\r\n;\r\n";
+								$actions .= RCUBE_SIEVE_INDENT . $action['type']." text:" . RCUBE_SIEVE_NEWLINE . $action['target'] . RCUBE_SIEVE_NEWLINE . "." . RCUBE_SIEVE_NEWLINE . ";" . RCUBE_SIEVE_NEWLINE;
 							else
-								$actions .= "\t".$action['type']." \"" . $this->_escape_string($action['target']) . "\";\r\n";
+								$actions .= RCUBE_SIEVE_INDENT . $action['type']." \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
 
 							break;
 						case 'vacation':
@@ -266,19 +271,20 @@ class rcube_sieve_script {
 // 								mb_internal_encoding(RCMAIL_CHARSET);
 // 							}
 
-							$actions .= "\tvacation\r\n";
-							$actions .= "\t\t:days ". $action['days'] ."\r\n";
-							if (!empty($action['addresses'])) $actions .= "\t\t:addresses [\"". str_replace(",", "\",\"", $this->_escape_string($action['addresses'])) ."\"]\r\n";
-							if (!empty($action['subject'])) $actions .= "\t\t:subject \"". $action['subject'] ."\"\r\n";
-							if (!empty($action['handle'])) $actions .= "\t\t:handle \"". $this->_escape_string($action['handle']) ."\"\r\n";
-							if (!empty($action['from'])) $actions .= "\t\t:from \"". $this->_escape_string($action['from']) ."\"\r\n";
+							$actions .= RCUBE_SIEVE_INDENT . "vacation" . RCUBE_SIEVE_NEWLINE;
+							$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":days ". $action['days'] . RCUBE_SIEVE_NEWLINE;
+							if (!empty($action['addresses'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":addresses [\"". str_replace(",", "\",\"", $this->_escape_string($action['addresses'])) ."\"]" . RCUBE_SIEVE_NEWLINE;
+							if (!empty($action['subject'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":subject \"". $action['subject'] ."\"" . RCUBE_SIEVE_NEWLINE;
+							if (!empty($action['handle'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":handle \"". $this->_escape_string($action['handle']) ."\"" . RCUBE_SIEVE_NEWLINE;
+							if (!empty($action['from'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":from \"". $this->_escape_string($action['from']) ."\"" . RCUBE_SIEVE_NEWLINE;
 
 							if ($action['charset'] != "UTF-8")
-								$actions .= "\t\t:mime text:\r\nContent-Type: text/plain; charset=". $action['charset'] ."\r\n\r\n" . $action['msg'] . "\r\n.\r\n;\r\n";
+								$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":mime text:". RCUBE_SIEVE_NEWLINE ."Content-Type: text/plain; charset=". $action['charset'] . RCUBE_SIEVE_NEWLINE . RCUBE_SIEVE_NEWLINE . $action['msg'] . RCUBE_SIEVE_NEWLINE . "." . RCUBE_SIEVE_NEWLINE . ";" . RCUBE_SIEVE_NEWLINE;
 							elseif (strpos($action['msg'], "\n")!==false)
-								$actions .= "\t\ttext:\r\n" . $action['msg'] . "\r\n.\r\n;\r\n";
+
+								$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . "text:" . RCUBE_SIEVE_NEWLINE . $action['msg'] . RCUBE_SIEVE_NEWLINE . "." . RCUBE_SIEVE_NEWLINE . ";" . RCUBE_SIEVE_NEWLINE;
 							else
-								$actions .= "\t\t\"" . $this->_escape_string($action['msg']) . "\";\r\n";
+								$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . "\"" . $this->_escape_string($action['msg']) . "\";" . RCUBE_SIEVE_NEWLINE;
 
 							break;
 						case 'imapflags':
@@ -286,41 +292,41 @@ class rcube_sieve_script {
 							array_push($exts, $action['type']);
 
 							if (strpos($actions, "setflag") !== false)
-								$actions .= "\taddflag \"" . $this->_escape_string($action['target']) . "\";\r\n";
+								$actions .= RCUBE_SIEVE_INDENT . "addflag \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
 							else
-								$actions .= "\tsetflag \"" . $this->_escape_string($action['target']) . "\";\r\n";
+								$actions .= RCUBE_SIEVE_INDENT . "setflag \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
 
 							break;
 						case 'notify':
 						case 'enotify':
 							array_push($exts, $action['type']);
-							$actions .= "\tnotify\r\n";
-							$actions .= "\t\t:method \"" . $this->_escape_string($action['method']) . "\"\r\n";
-							if (!empty($action['options'])) $actions .= "\t\t:options [\"" . str_replace(",", "\",\"", $this->_escape_string($action['options'])) . "\"]\r\n";
-							if (!empty($action['from'])) $actions .= "\t\t:from \"" . $this->_escape_string($action['from']) . "\"\r\n";
-							if (!empty($action['importance'])) $actions .= "\t\t:importance \"" . $this->_escape_string($action['importance']) . "\"\r\n";
-							$actions .= "\t\t:message \"". $this->_escape_string($action['msg']) ."\";\r\n";
+							$actions .= RCUBE_SIEVE_INDENT . "notify" . RCUBE_SIEVE_NEWLINE;
+							$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":method \"" . $this->_escape_string($action['method']) . "\"" . RCUBE_SIEVE_NEWLINE;
+							if (!empty($action['options'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":options [\"" . str_replace(",", "\",\"", $this->_escape_string($action['options'])) . "\"]" . RCUBE_SIEVE_NEWLINE;
+							if (!empty($action['from'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":from \"" . $this->_escape_string($action['from']) . "\"" . RCUBE_SIEVE_NEWLINE;
+							if (!empty($action['importance'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":importance \"" . $this->_escape_string($action['importance']) . "\"" . RCUBE_SIEVE_NEWLINE;
+							$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":message \"". $this->_escape_string($action['msg']) ."\";" . RCUBE_SIEVE_NEWLINE;
 							break;
 						case 'keep':
 						case 'discard':
 						case 'stop':
-							$actions .= "\t" . $action['type'] .";\r\n";
+							$actions .= RCUBE_SIEVE_INDENT . $action['type'] .";" . RCUBE_SIEVE_NEWLINE;
 							break;
 					}
 				}
 
-				$script .= $actions . "}\r\n";
+				$script .= $actions . "}" . RCUBE_SIEVE_NEWLINE;
 			}
 		}
 
 		// requires
 		$exts = array_unique($exts);
 		if (sizeof($exts))
-			$script = 'require ["' . implode('","', $exts) . "\"];\r\n" . $script;
+			$script = 'require ["' . implode('","', $exts) . "\"];" . RCUBE_SIEVE_NEWLINE . $script;
 
 		// author
 		if ($script)
-			$script = "## Generated by RoundCube Webmail SieveRules Plugin ##\r\n" . $script;
+			$script = "## Generated by RoundCube Webmail SieveRules Plugin ##".  RCUBE_SIEVE_NEWLINE . $script;
 
 		return $script;
 	}
@@ -532,7 +538,7 @@ class rcube_sieve_script {
 		$content = trim($content);
 
 		if (preg_match('/^:mime\s+text:(.*)\.$/sm', $content, $matches)) {
-			$parts = split("\r?\n", $matches[1], 4);
+			$parts = explode("\r?\n", $matches[1], 4);
 			$text = trim($parts[3]);
 		}
 		elseif (preg_match('/^text:(.*)\.$/sm', $content, $matches))
@@ -548,7 +554,7 @@ class rcube_sieve_script {
 		$content = trim($content);
 
 		if (preg_match('/^:mime\s+text:(.*)\.$/sm', $content, $matches)) {
-			$parts = split("\r?\n", $matches[1], 4);
+			$parts = explode("\r?\n", $matches[1], 4);
 			$charset = trim(substr($parts[1], stripos($parts[1], "charset=") + 8));
 		}
 
