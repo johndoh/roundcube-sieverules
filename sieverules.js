@@ -20,8 +20,8 @@ if (window.rcmail) {
 				rcmail.sieverules_list.addEventListener('select', function(o){ rcmail.sieverules_select(o); });
 				rcmail.sieverules_list.addEventListener('keypress', function(o){ rcmail.sieverules_keypress(o); });
           		rcmail.sieverules_list.addEventListener('dragstart', function(o){ rcmail.sieverules_drag_start(o); });
-          		rcmail.sieverules_list.addEventListener('dragmove', function(o, e){ rcmail.sieverules_drag_move(e); });
-          		rcmail.sieverules_list.addEventListener('dragend', function(o, e){ rcmail.sieverules_drag_end(e); });
+          		rcmail.sieverules_list.addEventListener('dragmove', function(e){ rcmail.sieverules_drag_move(e); });
+          		rcmail.sieverules_list.addEventListener('dragend', function(e){ rcmail.sieverules_drag_end(e); });
           		document.onmouseup = function(e){ return rcmail.sieverules_mouse_up(e); };
 				rcmail.sieverules_list.init();
 				rcmail.sieverules_list.focus();
@@ -34,8 +34,8 @@ if (window.rcmail) {
 				rcmail.sieverules_examples = new rcube_list_widget(rcmail.gui_objects.sieverules_examples, {multiselect:true, draggable:true, keyboard:true});
 				rcmail.sieverules_examples.addEventListener('select', function(o){ rcmail.sieverules_ex_select(o); });
           		rcmail.sieverules_examples.addEventListener('dragstart', function(o){ rcmail.sieverules_ex_drag_start(o); });
-          		rcmail.sieverules_examples.addEventListener('dragmove', function(o, e){ rcmail.sieverules_drag_move(e); });
-          		rcmail.sieverules_examples.addEventListener('dragend', function(o, e){ rcmail.sieverules_drag_end(e); });
+          		rcmail.sieverules_examples.addEventListener('dragmove', function(e){ rcmail.sieverules_drag_move(e); });
+          		rcmail.sieverules_examples.addEventListener('dragend', function(e){ rcmail.sieverules_drag_end(e); });
 				rcmail.sieverules_examples.init();
 
 				if (rcmail.env.eid)
