@@ -80,6 +80,10 @@ $labels['days'] = 'Zeitraum';
 $labels['message'] = 'Nachricht';
 $labels['sieveruleheaders'] = 'Zeige Beispiele für andere Header';
 $labels['examplefilters'] = 'Beispielfilter...';
+$labels['importfilters'] = 'Filter importieren';
+$labels['usedefaultfilter'] = 'Verwende Standardfilter';
+$labels['importfilter'] = 'Filter importieren';
+$labels['adveditor'] = 'Erweiterter Editor';
 
 $messages = array();
 $messages['nosieverules'] = 'Keine Filter gefunden.';
@@ -112,5 +116,12 @@ $messages['notifynomsg'] = 'Bitte gebe einen Text für die Nachricht ein';
 $messages['sieveruleexp'] = 'Bitte erstelle eine oder mehrere Regeln gegen die jede Nachricht getestet werden soll. Filter werden in der Reihenfolge durchlaufen, in der sie links gelistet sind. Wenn ein Filter zutrifft, werden keine weiteren Filter durchlaufen.';
 $messages['sieveactexp'] = 'Bitte wähle eine von den unten gelisteten Optionen. Diese Aktionen werden für jede Nachricht ausgeführt, die auf obige Filterregel(n) passt.';
 $messages['sieveheadershlp'] = 'Unten werden einige Header als Beispiel für mögliche Header angezeigt. Wähle einen oder füge oben einen eigenen Header hinzu.';
+$messages['movingfilter'] = 'Verschiebe Filter...';
+$messages['noexistingfilters'] = 'Keine vorhandenen Filter gefunden!';
+$messages['importdefault'] = '<b>Verwende Standardfilter:</b> Es sind eine Reihe von Standardfiltern verfügbar. Möchtest Du diese verwenden?';
+$messages['importother'] = '<b>Filter importieren:</b> EIne Reihe von Filtern von %s wurden gefunden. Möchtest Du diese Filter Deinen Filtern hinzufügen?';
+$messages['switchtoadveditor'] = 'Die verwendung des erweiterten Editors ermöglicht es, die Sieve-Filter direkt zu bearbeiten. Alle Änderungen sind für den normalen Editor unlesbar und werden verworfen wenn eine Regel mit dem normalen Editor gespeichert wird. Möchtest Du fortfahren?';
+$messages['filterimported'] = 'Filterimport erfolgreich';
+$messages['filterimporterror'] = 'Fehler beim Filterimport. Serverfehler.';
 
 ?>
