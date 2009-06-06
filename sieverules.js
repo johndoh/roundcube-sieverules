@@ -404,7 +404,7 @@ rcmail.sieverules_drag_start = function(list) {
 		rcmail.env.sieverules_coords = new Array();
 		for (var i = 0; i < rows.length; i++) {
 			pos = $('#' + rows[i].id).offset();
-			rcmail.env.sieverules_coords[rows[i].id] = { x1:pos.left, y1:pos.top, x2:pos.left + $('#' + rows[i].id).width(), y2:pos.top + $('#' + rows[i].id).height() };
+			rcmail.env.sieverules_coords[rows[i].id] = { x1:pos.left, y1:pos.top, x2:pos.left + $('#' + rows[i].id).width(), y2:pos.top + $('#' + rows[i].id).height(), on:0 };
 		}
 	}
 };
@@ -419,7 +419,6 @@ rcmail.sieverules_drag_move = function(e) {
 		var li, pos, mouse;
 		mouse = rcube_event.get_mouse_pos(e);
 		pos = rcmail.env.sieveruleslist_coords;
-
 		mouse.y += toffset;
 
 		// if mouse pointer is outside of folderlist
@@ -435,17 +434,18 @@ rcmail.sieverules_drag_move = function(e) {
 		// over the folders
 		for (var k in rcmail.env.sieverules_coords) {
 			pos = rcmail.env.sieverules_coords[k];
-			if ((mouse.x >= pos.x1) && (mouse.x < pos.x2) && (mouse.y >= pos.y1) && (mouse.y < pos.y2)) {
+			if (mouse.x >= pos.x1 && mouse.x < pos.x2 && mouse.y >= pos.y1 && mouse.y < pos.y2) {
 				$(rcmail.gui_objects.sieverules_list).removeClass('droptargetend');
 				$('#' + k + ' td:eq(0)').addClass('droptarget');
 				$('#' + k + ' td:eq(1)').addClass('droptarget');
 				rcmail.env.sieverules_last_target = k;
+				rcmail.env.sieverules_coords[k].on = 1;
 			}
-			else {
+			else if (pos.on) {
 				$('#' + k + ' td:eq(0)').removeClass('droptarget');
 				$('#' + k + ' td:eq(1)').removeClass('droptarget');
-				if (k == rcmail.env.sieverules_last_target)
-					rcmail.env.sieverules_last_target = null;
+				rcmail.env.sieverules_last_target = null;
+				rcmail.env.sieverules_coords[k].on = 0;
 			}
 		}
 	}
@@ -454,14 +454,14 @@ rcmail.sieverules_drag_move = function(e) {
 rcmail.sieverules_drag_end = function(e) {
 	rcmail.sieverules_drag_active = false;
 	rcmail.sieverules_ex_drag_active = false;
+	rcmail.env.sieverules_last_target = null;
 
 	// over the rules
 	if (rcmail.gui_objects.sieverules_list && rcmail.env.sieverules_coords) {
 		for (var k in rcmail.env.sieverules_coords) {
-			if (k == rcmail.env.sieverules_last_target) {
+			if (rcmail.env.sieverules_coords[k].on) {
 				$('#' + k + ' td:eq(0)').removeClass('droptarget');
 				$('#' + k + ' td:eq(1)').removeClass('droptarget');
-				rcmail.env.sieverules_last_target = null;
 			}
 		}
 	}

@@ -130,12 +130,6 @@ span.disableLink {
   width: 160px;
 }
 
-#rules-table td.control
-{
-  /* css hack for IE */
-  width: expression((parseInt(document.documentElement.clientWidth)-800)+'px');
-}
-
 #actions-table td.action
 {
   width: 165px;
@@ -157,7 +151,6 @@ table.records-table td.vacdaysexp
 {
   width: 398px;
   white-space: -moz-pre-wrap !important;
-  white-space: -o-pre-wrap !important;
   white-space: pre-wrap !important;
   white-space: pre;
   word-wrap: break-word; /* IE (and Safari) */

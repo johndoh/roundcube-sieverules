@@ -3,7 +3,6 @@
 <head>
 <title><roundcube:object name="pagetitle" /></title>
 <roundcube:include file="/includes/links.html" />
-<link rel="stylesheet" type="text/css" href="/settings.css" />
 <link rel="stylesheet" type="text/css" href="/this/sieverules.css" />
 <script type="text/javascript" src="/functions.js"></script>
 <script type="text/javascript" src="/splitter.js"></script>
@@ -14,15 +13,17 @@
 <roundcube:if condition="env:examples" />
 #sieverules-list-filters {
 	bottom: <roundcube:exp expression="!empty(cookie:sievefiltersviewsplitter) ? cookie:sievefiltersviewsplitter+5 : 0" />px;
-	height: expression(parseInt(this.parentNode.offsetHeight - <roundcube:exp expression="!empty(cookie:sievefiltersviewsplitter) ? cookie:sievefiltersviewsplitter+5 : 0" />)+'px');
+	<roundcube:exp expression="browser:ie ? ('height:expression((parseInt(this.parentNode.offsetHeight)-'.(!empty(cookie:sievefiltersviewsplitter) ? cookie:sievefiltersviewsplitter+5 : 0).')+\\'px\\');') : ''" />
 }
 <roundcube:else />
-#sieverules-list-filters { bottom: 0px; height: expression(parseInt(this.parentNode.offsetHeight)+'px'); }
+#sieverules-list-filters {
+	bottom: 0px;
+	<roundcube:exp expression="browser:ie ? 'height:expression(parseInt(this.parentNode.offsetHeight)+\\'px\\');' : ''" />
+}
 <roundcube:endif />
 #sieverules-details {
     left: <roundcube:exp expression="!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter+5 : 250" />px;
-    /* IE hack */
-    width:expression((parseInt(mainscreen.offsetWidth)-<roundcube:exp expression="!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter+5 : 250" />)+'px')
+    <roundcube:exp expression="browser:ie ? ('width:expression((parseInt(mainscreen.offsetWidth)-'.(!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter+5 : 250).')+\\'px\\');') : ''" />
 }
 
 </style>
@@ -50,6 +51,10 @@
 		var filtersviewsplit = new rcube_splitter({id:'sievefiltersviewsplitter', p1: 'sieverules-list-filters', p2: 'sieverules-list-examples', orientation: 'h', relative: true, start: filtersHeight});
 		rcmail.add_onload('filtersviewsplit.init()');
 	}
+
+	<roundcube:if condition="browser:ie" />
+	rcmail.add_onload('$(\'#rules-table td.control\').css(\'width\', (parseInt(document.documentElement.clientWidth)-800)+\'px\')');
+	<roundcube:endif />
 </script>
 
 <div id="sieverules-details">
