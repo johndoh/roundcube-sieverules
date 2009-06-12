@@ -1150,13 +1150,13 @@ class sieverules extends rcube_plugin
 
 		$to_addresses = "";
 		$vacto_arr = explode(",", $vacto);
-		$sql_result = $rcmail->user->list_identities();
-		if ($rcmail->db->num_rows($sql_result)) {
+		$user_identities = $rcmail->user->list_identities();
+		if (count($user_identities)) {
 			$field_id = 'rcmfd_sievevacfrom_'. $rowid;
 		    $select_id = new html_select(array('id' => $field_id, 'name' => "_vacfrom[]", 'style' => 'width: 337px'));
 			$select_id->add(Q($this->gettext('autodetect')), "");
 
-		    while ($sql_arr = $rcmail->db->fetch_assoc($sql_result)) {
+		    foreach ($user_identities as $sql_arr) {
 				$select_id->add($sql_arr['email'], $sql_arr['email']);
 
 				$ffield_id = 'rcmfd_vac_' . $rowid . '_' . $sql_arr['identity_id'];
@@ -1164,24 +1164,24 @@ class sieverules extends rcube_plugin
 				$input_address = new html_checkbox(array('id' => $ffield_id, 'name' => '_vacto_check_' . $rowid . '[]', 'value' => $sql_arr['email'], 'onclick' => JS_OBJECT_NAME . '.sieverules_toggle_vac_to(this, '. $rowid .')'));
 				$to_addresses .= $input_address->show($curaddress) . "&nbsp;" . html::label($ffield_id, Q($sql_arr['email'])) . "<br />";
 			}
+
+			$vacs_table->set_row_attribs(array('class' => 'disabled', 'style' => 'display: none')); // 'style' => $vacadvstyle
+			$vacs_table->add(null, html::label($field_id, Q($this->gettext('from'))));
+			$vacs_table->add(array('colspan' => 2), $select_id->show($vacfrom));
+			$vacs_table->add_row();
+
+			$field_id = 'rcmfd_sievevacto_'. $rowid;
+			$input_vacto = new html_hiddenfield(array('id' => $field_id, 'name' => '_vacto[]', 'value' => $vacto));
+			$vacs_table->set_row_attribs(array('class' => 'advanced', 'style' => $vacadvstyle));
+			$vacs_table->add(array('style' => 'vertical-align: top;'), Q($this->gettext('sieveto')));
+			$vacs_table->add(null, $to_addresses . $input_vacto->show());
+			$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
+			$vacs_table->add(array('style' => 'vertical-align: top;'), $help_button);
+
+			$vacs_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
+			$vacs_table->add(array('colspan' => 3, 'class' => 'vacdaysexp'), $this->gettext('vactoexp'));
+			$vacs_table->add_row();
 		}
-
-		$vacs_table->set_row_attribs(array('class' => 'disabled', 'style' => 'display: none')); // 'style' => $vacadvstyle
-		$vacs_table->add(null, html::label($field_id, Q($this->gettext('from'))));
-		$vacs_table->add(array('colspan' => 2), $select_id->show($vacfrom));
-		$vacs_table->add_row();
-
-		$field_id = 'rcmfd_sievevacto_'. $rowid;
-		$input_vacto = new html_hiddenfield(array('id' => $field_id, 'name' => '_vacto[]', 'value' => $vacto));
-		$vacs_table->set_row_attribs(array('class' => 'advanced', 'style' => $vacadvstyle));
-		$vacs_table->add(array('style' => 'vertical-align: top;'), Q($this->gettext('sieveto')));
-		$vacs_table->add(null, $to_addresses . $input_vacto->show());
-		$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
-		$vacs_table->add(array('style' => 'vertical-align: top;'), $help_button);
-
-		$vacs_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
-		$vacs_table->add(array('colspan' => 3, 'class' => 'vacdaysexp'), $this->gettext('vactoexp'));
-		$vacs_table->add_row();
 
 		$field_id = 'rcmfd_sievevacdays_'. $rowid;
 		$input_day = new html_inputfield(array('id' => $field_id, 'name' => '_day[]', 'style' => 'width: 310px'));
@@ -1232,20 +1232,20 @@ class sieverules extends rcube_plugin
 
 		$notify_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 3, 'style' => $notify_style));
 
-		$sql_result = $rcmail->user->list_identities();
-		if ($rcmail->db->num_rows($sql_result)) {
+		$user_identities = $rcmail->user->list_identities();
+		if (count($user_identities)) {
 			$field_id = 'rcmfd_sievenotifyfrom_'. $rowid;
 		    $select_id = new html_select(array('id' => $field_id, 'name' => "_nfrom[]", 'style' => 'width: 337px'));
 			$select_id->add(Q($this->gettext('autodetect')), "");
 
-		    while ($sql_arr = $rcmail->db->fetch_assoc($sql_result))
+		    foreach ($user_identities as $sql_arr)
 				$select_id->add($sql_arr['email'], $sql_arr['email']);
-		}
 
-	 	$notify_table->set_row_attribs(array('class' => 'disabled', 'style' => 'display: none')); // 'style' => $noteadvstyle
- 		$notify_table->add(null, html::label($field_id, Q($this->gettext('sievefrom'))));
- 		$notify_table->add(array('colspan' => 2), $select_id->show($nfrom));
- 		$notify_table->add_row();
+	 		$notify_table->set_row_attribs(array('class' => 'disabled', 'style' => 'display: none')); // 'style' => $noteadvstyle
+ 			$notify_table->add(null, html::label($field_id, Q($this->gettext('sievefrom'))));
+ 			$notify_table->add(array('colspan' => 2), $select_id->show($nfrom));
+ 			$notify_table->add_row();
+		}
 
 		$field_id = 'rcmfd_nmethod_'. $rowid;
 		$input_method = new html_inputfield(array('id' => $field_id, 'name' => '_nmethod[]', 'style' => 'width: 330px'));

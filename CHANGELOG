@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+ * Use better identity checking
+
+2009 06 07
+==========
  * Add possibility to easily switch between \r\n and \n in sieve file and also change indent
  * Swap split() for explode(), PHP 5.3 compatibility
 
