@@ -503,7 +503,11 @@ class sieverules extends rcube_plugin
 				switch ($type) {
 					case 'fileinto':
 						$folder = $this->_strip_val($folders[$idx]);
-						$script['actions'][$i]['target'] = $this->_mod_mailbox($folder);
+						$rcmail = rcmail::get_instance();
+						$rcmail->imap_init(TRUE);
+						$script['actions'][$i]['target'] = $this->config['include_imap_root'] ? $rcmail->imap->mod_mailbox($folder) : $folder;
+						if (!empty($this->config['folder_delimiter']))
+							$script['actions'][$i]['target'] = str_replace($rcmail->imap->get_hierarchy_delimiter(), $this->config['folder_delimiter'], $script['actions'][$i]['target']);
 						break;
 					case 'redirect':
 						$address = $this->_strip_val($addresses[$idx]);
@@ -1045,7 +1049,9 @@ class sieverules extends rcube_plugin
 
 		if ($action['type'] == 'fileinto') {
 			$method = 'fileinto';
-			$folder = $this->_mod_mailbox($action['target'], 'out');
+			$folder = $this->config['include_imap_root'] ? $rcmail->imap->mod_mailbox($action['target'], 'out') : $action['target'];
+			if (!empty($this->config['folder_delimiter']))
+				$folder = str_replace($rcmail->imap->get_hierarchy_delimiter(), $this->config['folder_delimiter'], $folder);
 		}
 		elseif ($action['type'] == 'reject' || $action['type'] == 'ereject') {
 			$folder_style = 'display: none;';
@@ -1367,25 +1373,6 @@ class sieverules extends rcube_plugin
 
 	private function _strip_val($str) {
 		return trim(htmlspecialchars_decode($str));
-	}
-
-	// coppied from rcube_imap.php
-	private function _mod_mailbox($mbox_name, $mode='in') {
-		$rcmail = rcmail::get_instance();
-		$rcmail->imap_init(TRUE);
-
-		if (!$this->config['include_imap_root'])
-			return $mbox_name;
-
-		if ((!empty($rcmail->imap->root_ns) && $rcmail->imap->root_ns == $mbox_name) || $mbox_name == 'INBOX')
-			return $mbox_name;
-
-		if (!empty($rcmail->imap->root_dir) && $mode=='in')
-			$mbox_name = $rcmail->imap->root_dir.$rcmail->imap->delimiter.$mbox_name;
-		else if (strlen($rcmail->imap->root_dir) && $mode=='out')
-			$mbox_name = substr($mbox_name, strlen($rcmail->imap->root_dir)+1);
-
-		return $mbox_name;
 	}
 }
 

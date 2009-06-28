@@ -1,6 +1,9 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 06 27
+==========
+ * Use imap->mod_mailbox()
  * Use better identity checking
 
 2009 06 07
