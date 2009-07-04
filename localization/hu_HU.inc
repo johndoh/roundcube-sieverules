@@ -1,5 +1,5 @@
 <?php
-/* Author: Zoltan Nagy */
+/* Author: Zoltan Nagy (nzolt|at|dotweb|dot|hu) */
 
 $labels = array();
 $labels['filters'] = 'Szűrők';
@@ -86,4 +86,42 @@ $labels['importfilter'] = 'Szűrők importálása';
 $labels['adveditor'] = 'Haladó szerkesztő';
 
 $messages = array();
+$messages['nosieverules'] = 'Nem található szűrő';
+$messages['filterdeleteconfirm'] = 'Biztosan törölni akarod ezt a szűrőt?';
+$messages['ruledeleteconfirm'] = 'Biztosan törölni akarod ezt a szabályt?';
+$messages['actiondeleteconfirm'] = 'Biztosan törölni akarod ezt az akciót?';
+$messages['filterunknownerror'] = 'Ismeretlen szerverhiba';
+$messages['filterconnerror'] = 'Nem sikerült kapcsolódni a sieve szerverhez';
+$messages['filterdeleteerror'] = 'Nem lehet törölni a szűrőt. Szerver hiba';
+$messages['filterdeleted'] = 'A szűrő sikeresen törölve';
+$messages['filtersaved'] = 'Szűrő elmentve';
+$messages['filtersaveerror'] = 'Nem sikerült elmenteni a szűrőt. Szerver hiba';
+$messages['vacdaysexp'] = 'Az dőszak, azon napok száma míg egy üzenet nem lesz újraküldve ugyanannak a címzettnek, függetlenül attól hányszolt lépett önnel kapcsolatba.<br /><br />Pédául: Ha János üzenetet küld Hétfőn és az időszak 7, válaszul kap egy Irodán kívül üzenetet ami nem lesz neki újraküldve a következő Hétfőig, bármennyi üzenetet is küld János ebben az időszakban.';
+$messages['vachandleexp'] = 'A mutató arra használható, hogy összekapcsoljon külömböző Irodán kívül üzeneteket. Ha egy ilyen üzenet el lett küldve, másik ilyen mutatóju üzenet nem lesz elküldve megadott időszakban';
+$messages['vactoexp'] = 'A többi címzett listája akiknek az automatikus válasz el lesz küldve. Ha egy címzett nem a fő cím én nincs ebben a listában, nem lesz neki üzenet küldve.';
+$messages['norulename'] = 'Irjon be egy nevet a szűrőnek';
+$messages['ruleexists'] = 'Ez a szűrőnév már létezik. Kérem irjon be másikat';
+$messages['noheader'] = 'Kérem irja be a fejléc nevét a teszthez';
+$messages['headerbadchars'] = 'Hiba: A fejléc illegális karaktert tartalmaz';
+$messages['noheadervalue'] = 'Kérem irjon be egy értéket a fejléc teszteléséhez';
+$messages['sizewrongformat'] = 'Hiba: az üzenet mérete szám kell legyen';
+$messages['noredirect'] = 'Kérem irjon be egy e-mail címet az átirányításhoz';
+$messages['redirectaddresserror'] = 'Hiba: A cím nem megfelelő';
+$messages['noreject'] = 'Írja be az üzenetet amit válaszolni szeretne a visszadobott üzenetre';
+$messages['vacnodays'] = 'Írja be a napok számát arra az időszakra mig az üzenet nem lesz újraküldve ugyanannak a címzettnek';
+$messages['vacdayswrongformat'] = 'Hiba: az időszak 1-nél nagyobb vagy egyenlő lehet';
+$messages['vacnomsg'] = 'Írja be az üzenet szövegét';
+$messages['notifynomothod'] = 'Írja be a módszert, melyel az értesitést eloküldjük';
+$messages['notifynomsg'] = 'Írja be az üzenet szövegét';
+$messages['sieveruleexp'] = 'Kérem határozzon meg egy vagy több szabályt mellyel az üzenetek szelve lesznek. A szűrők olyan sorrendben futnak le, ahogyan megjelennek a baloldalon. Ha egy szűrőnek megfelel az üzenet, több szűrő nem hajtodik végre.';
+$messages['sieveactexp'] = 'Kérem válasszon a következő lehetőségekből. ezek minden üzenetnre végrehajtódnak, melyek megfelelnek a szabálynak.';
+$messages['sieveheadershlp'] = 'Alább néhány példa más fejlécre melyek tesztelhetőek a szűrőkkel. Válassza ki a fejlécet, adja hozzá a szűrőhőz vagy írjon be egyénit az alábbi szövegmezőbe.';
+$messages['movingfilter'] = 'Szűrő áthelyezése...';
+$messages['noexistingfilters'] = 'Nem találhatók szűrők';
+$messages['importdefault'] = '<b>Alapértelmezett szűrők használata:</b> Alapértelmezett szűrők léteznek. Szeretné használni ezeket a szűrőket?';
+$messages['importother'] = '<b>Szűrők importálása:</b> Egy másik szűrőcsoport %s től létezik. Be szeretné tölteni ezt a szűrőcsoportot?';
+$messages['switchtoadveditor'] = 'ÿtváltás halado szerkesztőre, mellyel Ön direktbe szerkesztheti a sieve fájlt. Az itt végzett változtatások nem lesznek olvashatóak a norlál szerkesztöben és elvesznek ha a szűrők mentésre kerülnek a normál szerkesztőben. Szeretné folytatni?';
+$messages['filterimported'] = 'A szűrő sikeresen importálva';
+$messages['filterimporterror'] = 'Nem sikerült a szűrő importálása. Szerver hiba';
+
 ?>
