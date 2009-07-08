@@ -685,15 +685,15 @@ rcmail.sieverules_action_select = function(sel) {
 
     if (obj.value == 'fileinto')
 		document.getElementsByName('_folder[]')[idx].style.display = '';
-    else if (obj.value == 'reject')
+    else if (obj.value == 'reject' || obj.value == 'ereject')
 		document.getElementsByName('_reject[]')[idx].style.display = '';
     else if (obj.value == 'vacation')
 		actoion_row.cells[1].childNodes[3].style.display = '';
-    else if (obj.value == 'notify')
+    else if (obj.value == 'notify' || obj.value == 'enotify')
 		actoion_row.cells[1].childNodes[5].style.display = '';
     else if (obj.value == 'redirect')
 		document.getElementsByName('_redirect[]')[idx].style.display = '';
-    else if (obj.value == 'imapflags')
+    else if (obj.value == 'imapflags' || obj.value == 'imap4flags')
 		document.getElementsByName('_imapflags[]')[idx].style.display = '';
 }
 
