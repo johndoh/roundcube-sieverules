@@ -1,6 +1,13 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 07 11
+==========
+ * Fix support for dovecot 1.2
+ * Add support for copy extension
+ * Add support for body extension
+ * Better error reporting
+
 2009 06 27
 ==========
  * Use imap->mod_mailbox()

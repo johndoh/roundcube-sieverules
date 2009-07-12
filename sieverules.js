@@ -177,7 +177,10 @@ if (window.rcmail) {
 				var input_name = rcube_find_object('_name');
 				var rule_join = document.getElementsByName('_join');
 				var headers = document.getElementsByName('_header[]');
+				var bodyparts = document.getElementsByName('_bodypart[]');
+				var contentparts = document.getElementsByName('_body_contentpart[]');
 				var ops = document.getElementsByName('_operator[]');
+				var advops = document.getElementsByName('_advoperator[]');
 				var targets = document.getElementsByName('_target[]');
 				var advtargets = document.getElementsByName('_advtarget[]');
 				var acts = document.getElementsByName('_act[]');
@@ -218,6 +221,12 @@ if (window.rcmail) {
 						return false;
 					}
 
+					if (bodyparts[i].value == 'content' && contentparts[i].value == '') {
+						alert(rcmail.gettext('nobodycontentpart','sieverules'));
+						contentparts[i].focus();
+						return false;
+					}
+
 					if (targets[i] && ops[i].value.indexOf("exists") == -1 && ops[i].value.indexOf("advoptions") == -1 && targets[i].value == '') {
 						alert(rcmail.gettext('noheadervalue','sieverules'));
 						targets[i].focus();
@@ -235,12 +244,18 @@ if (window.rcmail) {
 						targets[i].focus();
 						return false;
 					}
+
+					if (headers[i].value == 'body' && (advops[i].value.indexOf('user') > -1 || advops[i].value.indexOf('detail') > -1 || advops[i].value.indexOf('domain') > -1)) {
+						alert(rcmail.gettext('badoperator','sieverules'));
+						advops[i].focus();
+						return false;
+					}
 				}
 
 				for (var i = 1; i < acts.length; i++) {
 					var idx = acts[i].selectedIndex;
 
-					if (acts[i][idx].value == 'redirect') {
+					if (acts[i][idx].value == 'redirect' || acts[i][idx].value == 'redirect_copy') {
 						if (addrs[i].value == '') {
 							alert(rcmail.gettext('noredirect','sieverules'));
 							addrs[i].focus();
@@ -253,7 +268,7 @@ if (window.rcmail) {
 							return false;
 						}
 					}
-					else if (acts[i][idx].value == 'reject') {
+					else if (acts[i][idx].value == 'reject' || acts[i][idx].value == 'ereject') {
 						if (rejects[i].value == '') {
 							alert(rcmail.gettext('noreject','sieverules'));
 							rejects[i].focus();
@@ -285,9 +300,15 @@ if (window.rcmail) {
 							return false;
 						}
 					}
-					else if (acts[i][idx].value == 'notify') {
+					else if (acts[i][idx].value == 'notify' || acts[i][idx].value == 'enotify') {
 						if (nmethods[i].value == '') {
 							alert(rcmail.gettext('notifynomothod','sieverules'));
+							nmethods[i].focus();
+							return false;
+						}
+
+						if (acts[i][idx].value == 'enotify' && nmethods[i].value.indexOf(':') == -1) {
+							alert(rcmail.gettext('notifyinvalidmothod','sieverules'));
 							nmethods[i].focus();
 							return false;
 						}
@@ -559,6 +580,7 @@ rcmail.sieverules_rule_join_radio = function(value) {
 
 rcmail.sieverules_header_select = function(sel) {
 	var idx = sel.parentNode.parentNode.rowIndex / 3;
+	var eidx = ((idx + 1) * 3) - 1;
     var obj = document.getElementsByName('_selheader[]')[idx];
 	var testType = obj.value.split('::')[0];
 	var header = obj.value.split('::')[1];
@@ -568,6 +590,7 @@ rcmail.sieverules_header_select = function(sel) {
 	document.getElementsByName('_header[]')[idx].value = header;
 	document.getElementsByName('_target[]')[idx].style.width = '150px'
 	document.getElementsByName('_operator[]')[idx].selectedIndex = 0;
+	document.getElementsByName('_bodypart[]')[idx].style.display = 'none';
 
     if (header == 'size') {
 	    document.getElementsByName('_header[]')[idx].style.visibility = 'hidden';
@@ -624,6 +647,20 @@ rcmail.sieverules_header_select = function(sel) {
 			document.getElementsByName('_headerhlp')[idx].style.visibility = 'hidden';
 		}
 
+		if (header == 'body') {
+			document.getElementsByName('_header[]')[idx].style.display = 'none';
+			document.getElementsByName('_headerhlp')[idx].style.display = 'none';
+			document.getElementsByName('_bodypart[]')[idx].style.display = '';
+
+			document.getElementsByName('_body_contentpart[]')[idx].parentNode.parentNode.style.display = '';
+		}
+		else {
+			document.getElementsByName('_header[]')[idx].style.display = '';
+			document.getElementsByName('_headerhlp')[idx].style.display = '';
+
+			document.getElementsByName('_body_contentpart[]')[idx].parentNode.parentNode.style.display = 'none';
+		}
+
 	    document.getElementsByName('_operator[]')[idx].style.display = '';
 	    document.getElementsByName('_size_operator[]')[idx].style.display = 'none';
 	    document.getElementsByName('_target[]')[idx].style.display = '';
@@ -633,6 +670,27 @@ rcmail.sieverules_header_select = function(sel) {
     var idx = sel.parentNode.parentNode.rowIndex;
     rcube_find_object('rules-table').tBodies[0].rows[idx + 1].style.display = 'none';
     rcube_find_object('rules-table').tBodies[0].rows[idx + 2].style.display = 'none';
+}
+
+rcmail.sieverules_bodypart_select = function(sel) {
+	var idx = sel.parentNode.parentNode.rowIndex;
+	var eidx = idx / 3;
+    var obj = document.getElementsByName('_bodypart[]')[eidx];
+
+   	document.getElementsByName('_body_contentpart[]')[eidx].disabled = false;
+	document.getElementsByName('_advoperator[]')[eidx].disabled = (document.getElementsByName('_operator[]')[eidx].value == 'advoptions') ? false : true;
+
+	if (document.getElementsByName('_operator[]')[eidx].value == 'advoptions')
+		rcmail.sieverules_rule_advop_select(document.getElementsByName('_advoperator[]')[eidx]);
+	else
+		document.getElementsByName('_comparator[]')[eidx].disabled = true;
+
+	document.getElementsByName('_advtarget[]')[eidx].disabled = (document.getElementsByName('_operator[]')[eidx].value == 'advoptions') ? false : true;
+	var advopts_row = rcube_find_object('rules-table').tBodies[0].rows[idx + 2];
+	if (obj.value != 'content' && document.getElementsByName('_operator[]')[eidx].value == 'advoptions')
+		document.getElementsByName('_body_contentpart[]')[eidx].disabled = true;
+	else
+		advopts_row.style.display = (obj.value == 'content' ? '' : 'none');
 }
 
 rcmail.sieverules_rule_op_select = function(sel) {
@@ -652,8 +710,18 @@ rcmail.sieverules_rule_op_select = function(sel) {
 		document.getElementsByName('_test[]')[eidx].value = testType;
 	}
 
+	document.getElementsByName('_body_contentpart[]')[eidx].disabled = (document.getElementsByName('_bodypart[]')[eidx].value == 'content') ? false : true;
+	document.getElementsByName('_advoperator[]')[eidx].disabled = false;
+	rcmail.sieverules_rule_advop_select(document.getElementsByName('_advoperator[]')[eidx]);
+	document.getElementsByName('_advtarget[]')[eidx].disabled = false;
 	var advopts_row = rcube_find_object('rules-table').tBodies[0].rows[idx + 2];
-	advopts_row.style.display = (obj.value == 'advoptions' ? '' : 'none');
+	if (obj.value != 'advoptions' && document.getElementsByName('_bodypart[]')[eidx].value == 'content') {
+		document.getElementsByName('_advoperator[]')[eidx].disabled = true;
+		document.getElementsByName('_comparator[]')[eidx].disabled = true;
+		document.getElementsByName('_advtarget[]')[eidx].disabled = true;
+	}
+	else
+		advopts_row.style.display = (obj.value == 'advoptions' ? '' : 'none');
 
 	return false;
 }
@@ -683,7 +751,7 @@ rcmail.sieverules_action_select = function(sel) {
 	actoion_row.cells[1].childNodes[3].style.display = 'none';
 	actoion_row.cells[1].childNodes[5].style.display = 'none';
 
-    if (obj.value == 'fileinto')
+    if (obj.value == 'fileinto' || obj.value == 'fileinto_copy')
 		document.getElementsByName('_folder[]')[idx].style.display = '';
     else if (obj.value == 'reject' || obj.value == 'ereject')
 		document.getElementsByName('_reject[]')[idx].style.display = '';
@@ -691,7 +759,7 @@ rcmail.sieverules_action_select = function(sel) {
 		actoion_row.cells[1].childNodes[3].style.display = '';
     else if (obj.value == 'notify' || obj.value == 'enotify')
 		actoion_row.cells[1].childNodes[5].style.display = '';
-    else if (obj.value == 'redirect')
+    else if (obj.value == 'redirect' || obj.value == 'redirect_copy')
 		document.getElementsByName('_redirect[]')[idx].style.display = '';
     else if (obj.value == 'imapflags' || obj.value == 'imap4flags')
 		document.getElementsByName('_imapflags[]')[idx].style.display = '';
@@ -740,9 +808,9 @@ rcmail.sieverules_toggle_vac_osubj = function(sel, id) {
 	obj.value = sel.checked ? sel.value : "";
 }
 
-rcmail.sieverules_toggle_notify_impt = function(sel, id) {
+rcmail.sieverules_notify_impt = function(sel, id) {
 	var obj = rcube_find_object('rcmfd_sievenimpt_' + id);
-	obj.value = sel.value;
+	obj.value = sel.value == 'none' ? '' : sel.value;
 }
 
 rcmail.sieverules_help = function(sel, row) {

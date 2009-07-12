@@ -85,9 +85,9 @@ span.disableLink {
 #sieverules-table, #sieverules-examples
 {
   width: 100%;
-  table-layout: fixed;
+  /* table-layout: fixed; */
   /* css hack for IE */
-  width: expression('auto');
+  /* width: expression('auto'); */
 }
 
 #sieverules-table tbody td

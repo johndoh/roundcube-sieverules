@@ -145,7 +145,7 @@ class rcube_sieve {
 			$script = '';
 		}
 
-		$this->script = new rcube_sieve_script($script);
+		$this->script = new rcube_sieve_script($script, $this->get_extensions());
 	}
 
 	private function _set_error($error) {

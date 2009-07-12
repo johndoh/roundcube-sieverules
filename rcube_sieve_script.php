@@ -25,11 +25,15 @@
  |   * Added support for subaddress tests                                |
  |   * Added support for notify action                                   |
  |   * Added support for stop action                                     |
+ |   * Added support for body and copy                                   |
  +-----------------------------------------------------------------------+
 
  $Id: $
 
 */
+
+define('SIEVE_ERROR_BAD_ACTION', 1);
+define('SIEVE_ERROR_NOT_FOUND', 2);
 
 // define constants for sieve file
 define('RCUBE_SIEVE_NEWLINE', "\r\n");
@@ -42,20 +46,26 @@ class rcube_sieve_script {
 						'fileinto',
 						'reject',
 						'ereject',
-						'redirect',
-						'keep',
-						'discard',
 						'vacation',
 						'imapflags',
 						'imap4flags',
 						'notify',
 						'enotify',
-						'stop'
 						);
 	public $raw = '';
 
-	public function __construct($script) {
+	public function __construct($script, $ext = array()) {
 		$this->raw = $script;
+
+		// adjust supported extenstion to match sieve server
+		$this->supported = array_intersect($this->supported, $ext);
+		if (in_array('copy', $ext))
+			$this->supported = array_merge($this->supported, array('fileinto_copy','redirect_copy'));
+
+		// include standard actions in supported list
+		$this->supported = array_merge($this->supported, array('redirect','keep','discard','stop'));
+
+		// load script
 		$this->content = $this->parse_text($script);
 	}
 
@@ -100,7 +110,7 @@ class rcube_sieve_script {
 	public function add_rule($content, $pos = null) {
 		foreach ($content['actions'] as $action) {
 			if (!in_array($action['type'], $this->supported))
-				return false;
+				return SIEVE_ERROR_BAD_ACTION;
 		}
 
 		if ($pos != null)
@@ -108,7 +118,7 @@ class rcube_sieve_script {
 		else
 			array_push($this->content, $content);
 
-		return sizeof($this->content)-1;
+		return true;
 	}
 
 	public function delete_rule($index) {
@@ -118,7 +128,7 @@ class rcube_sieve_script {
 			return true;
 		}
 
-		return false;
+		return SIEVE_ERROR_NOT_FOUND;
 	}
 
 	public function size() {
@@ -128,15 +138,15 @@ class rcube_sieve_script {
 	public function update_rule($index, $content) {
 		foreach ($content['actions'] as $action) {
 			if (!in_array($action['type'], $this->supported))
-				return false;
+				return SIEVE_ERROR_BAD_ACTION;
 		}
 
 		if ($this->content[$index]) {
 			$this->content[$index] = $content;
-			return $index;
+			return true;
 		}
 
-		return false;
+		return SIEVE_ERROR_NOT_FOUND;
 	}
 
 	public function move_rule($source, $destination) {
@@ -219,6 +229,37 @@ class rcube_sieve_script {
 								$tests[$i] .= ' "' . $this->_escape_string($test['target']) . '"';
 
 							break;
+						case 'body':
+							array_push($exts, 'body');
+							if ($test['operator'] == 'regex')
+								array_push($exts, 'regex');
+							elseif (substr($test['operator'], 0, 5) == 'count' || substr($test['operator'], 0, 5) == 'value')
+								array_push($exts, 'relational');
+
+							$tests[$i] .= ($test['not'] ? 'not ' : '');
+							$tests[$i] .= $test['type'];
+
+							if ($test['bodypart'] != '')
+								$tests[$i] .= ' :' . $test['bodypart'];
+
+							if ($test['contentpart'] != '')
+								$tests[$i] .= ' "'. $test['contentpart'] .'"';
+
+							$tests[$i] .= ' :' . $test['operator'];
+
+							if ($test['comparator'] != '') {
+								if ($test['comparator'] != 'i;ascii-casemap' && $test['comparator'] != 'i;octet')
+									array_push($exts, 'comparator-' . $test['comparator']);
+
+								$tests[$i] .= ' :comparator "' . $test['comparator'] . '"';
+							}
+
+							if (is_array($test['target']))
+								$tests[$i] .= ' ["' . implode('", "', $this->_escape_string($test['target'])) . '"]';
+							else
+								$tests[$i] .= ' "' . $this->_escape_string($test['target']) . '"';
+
+							break;
 					}
 
 					$i++;
@@ -245,8 +286,17 @@ class rcube_sieve_script {
 							array_push($exts, 'fileinto');
 							$actions .= RCUBE_SIEVE_INDENT . "fileinto \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
 							break;
+						case 'fileinto_copy':
+							array_push($exts, 'fileinto');
+							array_push($exts, 'copy');
+							$actions .= RCUBE_SIEVE_INDENT . "fileinto :copy \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
+							break;
 						case 'redirect':
 							$actions .= RCUBE_SIEVE_INDENT . "redirect \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
+							break;
+						case 'redirect_copy':
+							array_push($exts, 'copy');
+							$actions .= RCUBE_SIEVE_INDENT . "redirect :copy \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
 							break;
 						case 'reject':
 						case 'ereject':
@@ -298,14 +348,22 @@ class rcube_sieve_script {
 
 							break;
 						case 'notify':
-						case 'enotify':
-							array_push($exts, $action['type']);
+							array_push($exts, 'notify');
 							$actions .= RCUBE_SIEVE_INDENT . "notify" . RCUBE_SIEVE_NEWLINE;
 							$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":method \"" . $this->_escape_string($action['method']) . "\"" . RCUBE_SIEVE_NEWLINE;
 							if (!empty($action['options'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":options [\"" . str_replace(",", "\",\"", $this->_escape_string($action['options'])) . "\"]" . RCUBE_SIEVE_NEWLINE;
 							if (!empty($action['from'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":from \"" . $this->_escape_string($action['from']) . "\"" . RCUBE_SIEVE_NEWLINE;
 							if (!empty($action['importance'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":importance \"" . $this->_escape_string($action['importance']) . "\"" . RCUBE_SIEVE_NEWLINE;
 							$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":message \"". $this->_escape_string($action['msg']) ."\";" . RCUBE_SIEVE_NEWLINE;
+							break;
+						case 'enotify':
+							array_push($exts, 'enotify');
+							$actions .= RCUBE_SIEVE_INDENT . "notify" . RCUBE_SIEVE_NEWLINE;
+							if (!empty($action['options'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":options [\"" . str_replace(",", "\",\"", $this->_escape_string($action['options'])) . "\"]" . RCUBE_SIEVE_NEWLINE;
+							if (!empty($action['from'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":from \"" . $this->_escape_string($action['from']) . "\"" . RCUBE_SIEVE_NEWLINE;
+							if (!empty($action['importance'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":importance \"" . $this->_escape_string($action['importance']) . "\"" . RCUBE_SIEVE_NEWLINE;
+							$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":message \"". $this->_escape_string($action['msg']) ."\"" . RCUBE_SIEVE_NEWLINE;
+							$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . "\"" . $this->_escape_string($action['method']) . "\";" . RCUBE_SIEVE_NEWLINE;
 							break;
 						case 'keep':
 						case 'discard':
@@ -394,8 +452,8 @@ class rcube_sieve_script {
 		$patterns[] = '^\s*discard;';
 		$patterns[] = '^\s*keep;';
 		$patterns[] = '^\s*stop;';
-		$patterns[] = '^\s*fileinto\s+(.*?[^\\\]);';
-		$patterns[] = '^\s*redirect\s+(.*?[^\\\]);';
+		$patterns[] = '^\s*fileinto\s+(:copy\s+)?(.*?[^\\\]);';
+		$patterns[] = '^\s*redirect\s+(:copy\s+)?(.*?[^\\\]);';
 		$patterns[] = '^\s*setflag\s+(.*?[^\\\]);';
 		$patterns[] = '^\s*addflag\s+(.*?[^\\\]);';
 		$patterns[] = '^\s*reject\s+text:(.*)\n\.\n;';
@@ -405,6 +463,7 @@ class rcube_sieve_script {
 		$patterns[] = '^\s*vacation\s+:days\s+([0-9]+)\s+(:addresses\s+\[(.*?[^\\\])\]\s+)?(:subject\s+(".*?[^"\\\]")\s+)?(:handle\s+(".*?[^"\\\]")\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:mime\s+)?text:(.*)\n\.\n;';
 		$patterns[] = '^\s*vacation\s+:days\s+([0-9]+)\s+(:addresses\s+\[(.*?[^\\\])\]\s+)?(:subject\s+(".*?[^"\\\]")\s+)?(:handle\s+(".*?[^"\\\]")\s+)?(:from\s+(".*?[^"\\\]")\s+)?(.*?[^\\\]);';
 		$patterns[] = '^\s*notify\s+:method\s+(".*?[^"\\\]")\s+(:options\s+\[(.*?[^\\\])\]\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:importance\s+(".*?[^"\\\]")\s+)?:message\s+(".*?[^"\\\]");';
+		$patterns[] = '^\s*notify\s+(:options\s+\[(.*?[^\\\])\]\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:importance\s+(".*?[^"\\\]")\s+)?:message\s+(".*?[^"\\\]")\s+(.*);';
 
 		$pattern = '/(' . implode('$)|(', $patterns) . '$)/ms';
 
@@ -416,8 +475,14 @@ class rcube_sieve_script {
 				if(preg_match('/^(discard|keep|stop)/', $content, $matches)) {
 					$result[] = array('type' => $matches[1]);
 				}
+				elseif(preg_match('/^fileinto\s+:copy/', $content)) {
+					$result[] = array('type' => 'fileinto_copy', 'target' => $this->_parse_string($m[sizeof($m)-1]));
+				}
 				elseif(preg_match('/^fileinto/', $content)) {
 					$result[] = array('type' => 'fileinto', 'target' => $this->_parse_string($m[sizeof($m)-1]));
+				}
+				elseif(preg_match('/^redirect\s+:copy/', $content)) {
+					$result[] = array('type' => 'redirect_copy', 'target' => $this->_parse_string($m[sizeof($m)-1]));
 				}
 				elseif(preg_match('/^redirect/', $content)) {
 					$result[] = array('type' => 'redirect', 'target' => $this->_parse_string($m[sizeof($m)-1]));
@@ -426,7 +491,10 @@ class rcube_sieve_script {
 					$result[] = array('type' => $matches[1], 'target' => $this->_parse_string($matches[2]));
 				}
 				elseif(preg_match('/^(setflag|addflag)/', $content)) {
-					$result[] = array('type' => 'imapflags', 'target' => $this->_parse_string($m[sizeof($m)-1]));
+					if (in_array('imap4flags', $this->supported))
+						$result[] = array('type' => 'imap4flags', 'target' => $this->_parse_string($m[sizeof($m)-1]));
+					else
+						$result[] = array('type' => 'imapflags', 'target' => $this->_parse_string($m[sizeof($m)-1]));
 				}
 				elseif(preg_match('/^vacation\s+:days\s+([0-9]+)\s+(:addresses\s+\[(.*?[^\\\])\]\s+)?(:subject\s+(".*?[^"\\\]")\s+)?(:handle\s+(".*?[^"\\\]")\s+)?(:from\s+(".*?[^"\\\]")\s+)?(.*);$/sm', $content, $matches)) {
 					$origsubject = "";
@@ -454,6 +522,14 @@ class rcube_sieve_script {
 									'from' => $this->_parse_string($matches[5]),
 									'importance' => $this->_parse_string($matches[7]),
 									'msg' => $this->_parse_string($matches[8]));
+				}
+				elseif(preg_match('/^notify\s+(:options\s+\[(.*?[^\\\])\]\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:importance\s+(".*?[^"\\\]")\s+)?:message\s+(".*?[^"\\\]")\s+(.*);$/sm', $content, $matches)) {
+					$result[] = array('type' => 'enotify',
+									'method' => $this->_parse_string($matches[8]),
+									'options' => $this->_parse_string($matches[2]),
+									'from' => $this->_parse_string($matches[4]),
+									'importance' => $this->_parse_string($matches[6]),
+									'msg' => $this->_parse_string($matches[7]));
 				}
 			}
 		}
@@ -486,6 +562,10 @@ class rcube_sieve_script {
 		$patterns[] = '(not\s+)?(header|address|envelope)\s+:(count\s+".*?[^\\\]"|value\s+".*?[^\\\]")(\s+:comparator\s+"(.*?[^\\\])")?\s+(".*?[^\\\]")\s+(".*?[^\\\]")';
 		$patterns[] = '(not\s+)?(header|address|envelope)\s+:(count\s+".*?[^\\\]"|value\s+".*?[^\\\]")(\s+:comparator\s+"(.*?[^\\\])")?\s+\[(.*?[^\\\]")\]\s+(".*?[^\\\]")';
 		$patterns[] = '(not\s+)?(header|address|envelope)\s+:(count\s+".*?[^\\\]"|value\s+".*?[^\\\]")(\s+:comparator\s+"(.*?[^\\\])")?\s+(".*?[^\\\]")\s+\[(.*?[^\\\]")\]';
+		$patterns[] = '(not\s+)?(body)(\s+:(raw|text|content\s+".*?[^\\\]"))?\s+:(contains|is|matches|regex)((\s+))\[(.*?[^\\\]")\]';
+		$patterns[] = '(not\s+)?(body)(\s+:(raw|text|content\s+".*?[^\\\]"))?\s+:(contains|is|matches|regex)((\s+))(".*?[^\\\]")';
+		$patterns[] = '(not\s+)?(body)(\s+:(raw|text|content\s+".*?[^\\\]"))?\s+:(count\s+".*?[^\\\]"|value\s+".*?[^\\\]")(\s+:comparator\s+"(.*?[^\\\])")?\s+\[(.*?[^\\\]")\]';
+		$patterns[] = '(not\s+)?(body)(\s+:(raw|text|content\s+".*?[^\\\]"))?\s+:(count\s+".*?[^\\\]"|value\s+".*?[^\\\]")(\s+:comparator\s+"(.*?[^\\\])")?\s+(".*?[^\\\]")';
 
 		// join patterns...
 		$pattern = '/(' . implode(')|(', $patterns) . ')/';
@@ -525,6 +605,27 @@ class rcube_sieve_script {
 					$result[] = array(
 									'type' 	=> 'true',
 									'not' 	=> $match[$size-2] ? true : false,
+								);
+				}
+				elseif (preg_match('/^(not\s+)?body/', $match[0])) {
+					if (preg_match('/.*content\s+"(.*?[^\\\])".*/', $match[$size-5], $parts)) {
+						$bodypart = 'content';
+						$contentpart = $parts[1];
+					}
+					else {
+						$bodypart = $match[$size-5];
+						$contentpart = '';
+					}
+
+					$result[] = array(
+									'type'		=> 'body',
+									'not' 		=> $match[$size-8] ? true : false,
+									'bodypart'	=> $bodypart,
+									'contentpart' => $contentpart,
+									'operator'	=> $match[$size-4], // is/contains/matches
+									'header' 	=> 'body', // header(s)
+									'target'	=> $this->_parse_list($match[$size-1]), // string(s)
+									'comparator' => trim($match[$size-2])
 								);
 				}
 			}

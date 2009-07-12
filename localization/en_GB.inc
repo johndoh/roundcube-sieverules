@@ -84,6 +84,14 @@ $labels['importfilters'] = 'Import Filters';
 $labels['usedefaultfilter'] = 'Use default filters';
 $labels['importfilter'] = 'Import filters';
 $labels['adveditor'] = 'Advanced editor';
+$labels['messageredirectcopy'] = 'Send a copy to';
+$labels['messagecopyto'] = 'Copy message to';
+$labels['body'] = 'Body';
+$labels['auto'] = 'Auto';
+$labels['raw'] = 'Raw';
+$labels['text'] = 'Text';
+$labels['other'] = 'Other';
+$labels['bodycontentpart'] = 'Content Part';
 
 $messages = array();
 $messages['nosieverules'] = 'No filters found.';
@@ -123,5 +131,10 @@ $messages['importother'] = '<b>Import filters:</b> Another set of filters from %
 $messages['switchtoadveditor'] = 'Switching to the advanced editor allows you to edit the sieve file directly. Any changes here may be unreadable in the normal editor and may be lost when filters are saved using the normal editor. Do you wish to continue?';
 $messages['filterimported'] = 'Filter imported successfully';
 $messages['filterimporterror'] = 'Unable to import filter. Server error occurred';
+$messages['notifyinvalidmothod'] = 'The method does not appear to be written in a valid format, it must be a URI. For example: `mailto:alert@example.com`.';
+$messages['nobodycontentpart'] = 'Please enter a content part to test';
+$messages['badoperator'] = 'Sorry the operator you selected cannot be used in this rule';
+$messages['filteractionerror'] = 'The action you requested is not supported by the server';
+$messages['filtermissingerror'] = 'Unable to find the rule requested';
 
 ?>
