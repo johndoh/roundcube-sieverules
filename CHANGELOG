@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 07 17
+==========
+ * Fix get_form_tags() call after r2755
+
 2009 07 11
 ==========
  * Fix support for dovecot 1.2

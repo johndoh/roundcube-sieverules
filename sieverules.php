@@ -110,9 +110,9 @@ class sieverules extends rcube_plugin
 		}
 	}
 
-	function gen_advanced()
+	function gen_advanced($attrib)
 	{
-		list($form_start, $form_end) = get_form_tags(null, 'plugin.sieverules.save');
+		list($form_start, $form_end) = get_form_tags($attrib, 'plugin.sieverules.save');
 		$out = $form_start;
 
 		$input_script = new html_textarea(array('id' => 'sieverules_adv', 'name' => '_script'));
@@ -262,7 +262,7 @@ class sieverules extends rcube_plugin
 			$this->api->output->set_env('predefined_rules', $predefined);
 		}
 
-		list($form_start, $form_end) = get_form_tags(null, 'plugin.sieverules.save');
+		list($form_start, $form_end) = get_form_tags($attrib, 'plugin.sieverules.save');
 
 		$out = $form_start;
 
