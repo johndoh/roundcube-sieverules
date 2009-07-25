@@ -288,11 +288,11 @@ if (window.rcmail) {
 							return false;
 						}
 
-						if (subjects[i].value == '') {
-							alert(rcmail.gettext('vacnosubject','sieverules'));
-							subjects[i].focus();
-							return false;
-						}
+						//if (subjects[i].value == '') {
+						//	alert(rcmail.gettext('vacnosubject','sieverules'));
+						//	subjects[i].focus();
+						//	return false;
+						//}
 
 						if (msgs[i].value == '') {
 							alert(rcmail.gettext('vacnomsg','sieverules'));

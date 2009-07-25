@@ -47,10 +47,7 @@ class sieverules extends rcube_plugin
 	function init()
 	{
 		$this->action = rcmail::get_instance()->action;
-		$this->add_texts('localization/', array('filters', 'norulename', 'ruleexists', 'noheader', 'headerbadchars','noheadervalue',
-		  'sizewrongformat', 'noredirect', 'redirectaddresserror', 'noreject','vacnodays', 'vacdayswrongformat', 'vacnosubject',
-		  'vacnomsg', 'notifynomothod', 'notifynomsg', 'filterdeleteconfirm', 'ruledeleteconfirm', 'actiondeleteconfirm',
-		  'movingfilter', 'switchtoadveditor', 'notifyinvalidmothod', 'nobodycontentpart','badoperator'));
+		$this->add_texts('localization/', array('filters'));
 		$this->register_action('plugin.sieverules', array($this, 'init_html'));
 		$this->register_action('plugin.sieverules.add', array($this, 'init_html'));
 		$this->register_action('plugin.sieverules.edit', array($this, 'init_html'));
@@ -125,6 +122,7 @@ class sieverules extends rcube_plugin
 
 	function gen_list($attrib)
 	{
+		$this->api->output->add_label('sieverules.movingfilter');
 		$this->api->output->add_gui_object('sieverules_list', 'sieverules-table');
 
 		$table = new html_table(array('id' => 'sieverules-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 2));
@@ -177,6 +175,7 @@ class sieverules extends rcube_plugin
 	function gen_advswitch()
 	{
 		if ($this->config['adveditor'] == '1' or $this->config['adveditor'] == '2') {
+			$this->api->output->add_label('sieverules.switchtoadveditor');
 			$input_adv = new html_checkbox(array('id' => 'adveditor', 'onclick' => JS_OBJECT_NAME . '.sieverules_adveditor(this);', 'value' => '1'));
 			$out = html::label('adveditor', Q($this->gettext('adveditor'))) . $input_adv->show($this->action == 'plugin.sieverules.advanced' ? '1' : '');
 			return html::tag('div', array('id' => 'advancedmode'), $out);
@@ -236,6 +235,15 @@ class sieverules extends rcube_plugin
 
 	function gen_form($attrib)
 	{
+		$this->api->output->add_label(
+			'sieverules.norulename', 'sieverules.ruleexists', 'sieverules.noheader',
+			'sieverules.headerbadchars', 'sieverules.noheadervalue', 'sieverules.sizewrongformat',
+			'sieverules.noredirect', 'sieverules.redirectaddresserror', 'sieverules.noreject', 'sieverules.vacnodays',
+			'sieverules.vacdayswrongformat', 'sieverules.vacnomsg', 'sieverules.notifynomothod',
+			'sieverules.notifynomsg', 'sieverules.filterdeleteconfirm', 'sieverules.ruledeleteconfirm',
+			'sieverules.actiondeleteconfirm', 'sieverules.notifyinvalidmothod', 'sieverules.nobodycontentpart',
+			'sieverules.badoperator');
+
 		$ext = $this->sieve->get_extensions();
 		$iid = get_input_value('_iid', RCUBE_INPUT_GPC);
 		if ($iid == '')
