@@ -714,10 +714,19 @@ class sieverules extends rcube_plugin
 
 	private function _load_config()
 	{
-		ob_start();
-		include('config.inc.php');
-		$this->config = (array)$sieverules_config;
-		ob_end_clean();
+		$fpath = $this->home.'/config.inc.php';
+		if (is_file($fpath) && is_readable($fpath)) {
+			ob_start();
+			include($fpath);
+			$this->config = (array)$sieverules_config;
+			ob_end_clean();
+		}
+		else {
+			raise_error(array(
+				'code' => 527,
+				'type' => 'php',
+				'message' => "Failed to load SieveRules plugin config"), TRUE, TRUE);
+		}
 	}
 
 	private function _startup()
