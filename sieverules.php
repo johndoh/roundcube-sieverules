@@ -141,9 +141,9 @@ class sieverules extends rcube_plugin
 				$table->add(null, $filter['name']);
 
 			$dst = $idx - 1;
-			$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $idx .','. $dst, 'type' => 'image', 'image' => $attrib['upicon'], 'alt' => 'sieverules.moveup', 'title' => 'sieverules.moveup'));
+			$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $attrib['upicon'], 'alt' => 'sieverules.moveup', 'title' => 'sieverules.moveup'));
 			$dst = $idx + 2;
-			$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $idx .','. $dst, 'type' => 'image', 'image' => $attrib['downicon'], 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
+			$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $attrib['downicon'], 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
 
 			$table->add('control', $up_link . '&nbsp;' . $down_link);
 		}

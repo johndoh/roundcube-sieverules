@@ -49,11 +49,12 @@ if (window.rcmail) {
 				}, true);
 			}
 
-			rcmail.register_command('plugin.sieverules.move', function(props){
-				var args = props.split(",");
-				if (args[1] > -1 && args[1] <= rcmail.sieverules_list.rows.length) {
+			rcmail.register_command('plugin.sieverules.move', function(props, obj){
+				var args = (props.source) ? props : { source:obj.parentNode.parentNode.rowIndex - 1, dest:props };
+
+				if (args.dest > -1 && args.dest <= rcmail.sieverules_list.rows.length) {
 					rcmail.set_busy(true, 'sieverules.movingfilter');
-		    		rcmail.http_request('plugin.sieverules.move', '_src=' + args[0] + '&_dst=' +args[1], true);
+		    		rcmail.http_request('plugin.sieverules.move', '_src=' + args.source + '&_dst=' + args.dest, true);
 	    		}
 			}, true);
 
@@ -395,7 +396,7 @@ rcmail.sieverules_mouse_up = function(e) {
 			$('#' + rcmail.env.sieverules_last_target + ' td:eq(1)').removeClass('droptarget');
 		}
 
-		rcmail.command('plugin.sieverules.move', _src + ',' + _dst);
+		rcmail.command('plugin.sieverules.move', { source:_src, dest:_dst });
 		rcmail.sieverules_list.draglayer.hide();
 	}
 };
