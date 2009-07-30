@@ -1,7 +1,7 @@
 <?php
 // +-----------------------------------------------------------------------+
 // | Copyright (c) 2002-2003, Richard Heyes                                |
-// | Copyright (c) 2006, Anish Mistry                                      |
+// | Copyright (c) 2006,2008 Anish Mistry                                  |
 // | All rights reserved.                                                  |
 // |                                                                       |
 // | Redistribution and use in source and binary forms, with or without    |
@@ -33,8 +33,6 @@
 // | Author: Richard Heyes <richard@phpguru.org>                           |
 // | Co-Author: Damian Fernandez Sosa <damlists@cnba.uba.ar>               |
 // | Co-Author: Anish Mistry <amistry@am-productions.biz>                  |
-// +-----------------------------------------------------------------------+
-// | Applied patch to fix bug #14205                                       |
 // +-----------------------------------------------------------------------+
 
 require_once('Net/Socket.php');
@@ -123,10 +121,16 @@ class Net_Sieve
     var $_useTLS = true;
 
     /**
+    * Additional options for stream_context_create()
+    * @var array
+    */
+    var $_options = null;
+
+    /**
     * The auth methods this class support
     * @var array
     */
-    var $supportedAuthMethods=array('DIGEST-MD5', 'CRAM-MD5', 'PLAIN' , 'LOGIN');
+    var $supportedAuthMethods=array('DIGEST-MD5', 'CRAM-MD5', 'EXTERNAL', 'PLAIN' , 'LOGIN');
     //if you have problems using DIGEST-MD5 authentication  please comment the line above and uncomment the following line
     //var $supportedAuthMethods=array( 'CRAM-MD5', 'PLAIN' , 'LOGIN');
 
@@ -159,8 +163,9 @@ class Net_Sieve
     * @param  string $bypassAuth Skip the authentication phase.  Useful if the socket
                                   is already open.
     * @param  boolean $useTLS Use TLS if available
+    * @param  array  $options   options for stream_context_create()
     */
-    function Net_Sieve($user = null , $pass  = null , $host = 'localhost', $port = 2000, $logintype = '', $euser = '', $debug = false, $bypassAuth = false, $useTLS = true)
+    function Net_Sieve($user = null , $pass  = null , $host = 'localhost', $port = 2000, $logintype = '', $euser = '', $debug = false, $bypassAuth = false, $useTLS = true, $options = null)
     {
         $this->_state = NET_SIEVE_STATE_DISCONNECTED;
         $this->_data['user'] = $user;
@@ -173,6 +178,7 @@ class Net_Sieve
         $this->_debug = $debug;
         $this->_bypassAuth = $bypassAuth;
         $this->_useTLS = $useTLS;
+        $this->_options = $options;
         /*
         * Include the Auth_SASL package.  If the package is not available,
         * we disable the authentication methods that depend upon it.
@@ -218,7 +224,7 @@ class Net_Sieve
     */
     function _handleConnectAndLogin()
     {
-        if (PEAR::isError($res = $this->connect($this->_data['host'] , $this->_data['port'], null, $this->_useTLS ))) {
+        if (PEAR::isError($res = $this->connect($this->_data['host'] , $this->_data['port'], $this->_options, $this->_useTLS ))) {
             return $res;
         }
         if($this->_bypassAuth === false) {
@@ -366,9 +372,6 @@ class Net_Sieve
             return $this->_raiseError($msg,$code);
         }
 
-        // Get logon greeting/capability and parse
-        $this->_parseCapability($res);
-
         if($useTLS === true) {
             // check if we can enable TLS via STARTTLS
             if(isset($this->_capability['starttls']) && function_exists('stream_socket_enable_crypto') === true) {
@@ -376,13 +379,6 @@ class Net_Sieve
                     return $res;
                 }
             }
-
-            // Patch to fix bug #14205
-			// Get STARTTLS capability and parse
-			if (PEAR::isError($res = $this->_doCmd())) {
-				return $res;
-			}
-			$this->_parseCapability($res);
         }
 
         return true;
@@ -446,6 +442,9 @@ class Net_Sieve
                 break;
             case 'PLAIN':
                 $result = $this->_authPLAIN( $uid , $pwd , $euser );
+                break;
+            case 'EXTERNAL':
+                $result = $this->_authEXTERNAL( $uid , $pwd , $euser );
                 break;
             default :
                 $result = new PEAR_Error( "$method is not a supported authentication method" );
@@ -584,6 +583,28 @@ class Net_Sieve
         if (PEAR::isError($res = $this->_doCmd() )) {
             return $res;
         }
+    }
+
+     /**
+     * Authenticates the user using the EXTERNAL method.
+     *
+     * @param string $user The userid to authenticate as.
+     * @param string $pass The password to authenticate with.
+     * @param string $euser The effective uid to authenticate as.
+     *
+     * @return array Returns an array containing the response
+     *
+     * @access private
+     * @since  1.1.7
+     */
+    function _authEXTERNAL($user, $pass, $euser)
+    {
+        if ($euser != '') {
+            $cmd=sprintf('AUTHENTICATE "EXTERNAL" "%s"', base64_encode($euser) ) ;
+        } else {
+            $cmd=sprintf('AUTHENTICATE "EXTERNAL" "%s"', base64_encode($user) );
+        }
+        return $this->_sendCmd( $cmd ) ;
     }
 
     /**
@@ -794,6 +815,9 @@ class Net_Sieve
     */
     function _parseCapability($data)
     {
+        // clear the cached capabilities
+        $this->_capability = array();
+
         $data = preg_split('/\r?\n/', $data, -1, PREG_SPLIT_NO_EMPTY);
 
         for ($i = 0; $i < count($data); $i++) {
@@ -1138,12 +1162,18 @@ class Net_Sieve
             echo "STARTTLS Negotiation Successful\n";
         }
 
-        // RFC says we need to query the server capabilities again
+        // The server should be sending a CAPABILITY response after
+        // negotiating TLS. Read it, and ignore if it doesn't.
+        $this->_doCmd();
+
+        // RFC says we need to query the server capabilities again now that
+        // we are under encryption
         if(PEAR::isError($res = $this->_cmdCapability() )) {
             $msg='Failed to connect, server said: ' . $res->getMessage();
             $code=2;
             return $this->_raiseError($msg,$code);
         }
+
         return true;
     }
 
