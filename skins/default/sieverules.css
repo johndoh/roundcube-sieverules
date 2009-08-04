@@ -29,6 +29,7 @@
   left: 0px;
   right: 0px;
   bottom: 0;
+  width: 100%;
   border: 1px solid #999999;
   overflow: auto;
   /* css hack for IE */
@@ -42,6 +43,7 @@
   bottom: 0px;
   left: 0px;
   right: 0px;
+  width: 100%;
   border: 1px solid #999999;
   overflow: auto;
   /* css hack for IE */
