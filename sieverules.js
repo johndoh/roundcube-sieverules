@@ -19,10 +19,10 @@ if (window.rcmail) {
 				rcmail.sieverules_list = new rcube_list_widget(rcmail.gui_objects.sieverules_list, {multiselect:false, draggable:true, keyboard:true});
 				rcmail.sieverules_list.addEventListener('select', function(o){ rcmail.sieverules_select(o); });
 				rcmail.sieverules_list.addEventListener('keypress', function(o){ rcmail.sieverules_keypress(o); });
-          		rcmail.sieverules_list.addEventListener('dragstart', function(o){ rcmail.sieverules_drag_start(o); });
-          		rcmail.sieverules_list.addEventListener('dragmove', function(e){ rcmail.sieverules_drag_move(e); });
-          		rcmail.sieverules_list.addEventListener('dragend', function(e){ rcmail.sieverules_drag_end(e); });
-          		document.onmouseup = function(e){ return rcmail.sieverules_mouse_up(e); };
+				rcmail.sieverules_list.addEventListener('dragstart', function(o){ rcmail.sieverules_drag_start(o); });
+				rcmail.sieverules_list.addEventListener('dragmove', function(e){ rcmail.sieverules_drag_move(e); });
+				rcmail.sieverules_list.addEventListener('dragend', function(e){ rcmail.sieverules_drag_end(e); });
+				document.onmouseup = function(e){ return rcmail.sieverules_mouse_up(e); };
 				rcmail.sieverules_list.init();
 				rcmail.sieverules_list.focus();
 
@@ -33,9 +33,9 @@ if (window.rcmail) {
 			if (rcmail.gui_objects.sieverules_examples) {
 				rcmail.sieverules_examples = new rcube_list_widget(rcmail.gui_objects.sieverules_examples, {multiselect:true, draggable:true, keyboard:true});
 				rcmail.sieverules_examples.addEventListener('select', function(o){ rcmail.sieverules_ex_select(o); });
-          		rcmail.sieverules_examples.addEventListener('dragstart', function(o){ rcmail.sieverules_ex_drag_start(o); });
-          		rcmail.sieverules_examples.addEventListener('dragmove', function(e){ rcmail.sieverules_drag_move(e); });
-          		rcmail.sieverules_examples.addEventListener('dragend', function(e){ rcmail.sieverules_drag_end(e); });
+				rcmail.sieverules_examples.addEventListener('dragstart', function(o){ rcmail.sieverules_ex_drag_start(o); });
+				rcmail.sieverules_examples.addEventListener('dragmove', function(e){ rcmail.sieverules_drag_move(e); });
+				rcmail.sieverules_examples.addEventListener('dragend', function(e){ rcmail.sieverules_drag_end(e); });
 				rcmail.sieverules_examples.init();
 
 				if (rcmail.env.eid)
@@ -44,8 +44,8 @@ if (window.rcmail) {
 				rcmail.register_command('plugin.sieverules.import_ex', function() {
 					if (rcmail.sieverules_examples.get_selection().length > 0) {
 						rcmail.set_busy(true, 'sieverules.movingfilter');
-			    		rcmail.goto_url('plugin.sieverules.import', '_ruleset=_example_&_pos='+ rcmail.env.sieverules_last_target +'&_eids=' + rcmail.sieverules_examples.get_selection(), true);
-		    		}
+						rcmail.goto_url('plugin.sieverules.import', '_ruleset=_example_&_pos='+ rcmail.env.sieverules_last_target +'&_eids=' + rcmail.sieverules_examples.get_selection(), true);
+					}
 				}, true);
 			}
 
@@ -54,8 +54,8 @@ if (window.rcmail) {
 
 				if (args.dest > -1 && args.dest <= rcmail.sieverules_list.rows.length) {
 					rcmail.set_busy(true, 'sieverules.movingfilter');
-		    		rcmail.http_request('plugin.sieverules.move', '_src=' + args.source + '&_dst=' + args.dest, true);
-	    		}
+					rcmail.http_request('plugin.sieverules.move', '_src=' + args.source + '&_dst=' + args.dest, true);
+				}
 			}, true);
 
 			rcmail.register_command('plugin.sieverules.add', function(id){ rcmail.goto_url('plugin.sieverules.add', '', true); }, true);
@@ -193,6 +193,7 @@ if (window.rcmail) {
 				var nmethods = document.getElementsByName('_nmethod[]');
 				var nmsgs = document.getElementsByName('_nmsg[]');
 				var size_test = new RegExp('^[0-9]+$');
+				var spamtest_test = new RegExp('^[0-9]+$');
 				var header_test = new RegExp('^[a-zA-Z0-9\-]+( ?, ?[a-zA-Z0-9\-]+)*$');
 
 				if (input_name && input_name.value == '') {
@@ -244,6 +245,10 @@ if (window.rcmail) {
 						alert(rcmail.gettext('sizewrongformat','sieverules'));
 						targets[i].focus();
 						return false;
+					}
+
+					if (headers[i].value == 'spamtest') {
+						targets[i].value = document.getElementsByName('_spam_probability[]')[i].value;
 					}
 
 					if (headers[i].value == 'body' && (advops[i].value.indexOf('user') > -1 || advops[i].value.indexOf('detail') > -1 || advops[i].value.indexOf('domain') > -1)) {
@@ -342,8 +347,8 @@ if (window.rcmail) {
 rcmail.sieverules_select = function(list) {
 	var id;
 
-    if (this.sieverules_timer)
-    	clearTimeout(rcmail.sieverules_timer);
+	if (this.sieverules_timer)
+		clearTimeout(rcmail.sieverules_timer);
 
 	if (id = list.get_single_selection())
 		rcmail.sieverules_timer = window.setTimeout(function(){ rcmail.sieverules_load(id, 'plugin.sieverules.edit'); }, 200);
@@ -351,20 +356,20 @@ rcmail.sieverules_select = function(list) {
 
 rcmail.sieverules_keypress = function(list) {
 	if (list.key_pressed == list.DELETE_KEY)
-      rcmail.command('plugin.sieverules.delete');
-    else if (list.key_pressed == list.BACKSPACE_KEY)
-      rcmail.command('plugin.sieverules.delete');
+		rcmail.command('plugin.sieverules.delete');
+	else if (list.key_pressed == list.BACKSPACE_KEY)
+		rcmail.command('plugin.sieverules.delete');
 }
 
 rcmail.sieverules_ex_select = function(list) {
-    if (list.multi_selecting)
-    	return false;
+	if (list.multi_selecting)
+		return false;
 
-    if (this.sieverules_timer)
-    	clearTimeout(this.sieverules_timer);
+	if (this.sieverules_timer)
+		clearTimeout(this.sieverules_timer);
 
-    var id;
-    if (id = list.get_single_selection())
+	var id;
+	if (id = list.get_single_selection())
 		rcmail.sieverules_timer = window.setTimeout(function(){ rcmail.sieverules_load(id, 'plugin.sieverules.add'); }, 200);
 }
 
@@ -372,12 +377,12 @@ rcmail.sieverules_mouse_up = function(e) {
 	if (rcmail.sieverules_list) {
 		if (!rcube_mouse_is_over(e, rcmail.sieverules_list.list))
 			rcmail.sieverules_list.blur();
-    }
+	}
 
-    if (rcmail.sieverules_examples) {
+	if (rcmail.sieverules_examples) {
 		if (!rcube_mouse_is_over(e, rcmail.sieverules_examples.list))
 			rcmail.sieverules_examples.blur();
-    }
+	}
 
 	// handle mouse release when dragging
 	if (rcmail.sieverules_ex_drag_active && rcmail.sieverules_list && rcmail.env.sieverules_last_target) {
@@ -410,8 +415,8 @@ rcmail.sieverules_ex_drag_start = function(list) {
 rcmail.sieverules_drag_start = function(list) {
 	rcmail.sieverules_drag_active = true;
 
-    if (this.sieverules_timer)
-     	clearTimeout(this.sieverules_timer);
+	if (this.sieverules_timer)
+	 	clearTimeout(this.sieverules_timer);
 
 	if (rcmail.gui_objects.sieverules_list) {
 		rcmail.initialBodyScrollTop = bw.ie ? 0 : window.pageYOffset;
@@ -491,23 +496,23 @@ rcmail.sieverules_drag_end = function(e) {
 };
 
 rcmail.sieverules_load = function(id, action) {
-    if (action == 'plugin.sieverules.edit' && (!id || id==rcmail.env.iid))
+	if (action == 'plugin.sieverules.edit' && (!id || id==rcmail.env.iid))
 		return false;
 
-    var add_url = '';
-    var target = window;
-    if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
+	var add_url = '';
+	var target = window;
+	if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
 		add_url = '&_framed=1';
 		target = window.frames[rcmail.env.contentframe];
 		rcube_find_object(rcmail.env.contentframe).style.visibility = 'inherit';
 	}
 
-    if (action && (id || action == 'plugin.sieverules.add')) {
+	if (action && (id || action == 'plugin.sieverules.add')) {
 		rcmail.set_busy(true);
 		target.location.href = rcmail.env.comm_path+'&_action='+action+'&_iid='+id+add_url;
 	}
 
-    return true;
+	return true;
 }
 
 rcmail.sieverules_update_list = function(_src, _dst) {
@@ -582,10 +587,10 @@ rcmail.sieverules_rule_join_radio = function(value) {
 rcmail.sieverules_header_select = function(sel) {
 	var idx = sel.parentNode.parentNode.rowIndex / 3;
 	var eidx = ((idx + 1) * 3) - 1;
-    var obj = document.getElementsByName('_selheader[]')[idx];
+	var obj = document.getElementsByName('_selheader[]')[idx];
 	var testType = obj.value.split('::')[0];
 	var header = obj.value.split('::')[1];
-    var selIdx = 0;
+	var selIdx = 0;
 
 	document.getElementsByName('_test[]')[idx].value = testType;
 	document.getElementsByName('_header[]')[idx].value = header;
@@ -593,51 +598,72 @@ rcmail.sieverules_header_select = function(sel) {
 	document.getElementsByName('_operator[]')[idx].selectedIndex = 0;
 	document.getElementsByName('_bodypart[]')[idx].style.display = 'none';
 
-    if (header == 'size') {
-	    document.getElementsByName('_header[]')[idx].style.visibility = 'hidden';
-	    document.getElementsByName('_headerhlp')[idx].style.visibility = 'hidden';
-	    document.getElementsByName('_operator[]')[idx].style.display = 'none';
-	    document.getElementsByName('_size_operator[]')[idx].style.display = '';
-	    document.getElementsByName('_target[]')[idx].style.display = '';
-	    document.getElementsByName('_target[]')[idx].style.width = '100px'
-	    document.getElementsByName('_units[]')[idx].style.display = '';
-    }
-    else if (header.indexOf('predefined_') == 0) {
+	if (header == 'size') {
+		document.getElementsByName('_header[]')[idx].style.visibility = 'hidden';
+		document.getElementsByName('_headerhlp')[idx].style.visibility = 'hidden';
+		document.getElementsByName('_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_spamtest_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_spam_probability[]')[idx].style.display = 'none';
+		document.getElementsByName('_size_operator[]')[idx].style.display = '';
+		document.getElementsByName('_target[]')[idx].style.display = '';
+		document.getElementsByName('_target[]')[idx].style.width = '100px'
+		document.getElementsByName('_units[]')[idx].style.display = '';
+	}
+	else if (header == 'spamtest') {
 		document.getElementsByName('_header[]')[idx].style.visibility = 'hidden';
 		document.getElementsByName('_headerhlp')[idx].style.visibility = 'hidden';
 		document.getElementsByName('_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_size_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_spamtest_operator[]')[idx].style.display = '';
+		document.getElementsByName('_spam_probability[]')[idx].style.display = '';
+		document.getElementsByName('_target[]')[idx].style.display = 'none';
+		document.getElementsByName('_target[]')[idx].value = document.getElementsByName('_spam_probability[]')[idx].value;
+		document.getElementsByName('_units[]')[idx].style.display = 'none';
+	}
+	else if (header.indexOf('predefined_') == 0) {
+		document.getElementsByName('_header[]')[idx].style.visibility = 'hidden';
+		document.getElementsByName('_headerhlp')[idx].style.visibility = 'hidden';
+		document.getElementsByName('_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_size_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_spamtest_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_spam_probability[]')[idx].style.display = 'none';
 		document.getElementsByName('_target[]')[idx].style.display = 'none';
 		document.getElementsByName('_units[]')[idx].style.display = 'none';
 
-	    if (rcmail.env.predefined_rules[header.substring(11)][0] == 'size') {
-		    document.getElementsByName('_header[]')[idx].value = 'size';
-		    selIdx = rcmail.sieverules_get_index(document.getElementsByName('_size_operator[]')[idx], rcmail.env.predefined_rules[header.substring(11)][2]);
-		    document.getElementsByName('_size_operator[]')[idx].selectedIndex = selIdx;
-		    var reg = new RegExp('^([0-9]+)(K|M)*$');
+		if (rcmail.env.predefined_rules[header.substring(11)][0] == 'size') {
+			document.getElementsByName('_header[]')[idx].value = 'size';
+			selIdx = rcmail.sieverules_get_index(document.getElementsByName('_size_operator[]')[idx], rcmail.env.predefined_rules[header.substring(11)][2]);
+			document.getElementsByName('_size_operator[]')[idx].selectedIndex = selIdx;
+			var reg = new RegExp('^([0-9]+)(K|M)*$');
 			var matches = reg.exec(rcmail.env.predefined_rules[header.substring(11)][3]);
-		    document.getElementsByName('_target[]')[idx].value = matches[1];
-   		    selIdx = rcmail.sieverules_get_index(document.getElementsByName('_units[]')[idx], matches[2]);
-		    document.getElementsByName('_units[]')[idx].selectedIndex = selIdx;
-	    }
-	    else {
-		    document.getElementsByName('_header[]')[idx].value = rcmail.env.predefined_rules[header.substring(11)][1];
-   		    selIdx = rcmail.sieverules_get_index(document.getElementsByName('_operator[]')[idx], rcmail.env.predefined_rules[header.substring(11)][2], -1);
+			document.getElementsByName('_target[]')[idx].value = matches[1];
+			selIdx = rcmail.sieverules_get_index(document.getElementsByName('_units[]')[idx], matches[2]);
+			document.getElementsByName('_units[]')[idx].selectedIndex = selIdx;
+		}
+		else if (rcmail.env.predefined_rules[header.substring(11)][0] == 'spamtest') {
+			document.getElementsByName('_header[]')[idx].value = 'spamtest';
+			selIdx = rcmail.sieverules_get_index(document.getElementsByName('_spamtest_operator[]')[idx], rcmail.env.predefined_rules[header.substring(11)][2]);
+			document.getElementsByName('_spamtest_operator[]')[idx].selectedIndex = selIdx;
+			document.getElementsByName('_spam_probability[]')[idx].value = rcmail.env.predefined_rules[header.substring(11)][3];
+		}
+		else {
+			document.getElementsByName('_header[]')[idx].value = rcmail.env.predefined_rules[header.substring(11)][1];
+			selIdx = rcmail.sieverules_get_index(document.getElementsByName('_operator[]')[idx], rcmail.env.predefined_rules[header.substring(11)][2], -1);
 
-   		    // check advanced options if standard not found
-   		    if (selIdx == -1 && rcmail.sieverules_get_index(document.getElementsByName('_advoperator[]')[idx], rcmail.env.predefined_rules[header.substring(11)][2], -1) > -1) {
+			// check advanced options if standard not found
+			if (selIdx == -1 && rcmail.sieverules_get_index(document.getElementsByName('_advoperator[]')[idx], rcmail.env.predefined_rules[header.substring(11)][2], -1) > -1) {
 				document.getElementsByName('_operator[]')[idx].selectedIndex = rcmail.sieverules_get_index(document.getElementsByName('_operator[]')[idx], 'advoptions');
 				document.getElementsByName('_advoperator[]')[idx].selectedIndex = rcmail.sieverules_get_index(document.getElementsByName('_advoperator[]')[idx], rcmail.env.predefined_rules[header.substring(11)][2]);
 				document.getElementsByName('_comparator[]')[idx].selectedIndex = rcmail.sieverules_get_index(document.getElementsByName('_comparator[]')[idx], rcmail.env.predefined_rules[header.substring(11)][3]);
-		    	document.getElementsByName('_advtarget[]')[idx].value = rcmail.env.predefined_rules[header.substring(11)][4];
-   		    }
-   		    else {
+				document.getElementsByName('_advtarget[]')[idx].value = rcmail.env.predefined_rules[header.substring(11)][4];
+			}
+			else {
 				document.getElementsByName('_operator[]')[idx].selectedIndex = selIdx;
-		    	document.getElementsByName('_target[]')[idx].value = rcmail.env.predefined_rules[header.substring(11)][4];
-	    	}
-	    }
-    }
-    else {
+				document.getElementsByName('_target[]')[idx].value = rcmail.env.predefined_rules[header.substring(11)][4];
+			}
+		}
+	}
+	else {
 		if (header == 'other') {
 			document.getElementsByName('_header[]')[idx].style.visibility = 'visible';
 			document.getElementsByName('_headerhlp')[idx].style.visibility = 'visible';
@@ -662,23 +688,25 @@ rcmail.sieverules_header_select = function(sel) {
 			document.getElementsByName('_body_contentpart[]')[idx].parentNode.parentNode.style.display = 'none';
 		}
 
-	    document.getElementsByName('_operator[]')[idx].style.display = '';
-	    document.getElementsByName('_size_operator[]')[idx].style.display = 'none';
-	    document.getElementsByName('_target[]')[idx].style.display = '';
-	    document.getElementsByName('_units[]')[idx].style.display = 'none';
-    }
+		document.getElementsByName('_operator[]')[idx].style.display = '';
+		document.getElementsByName('_size_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_spamtest_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_spam_probability[]')[idx].style.display = 'none';
+		document.getElementsByName('_target[]')[idx].style.display = '';
+		document.getElementsByName('_units[]')[idx].style.display = 'none';
+	}
 
-    var idx = sel.parentNode.parentNode.rowIndex;
-    rcube_find_object('rules-table').tBodies[0].rows[idx + 1].style.display = 'none';
-    rcube_find_object('rules-table').tBodies[0].rows[idx + 2].style.display = 'none';
+	var idx = sel.parentNode.parentNode.rowIndex;
+	rcube_find_object('rules-table').tBodies[0].rows[idx + 1].style.display = 'none';
+	rcube_find_object('rules-table').tBodies[0].rows[idx + 2].style.display = 'none';
 }
 
 rcmail.sieverules_bodypart_select = function(sel) {
 	var idx = sel.parentNode.parentNode.rowIndex;
 	var eidx = idx / 3;
-    var obj = document.getElementsByName('_bodypart[]')[eidx];
+	var obj = document.getElementsByName('_bodypart[]')[eidx];
 
-   	document.getElementsByName('_body_contentpart[]')[eidx].disabled = false;
+	document.getElementsByName('_body_contentpart[]')[eidx].disabled = false;
 	document.getElementsByName('_advoperator[]')[eidx].disabled = (document.getElementsByName('_operator[]')[eidx].value == 'advoptions') ? false : true;
 
 	if (document.getElementsByName('_operator[]')[eidx].value == 'advoptions')
@@ -698,14 +726,14 @@ rcmail.sieverules_rule_op_select = function(sel) {
 	var idx = sel.parentNode.parentNode.rowIndex;
 	var eidx = idx / 3;
 
-    var obj = document.getElementsByName('_operator[]')[eidx];
-    if (obj.value == 'exists' || obj.value == 'notexists' || obj.value == 'advoptions')
+	var obj = document.getElementsByName('_operator[]')[eidx];
+	if (obj.value == 'exists' || obj.value == 'notexists' || obj.value == 'advoptions')
 		document.getElementsByName('_target[]')[eidx].style.display = 'none';
-    else
+	else
 		document.getElementsByName('_target[]')[eidx].style.display = '';
 
 	if (obj.value != 'exists' && obj.value != 'notexists' && document.getElementsByName('_test[]')[eidx].value == 'exists') {
-    	var h_obj = document.getElementsByName('_selheader[]')[eidx];
+		var h_obj = document.getElementsByName('_selheader[]')[eidx];
 		var testType = h_obj.value.split('::')[0];
 
 		document.getElementsByName('_test[]')[eidx].value = testType;
@@ -742,9 +770,9 @@ rcmail.sieverules_rule_advop_select = function(sel) {
 rcmail.sieverules_action_select = function(sel) {
 	var idx = sel.parentNode.parentNode.rowIndex;
 	var actoion_row = rcube_find_object('actions-table').tBodies[0].rows[idx];
-    var obj = document.getElementsByName('_act[]')[idx];
+	var obj = document.getElementsByName('_act[]')[idx];
 
-    // hide everything
+	// hide everything
 	document.getElementsByName('_folder[]')[idx].style.display = 'none';
 	document.getElementsByName('_redirect[]')[idx].style.display = 'none';
 	document.getElementsByName('_reject[]')[idx].style.display = 'none';
@@ -752,17 +780,17 @@ rcmail.sieverules_action_select = function(sel) {
 	actoion_row.cells[1].childNodes[3].style.display = 'none';
 	actoion_row.cells[1].childNodes[5].style.display = 'none';
 
-    if (obj.value == 'fileinto' || obj.value == 'fileinto_copy')
+	if (obj.value == 'fileinto' || obj.value == 'fileinto_copy')
 		document.getElementsByName('_folder[]')[idx].style.display = '';
-    else if (obj.value == 'reject' || obj.value == 'ereject')
+	else if (obj.value == 'reject' || obj.value == 'ereject')
 		document.getElementsByName('_reject[]')[idx].style.display = '';
-    else if (obj.value == 'vacation')
+	else if (obj.value == 'vacation')
 		actoion_row.cells[1].childNodes[3].style.display = '';
-    else if (obj.value == 'notify' || obj.value == 'enotify')
+	else if (obj.value == 'notify' || obj.value == 'enotify')
 		actoion_row.cells[1].childNodes[5].style.display = '';
-    else if (obj.value == 'redirect' || obj.value == 'redirect_copy')
+	else if (obj.value == 'redirect' || obj.value == 'redirect_copy')
 		document.getElementsByName('_redirect[]')[idx].style.display = '';
-    else if (obj.value == 'imapflags' || obj.value == 'imap4flags')
+	else if (obj.value == 'imapflags' || obj.value == 'imap4flags')
 		document.getElementsByName('_imapflags[]')[idx].style.display = '';
 }
 
@@ -783,12 +811,12 @@ rcmail.sieverules_set_xheader = function(sel) {
 rcmail.sieverules_get_index = function(list, value, fallback) {
 	fallback = fallback || 0;
 
-    for (var i = 0; i < list.length; i++) {
-	    if (list[i].value == value)
-    		return i;
-   	}
+	for (var i = 0; i < list.length; i++) {
+		if (list[i].value == value)
+			return i;
+	}
 
-   	return fallback;
+	return fallback;
 }
 
 rcmail.sieverules_toggle_vac_to = function(sel, id) {

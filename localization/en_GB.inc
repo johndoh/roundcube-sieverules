@@ -24,6 +24,7 @@ $labels['filternotregex'] = 'does not match regular expression';
 $labels['filterunder'] = 'is less than';
 $labels['filterover'] = 'is more than';
 $labels['filteradvoptions'] = 'more options...';
+$labels['spamtest'] = 'Spam Probability';
 $labels['operator'] = 'Operator';
 $labels['comparator'] = 'Comparator';
 $labels['count'] = 'count';
@@ -92,6 +93,7 @@ $labels['raw'] = 'Raw';
 $labels['text'] = 'Text';
 $labels['other'] = 'Other';
 $labels['bodycontentpart'] = 'Content Part';
+$labels['spamnotchecked'] = 'not checked';
 
 $messages = array();
 $messages['nosieverules'] = 'No filters found.';

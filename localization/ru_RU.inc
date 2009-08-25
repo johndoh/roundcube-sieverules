@@ -5,6 +5,7 @@ $labels = array();
 $labels['filters'] = 'Фильтры';
 $labels['managefilters'] = 'управление фильтрами';
 $labels['filtername'] = 'Имя фильтра';
+$labels['spamtest'] = 'Вероятность СПАМа';
 $labels['disablerule'] = 'отключить    правило';
 $labels['disabled'] = 'отключено';
 $labels['newfilter'] = 'новый фильтр';
@@ -66,6 +67,7 @@ $labels['envelopeto'] = 'кому';
 $labels['otherheader'] = 'другие заголовки';
 $labels['message'] = 'сообщение';
 $labels['sieveruleheaders'] = 'посмотреть примеры других заголовков';
+$labels['spamnotchecked'] = 'не проверено';
 
 $messages = array();
 $messages['nosieverules'] = 'Фильтры не найдены.';

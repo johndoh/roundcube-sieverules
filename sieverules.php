@@ -281,7 +281,7 @@ class sieverules extends rcube_plugin
 		if (sizeof($cur_script['tests']) == 1 && $cur_script['tests'][0]['type'] == 'true' && !$cur_script['tests'][0]['not'])
 			$any = true;
 
-	    // filter disable
+		// filter disable
 		$field_id = 'rcmfd_disable';
 		$input_disable = new html_checkbox(array('name' => '_disable', 'id' => $field_id, 'value' => 1));
 
@@ -292,8 +292,8 @@ class sieverules extends rcube_plugin
 		$field_id = 'rcmfd_name';
 		$input_name = new html_inputfield(array('name' => '_name', 'id' => $field_id));
 
-	    $out .= html::label($field_id, Q($this->gettext('filtername')));
-	    $out .= "&nbsp;" . $input_name->show($cur_script['name']);
+		$out .= html::label($field_id, Q($this->gettext('filtername')));
+		$out .= "&nbsp;" . $input_name->show($cur_script['name']);
 
 		$out .= "<br /><br />";
 
@@ -316,13 +316,13 @@ class sieverules extends rcube_plugin
 		$join_type .= "&nbsp;" . html::label($field_id, Q($this->gettext('filterany')));
 
 		$rules_table = new html_table(array('id' => 'rules-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 5));
-	    $rules_table = $this->_rule_row($ext, $rules_table, null, $this->config['predefined_rules'], $attrib);
+		$rules_table = $this->_rule_row($ext, $rules_table, null, $this->config['predefined_rules'], $attrib);
 
-	    if (!$join_any) {
-		    if (!isset($cur_script))
-		    	$rules_table = $this->_rule_row($ext, $rules_table, array(), $this->config['predefined_rules'], $attrib);
-		    else foreach ($cur_script['tests'] as $rules)
-		    	$rules_table = $this->_rule_row($ext, $rules_table, $rules, $this->config['predefined_rules'], $attrib);
+		if (!$join_any) {
+			if (!isset($cur_script))
+				$rules_table = $this->_rule_row($ext, $rules_table, array(), $this->config['predefined_rules'], $attrib);
+			else foreach ($cur_script['tests'] as $rules)
+				$rules_table = $this->_rule_row($ext, $rules_table, $rules, $this->config['predefined_rules'], $attrib);
 		}
 
 		$out .= html::tag('fieldset', null, html::tag('legend', null, Q($this->gettext('messagesrules')))
@@ -332,12 +332,12 @@ class sieverules extends rcube_plugin
 
 		rcmail::get_instance()->imap_init(TRUE);
 		$actions_table = new html_table(array('id' => 'actions-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 3));
-	    $actions_table = $this->_action_row($ext, $actions_table, 'rowid', null, $attrib);
+		$actions_table = $this->_action_row($ext, $actions_table, 'rowid', null, $attrib);
 
-	    if (!isset($cur_script))
-	    	$actions_table = $this->_action_row($ext, $actions_table, 0, array(), $attrib);
-	    else foreach ($cur_script['actions'] as $idx => $actions)
-	    	$actions_table = $this->_action_row($ext, $actions_table, $idx, $actions, $attrib);
+		if (!isset($cur_script))
+			$actions_table = $this->_action_row($ext, $actions_table, 0, array(), $attrib);
+		else foreach ($cur_script['actions'] as $idx => $actions)
+			$actions_table = $this->_action_row($ext, $actions_table, $idx, $actions, $attrib);
 
 		$out .= html::tag('fieldset', null, html::tag('legend', null, Q($this->gettext('messagesactions')))
 				. Q($this->gettext('sieveactexp')). "<br /><br />"
@@ -401,6 +401,7 @@ class sieverules extends rcube_plugin
 			$bodyparts = $_POST['_bodypart'];
 			$ops = $_POST['_operator'];
 			$sizeops = $_POST['_size_operator'];
+			$spamtestops = $_POST['_spamtest_operator'];
 			$targets = $_POST['_target'];
 			$sizeunits = $_POST['_units'];
 			$contentparts = $_POST['_body_contentpart'];
@@ -468,6 +469,13 @@ class sieverules extends rcube_plugin
 							$script['tests'][$i]['contentpart'] = $contentpart;
 						else
 							$script['tests'][$i]['contentpart'] = '';
+					case 'spamtest':
+						$spamtestop = $this->_strip_val($spamtestops[$idx]);
+
+						$script['tests'][$i]['type'] = 'spamtest';
+						$script['tests'][$i]['operator'] = $spamtestop;
+						$script['tests'][$i]['target'] = $target;
+						break;
 					case 'exists':
 					case 'header':
 					case 'address':
@@ -575,9 +583,9 @@ class sieverules extends rcube_plugin
 						$script['actions'][$i]['options'] = $option;
 						$script['actions'][$i]['msg'] = $msg;
 						break;
-			    }
+				}
 
-			    $i++;
+				$i++;
 			}
 
 			if (!isset($this->script[$fid]))
@@ -797,16 +805,19 @@ class sieverules extends rcube_plugin
 		$header_style = 'visibility: hidden;';
 		$op_style = '';
 		$sizeop_style = 'display: none;';
+		$spamtestop_style = 'display: none;';
 		$target_style = '' ;
 		$units_style = 'display: none;';
 		$bodypart_style = 'display: none;';
 		$advcontentpart_style = 'display: none;';
+		$spam_prob_style = 'display: none;';
 
 		$test = 'header';
 		$selheader = 'Subject';
 		$header = 'Subject';
 		$op = 'contains';
 		$sizeop = 'under';
+		$spamtestop = 'gt';
 		$target = '';
 		$target_size = 150;
 		$units = 'KB';
@@ -837,6 +848,11 @@ class sieverules extends rcube_plugin
 				$target = $matches[1];
 				$target_size = 100;
 				$units = $matches[2];
+			}
+			elseif ($rule['type'] == 'spamtest') {
+				$header = 'spamtest';
+				$spamtestop = $rule['operator'];
+				$target = $rule['target'];
 			}
 			elseif ($rule['type'] == 'exists') {
 				$selheader = $predefined_rules[$predefined]['type'] . '::predefined_' . $predefined;
@@ -896,6 +912,19 @@ class sieverules extends rcube_plugin
 				$advcontentpart_style = '';
 			}
 		}
+		elseif (isset($rule['type']) && $rule['type'] == 'spamtest') {
+			$op_style = 'display: none;';
+			$target_style = 'display: none;' ;
+			$spamtestop_style = '';
+			$spam_prob_style = '';
+
+			$test = $rule['type'];
+			$selheader = 'spamtest::spamtest';
+			$header = 'spamtest';
+			$spamtestop = $rule['operator'];
+			$target = $rule['target'];
+			$spam_probability = $rule['target'];
+		}
 		elseif (isset($rule['type']) && $rule['type'] != 'true') {
 			$header_style = '';
 			$target_style = $rule['operator'] == 'exists' ? 'display: none;' : '' ;
@@ -922,6 +951,9 @@ class sieverules extends rcube_plugin
 
 		if (in_array('body', $ext))
 			$select_header->add(Q($this->gettext('body')), Q('body::body'));
+
+		if (in_array('spamtest', $ext))
+			$select_header->add(Q($this->gettext('spamtest')), Q('spamtest::spamtest'));
 
 		foreach($predefined_rules as $idx => $data) {
 			if (($data['type'] == 'envelope' && in_array('envelope', $ext)) || $data['type'] != 'envelope')
@@ -952,10 +984,15 @@ class sieverules extends rcube_plugin
 		$select_size_op->add(Q($this->gettext('filterunder')), 'under');
 		$select_size_op->add(Q($this->gettext('filterover')), 'over');
 
+		$select_spamtest_op = new html_select(array('name' => "_spamtest_operator[]", 'style' => $spamtestop_style . ' width: 123px;'));
+		$select_spamtest_op->add(Q($this->gettext('equals')), 'eq');
+		$select_spamtest_op->add(Q($this->gettext('islessthanequal')), 'le');
+		$select_spamtest_op->add(Q($this->gettext('isgreaterthanequal')), 'ge');
+
 		if ($showadvanced)
-			$rules_table->add('op', $select_op->show('advoptions') . $select_size_op->show($sizeop));
+			$rules_table->add('op', $select_op->show('advoptions') . $select_size_op->show($sizeop) . $select_spamtest_op->show($spamtestop));
 		else
-			$rules_table->add('op', $select_op->show($op) . $select_size_op->show($sizeop));
+			$rules_table->add('op', $select_op->show($op) . $select_size_op->show($sizeop) . $select_spamtest_op->show($spamtestop));
 
 		$input_target = new html_inputfield(array('name' => '_target[]', 'style' => $target_style . ' width: ' . $target_size . 'px'));
 
@@ -964,7 +1001,20 @@ class sieverules extends rcube_plugin
 		$select_units->add(Q($this->gettext('KB')), 'K');
 		$select_units->add(Q($this->gettext('MB')), 'M');
 
-		$rules_table->add('target', $input_target->show($target) . "&nbsp;" . $select_units->show($units));
+		$select_spam_probability = new html_select(array('name' => "_spam_probability[]", 'style' => $spam_prob_style . 'width: 150px;'));
+		$select_spam_probability->add(Q($this->gettext('spamnotchecked')), '0');
+		$select_spam_probability->add(Q("0%"), '1');
+		$select_spam_probability->add(Q("5%"), '2');
+		$select_spam_probability->add(Q("20%"), '3');
+		$select_spam_probability->add(Q("40%"), '4');
+		$select_spam_probability->add(Q("50%"), '5');
+		$select_spam_probability->add(Q("60%"), '6');
+		$select_spam_probability->add(Q("70%"), '7');
+		$select_spam_probability->add(Q("80%"), '8');
+		$select_spam_probability->add(Q("90%"), '9');
+		$select_spam_probability->add(Q("100%"), '10');
+
+		$rules_table->add('target', $select_spam_probability->show($spam_probability) . $input_target->show($target) . "&nbsp;" . $select_units->show($units));
 
 		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_rule', 'type' => 'image', 'image' => $attrib['addicon'], 'alt' => 'sieverules.addsieverule', 'title' => 'sieverules.addsieverule'));
 		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_rule', 'type' => 'image', 'image' => $attrib['deleteicon'], 'alt' => 'sieverules.deletesieverule', 'title' => 'sieverules.deletesieverule'));
@@ -994,10 +1044,10 @@ class sieverules extends rcube_plugin
 				$col1 .= $xheader_show . "<br />";
 			elseif ($idx < $col_length * 2)
 				$col2 .= $xheader_show . "<br />";
-	    	elseif ($idx < $col_length * 3)
-	    		$col3 .= $xheader_show . "<br />";
-	    	elseif ($idx < $col_length * 4)
-	    		$col4 .= $xheader_show . "<br />";
+			elseif ($idx < $col_length * 3)
+				$col3 .= $xheader_show . "<br />";
+			elseif ($idx < $col_length * 4)
+				$col4 .= $xheader_show . "<br />";
 		}
 
 		$headers_table->add(array('style' => 'vertical-align: top; width: 25%;'), $col1);
@@ -1234,10 +1284,10 @@ class sieverules extends rcube_plugin
 		$user_identities = $rcmail->user->list_identities();
 		if (count($user_identities)) {
 			$field_id = 'rcmfd_sievevacfrom_'. $rowid;
-		    $select_id = new html_select(array('id' => $field_id, 'name' => "_vacfrom[]", 'style' => 'width: 337px'));
+			$select_id = new html_select(array('id' => $field_id, 'name' => "_vacfrom[]", 'style' => 'width: 337px'));
 			$select_id->add(Q($this->gettext('autodetect')), "");
 
-		    foreach ($user_identities as $sql_arr) {
+			foreach ($user_identities as $sql_arr) {
 				$select_id->add($sql_arr['email'], $sql_arr['email']);
 
 				$ffield_id = 'rcmfd_vac_' . $rowid . '_' . $sql_arr['identity_id'];
@@ -1316,10 +1366,10 @@ class sieverules extends rcube_plugin
 		$user_identities = $rcmail->user->list_identities();
 		if (count($user_identities)) {
 			$field_id = 'rcmfd_sievenotifyfrom_'. $rowid;
-		    $select_id = new html_select(array('id' => $field_id, 'name' => "_nfrom[]", 'style' => 'width: 337px'));
+			$select_id = new html_select(array('id' => $field_id, 'name' => "_nfrom[]", 'style' => 'width: 337px'));
 			$select_id->add(Q($this->gettext('autodetect')), "");
 
-		    foreach ($user_identities as $sql_arr)
+			foreach ($user_identities as $sql_arr)
 				$select_id->add($sql_arr['email'], $sql_arr['email']);
 
 	 		$notify_table->set_row_attribs(array('class' => 'advanced', 'style' => $noteadvstyle));
@@ -1424,22 +1474,22 @@ class sieverules extends rcube_plugin
 	// coppied from rcube_template.php
 	private function _charset_selector($attrib, $charset) {
 		$charsets = array(
-			'US-ASCII'     => 'ASCII (English)',
-			'EUC-JP'       => 'EUC-JP (Japanese)',
-			'EUC-KR'       => 'EUC-KR (Korean)',
-			'BIG5'         => 'BIG5 (Chinese)',
-			'GB2312'       => 'GB2312 (Chinese)',
-			'ISO-2022-JP'  => 'ISO-2022-JP (Japanese)',
-			'ISO-8859-1'   => 'ISO-8859-1 (Latin-1)',
-			'ISO-8859-2'   => 'ISO-8895-2 (Central European)',
-			'ISO-8859-7'   => 'ISO-8859-7 (Greek)',
-			'ISO-8859-9'   => 'ISO-8859-9 (Turkish)',
-			'Windows-1251' => 'Windows-1251 (Cyrillic)',
-			'Windows-1252' => 'Windows-1252 (Western)',
-			'Windows-1255' => 'Windows-1255 (Hebrew)',
-			'Windows-1256' => 'Windows-1256 (Arabic)',
-			'Windows-1257' => 'Windows-1257 (Baltic)',
-			'UTF-8'        => 'UTF-8'
+			'US-ASCII'		=> 'ASCII (English)',
+			'EUC-JP'		=> 'EUC-JP (Japanese)',
+			'EUC-KR'		=> 'EUC-KR (Korean)',
+			'BIG5'			=> 'BIG5 (Chinese)',
+			'GB2312'		=> 'GB2312 (Chinese)',
+			'ISO-2022-JP'	=> 'ISO-2022-JP (Japanese)',
+			'ISO-8859-1'	=> 'ISO-8859-1 (Latin-1)',
+			'ISO-8859-2'	=> 'ISO-8895-2 (Central European)',
+			'ISO-8859-7'	=> 'ISO-8859-7 (Greek)',
+			'ISO-8859-9'	=> 'ISO-8859-9 (Turkish)',
+			'Windows-1251'	=> 'Windows-1251 (Cyrillic)',
+			'Windows-1252'	=> 'Windows-1252 (Western)',
+			'Windows-1255'	=> 'Windows-1255 (Hebrew)',
+			'Windows-1256'	=> 'Windows-1256 (Arabic)',
+			'Windows-1257'	=> 'Windows-1257 (Baltic)',
+			'UTF-8'			=> 'UTF-8'
 			);
 
 		$select = new html_select($attrib);
