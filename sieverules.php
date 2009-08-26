@@ -817,7 +817,7 @@ class sieverules extends rcube_plugin
 		$header = 'Subject';
 		$op = 'contains';
 		$sizeop = 'under';
-		$spamtestop = 'gt';
+		$spamtestop = 'ge';
 		$target = '';
 		$target_size = 150;
 		$units = 'KB';
