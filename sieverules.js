@@ -308,13 +308,13 @@ if (window.rcmail) {
 					}
 					else if (acts[i][idx].value == 'notify' || acts[i][idx].value == 'enotify') {
 						if (nmethods[i].value == '') {
-							alert(rcmail.gettext('notifynomothod','sieverules'));
+							alert(rcmail.gettext('notifynomethod','sieverules'));
 							nmethods[i].focus();
 							return false;
 						}
 
 						if (acts[i][idx].value == 'enotify' && nmethods[i].value.indexOf(':') == -1) {
-							alert(rcmail.gettext('notifyinvalidmothod','sieverules'));
+							alert(rcmail.gettext('notifyinvalidmethod','sieverules'));
 							nmethods[i].focus();
 							return false;
 						}

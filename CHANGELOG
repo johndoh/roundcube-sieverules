@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 09 03
+==========
+ * Localisation updates
+
 2009 08 25
 ==========
  * Add support for spamtest extension (by Vladislav Bogdanov)

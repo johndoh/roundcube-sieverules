@@ -69,6 +69,10 @@ class rcube_sieve {
 		closedir($handle);
     }
 
+	public function __destruct() {
+		$this->sieve->disconnect();
+	}
+
 	public function error() {
 		return $this->error ? $this->error : false;
     }

@@ -5,7 +5,7 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.0-BETA
+ * @version 1.0
  * @author Philip Weir
  * @url http://roundcube.net/plugins/sieverules
  */
@@ -239,9 +239,9 @@ class sieverules extends rcube_plugin
 			'sieverules.norulename', 'sieverules.ruleexists', 'sieverules.noheader',
 			'sieverules.headerbadchars', 'sieverules.noheadervalue', 'sieverules.sizewrongformat',
 			'sieverules.noredirect', 'sieverules.redirectaddresserror', 'sieverules.noreject', 'sieverules.vacnodays',
-			'sieverules.vacdayswrongformat', 'sieverules.vacnomsg', 'sieverules.notifynomothod',
+			'sieverules.vacdayswrongformat', 'sieverules.vacnomsg', 'sieverules.notifynomethod',
 			'sieverules.notifynomsg', 'sieverules.filterdeleteconfirm', 'sieverules.ruledeleteconfirm',
-			'sieverules.actiondeleteconfirm', 'sieverules.notifyinvalidmothod', 'sieverules.nobodycontentpart',
+			'sieverules.actiondeleteconfirm', 'sieverules.notifyinvalidmethod', 'sieverules.nobodycontentpart',
 			'sieverules.badoperator');
 
 		$ext = $this->sieve->get_extensions();
@@ -974,7 +974,7 @@ class sieverules extends rcube_plugin
 		$select_bodypart->add(Q($this->gettext('raw')), Q('raw'));
 		$select_bodypart->add(Q($this->gettext('text')), Q('text'));
 		$select_bodypart->add(Q($this->gettext('other')), Q('content'));
-		$rules_table->add('header', $input_header->show($header) . $help_button . $select_bodypart->show($bodypart));
+		$rules_table->add('header', $input_header->show($header) . $select_bodypart->show($bodypart) . $help_button);
 
 		$select_op = new html_select(array('name' => "_operator[]", 'onchange' => JS_OBJECT_NAME . '.sieverules_rule_op_select(this)', 'style' => $op_style . ' width: 123px;'));
 		foreach($this->operators as $name => $val)
@@ -1063,11 +1063,18 @@ class sieverules extends rcube_plugin
 		$advanced_table->add(array('colspan' => 2, 'style' => 'white-space: normal;'), Q($this->gettext('advancedoptions')));
 		$advanced_table->add_row();
 
+		$help_button = html::img(array('class' => $imgclass, 'src' => $attrib['helpicon'], 'alt' => $this->gettext('contentpart'), 'border' => 0, 'style' => 'margin-left: 4px;'));
+		$help_button = html::a(array('href' => "#", 'onclick' => 'return '. JS_OBJECT_NAME .'.sieverules_help(this, ' . $advanced_table->size() . ');', 'title' => $this->gettext('contentpart')), $help_button);
+
 		$field_id = 'rcmfd_advcontentpart_'. $rowid;
 		$advanced_table->set_row_attribs(array('style' => $advcontentpart_style));
-		$input_advcontentpart = new html_inputfield(array('id' => $field_id, 'name' => '_body_contentpart[]', 'style' => 'width: 260px'));
+		$input_advcontentpart = new html_inputfield(array('id' => $field_id, 'name' => '_body_contentpart[]', 'style' => 'width: 245px'));
 		$advanced_table->add(array('style' => 'white-space: normal;', 'class' => 'selheader'), html::label($field_id, Q($this->gettext('bodycontentpart'))));
-		$advanced_table->add(array('style' => 'white-space: normal;'), $input_advcontentpart->show($advcontentpart));
+		$advanced_table->add(array('style' => 'white-space: normal;'), $input_advcontentpart->show($advcontentpart) . $help_button);
+
+		$advanced_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
+		$advanced_table->add(array('colspan' => 2, 'class' => 'vacdaysexp'), $this->gettext('contentpartexp'));
+		$advanced_table->add_row();
 
 		$field_id = 'rcmfd_advoperator_'. $rowid;
 		$select_advop = new html_select(array('id' => $field_id, 'name' => "_advoperator[]", 'style' => 'width: 268px', 'onchange' => JS_OBJECT_NAME . '.sieverules_rule_advop_select(this)'));
@@ -1078,18 +1085,18 @@ class sieverules extends rcube_plugin
 		}
 
 	  	if (in_array('relational', $ext)) {
-		  	$select_advop->add(Q($this->gettext('count') . ' ' . $this->gettext('isgreaterthan')), 'count "gt"');
-		  	$select_advop->add(Q($this->gettext('count') . ' ' . $this->gettext('isgreaterthanequal')), 'count "ge"');
-		  	$select_advop->add(Q($this->gettext('count') . ' ' . $this->gettext('islessthan')), 'count "lt"');
-		  	$select_advop->add(Q($this->gettext('count') . ' ' . $this->gettext('islessthanequal')), 'count "le"');
-		  	$select_advop->add(Q($this->gettext('count') . ' ' . $this->gettext('equals')), 'count "eq"');
-		  	$select_advop->add(Q($this->gettext('count') . ' ' . $this->gettext('notequals')), 'count "ne"');
-		  	$select_advop->add(Q($this->gettext('value') . ' ' . $this->gettext('isgreaterthan')), 'value "gt"');
-		  	$select_advop->add(Q($this->gettext('value') . ' ' . $this->gettext('isgreaterthanequal')), 'value "ge"');
-		  	$select_advop->add(Q($this->gettext('value') . ' ' . $this->gettext('islessthan')), 'value "lt"');
-		  	$select_advop->add(Q($this->gettext('value') . ' ' . $this->gettext('islessthanequal')), 'value "le"');
-		  	$select_advop->add(Q($this->gettext('value') . ' ' . $this->gettext('equals')), 'value "eq"');
-		  	$select_advop->add(Q($this->gettext('value') . ' ' . $this->gettext('notequals')), 'value "ne"');
+		  	$select_advop->add(Q($this->gettext('countisgreaterthan')), 'count "gt"');
+		  	$select_advop->add(Q($this->gettext('countisgreaterthanequal')), 'count "ge"');
+		  	$select_advop->add(Q($this->gettext('countislessthan')), 'count "lt"');
+		  	$select_advop->add(Q($this->gettext('countislessthanequal')), 'count "le"');
+		  	$select_advop->add(Q($this->gettext('countequals')), 'count "eq"');
+		  	$select_advop->add(Q($this->gettext('countnotequals')), 'count "ne"');
+		  	$select_advop->add(Q($this->gettext('valueisgreaterthan')), 'value "gt"');
+		  	$select_advop->add(Q($this->gettext('valueisgreaterthanequal')), 'value "ge"');
+		  	$select_advop->add(Q($this->gettext('valueislessthan')), 'value "lt"');
+		  	$select_advop->add(Q($this->gettext('valueislessthanequal')), 'value "le"');
+		  	$select_advop->add(Q($this->gettext('valueequals')), 'value "eq"');
+		  	$select_advop->add(Q($this->gettext('valuenotequals')), 'value "ne"');
 		}
 
 		if (in_array('subaddress', $ext)) {
@@ -1108,14 +1115,15 @@ class sieverules extends rcube_plugin
 		if (substr($op, 0, 5) == 'count' || substr($op, 0, 5) == 'value')
 			$select_comparator = new html_select(array('id' => $field_id, 'name' => "_comparator[]", 'style' => 'width: 268px'));
 		else
-			$select_comparator = new html_select(array('id' => $field_id, 'name' => "_comparator[]", 'style' => 'width: 268px', 'disabled' => 'disabled'));
-		$select_comparator->add(Q('i;ascii-casemap'), '');
-		$select_comparator->add(Q('i;octet'), 'i;octet');
+ 			$select_comparator = new html_select(array('id' => $field_id, 'name' => "_comparator[]", 'style' => 'width: 268px', 'disabled' => 'disabled'));
 
-		foreach ($ext as $extension) {
-			if (substr($extension, 0, 11) == 'comparator-')
-				$select_comparator->add(Q(substr($extension, 11)), substr($extension, 11));
-		}
+ 		$select_comparator->add(Q($this->gettext('i;ascii-casemap')), '');
+ 		$select_comparator->add(Q($this->gettext('i;octet')), 'i;octet');
+
+ 		foreach ($ext as $extension) {
+ 			if (substr($extension, 0, 11) == 'comparator-')
+ 				$select_comparator->add(Q($this->gettext(substr($extension, 11))), substr($extension, 11));
+ 		}
 
 		$advanced_table->add(array('style' => 'white-space: normal;', 'class' => 'selheader'), html::label($field_id, Q($this->gettext('comparator'))));
 		$advanced_table->add(array('style' => 'white-space: normal;'), $select_comparator->show($rule['comparator']));
