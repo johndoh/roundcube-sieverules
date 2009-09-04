@@ -985,9 +985,9 @@ class sieverules extends rcube_plugin
 		$select_size_op->add(Q($this->gettext('filterover')), 'over');
 
 		$select_spamtest_op = new html_select(array('name' => "_spamtest_operator[]", 'style' => $spamtestop_style . ' width: 123px;'));
-		$select_spamtest_op->add(Q($this->gettext('equals')), 'eq');
-		$select_spamtest_op->add(Q($this->gettext('islessthanequal')), 'le');
-		$select_spamtest_op->add(Q($this->gettext('isgreaterthanequal')), 'ge');
+		$select_spamtest_op->add(Q($this->gettext('spamlevelequals')), 'eq');
+		$select_spamtest_op->add(Q($this->gettext('spamlevelislessthanequal')), 'le');
+		$select_spamtest_op->add(Q($this->gettext('spamlevelisgreaterthanequal')), 'ge');
 
 		if ($showadvanced)
 			$rules_table->add('op', $select_op->show('advoptions') . $select_size_op->show($sizeop) . $select_spamtest_op->show($spamtestop));

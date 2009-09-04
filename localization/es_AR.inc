@@ -94,6 +94,9 @@ $labels['importfilters'] = 'Importar filtros';
 $labels['usedefaultfilter'] = 'Usar filtros por defecto';
 $labels['importfilter'] = 'Importar filtro';
 $labels['adveditor'] = 'Editor avanzado';
+$labels['spamlevelisgreaterthanequal'] = 'es mayor o igual que';
+$labels['spamlevelislessthanequal'] = 'es menor o igual que';
+$labels['spamlevelequals'] = 'es igual a';
 
 $messages = array();
 $messages['nosieverules'] = 'No se han encontrado filtros.';

@@ -104,6 +104,9 @@ $labels['text'] = 'Text';
 $labels['other'] = 'Other';
 $labels['bodycontentpart'] = 'Content Part';
 $labels['spamnotchecked'] = 'not checked';
+$labels['spamlevelisgreaterthanequal'] = 'is greater than or equal to';
+$labels['spamlevelislessthanequal'] = 'is less than or equal to';
+$labels['spamlevelequals'] = 'is equal to';
 $labels['i;ascii-casemap'] = 'case-insensitive string match';
 $labels['i;octet'] = 'exact string match';
 $labels['i;ascii-numeric'] = 'numeric match';
@@ -151,6 +154,6 @@ $messages['nobodycontentpart'] = 'Please enter a content part to test';
 $messages['badoperator'] = 'Sorry the operator you selected cannot be used in this rule';
 $messages['filteractionerror'] = 'The action you requested is not supported by the server';
 $messages['filtermissingerror'] = 'Unable to find the rule requested';
-$messages['contentpartexp'] = 'The specific part of the message which should be tested. For example: `message/rfc822` or `text/html`.';
+$messages['contentpartexp'] = 'The MIME-type or specific part of the message which should be tested. For example: `message/rfc822`, `text/html`, `audio/mp3` or `image`.';
 
 ?>

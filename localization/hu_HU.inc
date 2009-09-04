@@ -94,6 +94,9 @@ $labels['importfilters'] = 'Szűrők importálása';
 $labels['usedefaultfilter'] = 'Alapértelmezett szűrők használata';
 $labels['importfilter'] = 'Szűrők importálása';
 $labels['adveditor'] = 'Haladó szerkesztő';
+$labels['spamlevelisgreaterthanequal'] = 'nagyobb vagy egyenlő';
+$labels['spamlevelislessthanequal'] = 'kissebb vagy egyenlő';
+$labels['spamlevelequals'] = 'egyenlő';
 
 $messages = array();
 $messages['nosieverules'] = 'Nem található szűrő';
