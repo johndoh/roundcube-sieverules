@@ -107,29 +107,69 @@ span.disableLink {
   vertical-align: top;
 }
 
-#rules-table, #actions-table
+#rules-table, #actions-table, #rules-table td table.records-table
 {
   width: 100%;
 }
 
-#rules-table td.selheader
-{
-  width: 120px;
-}
-
-#rules-table td.op
+#rules-table td.selheader, #rules-table td.op
 {
   width: 130px;
 }
 
 #rules-table td.header
 {
-  width: 140px;
+  width: 135px;
 }
 
 #rules-table td.target
 {
   width: 160px;
+}
+
+#rules-table input
+{
+  width: 150px;
+}
+
+#rules-table input.short
+{
+  width: 100px;
+}
+
+#rules-table select
+{
+  width: 123px;
+}
+
+#rules-table select.short
+{
+  width: 45px;
+}
+
+#rules-table select.long
+{
+  width: 150px;
+}
+
+#rules-table td table.records-table select
+{
+  width: 432px;
+}
+
+#rules-table td table.records-table input
+{
+  width: 426px;
+}
+
+#rules-table td table.records-table input.short
+{
+  width: 406px;
+}
+
+#rules-table td table.records-table input.radio
+{
+  width: auto;
 }
 
 #actions-table td.action
@@ -140,8 +180,43 @@ span.disableLink {
 
 #actions-table td.folder
 {
-  width: 380px;
+  width: 420px;
   vertical-align: top;
+}
+
+#actions-table td.action select
+{
+  width: 160px;
+}
+
+#actions-table td.folder input, #actions-table td.folder textarea
+{
+  width: 400px;
+}
+
+#actions-table td.folder select
+{
+  width: 408px;
+}
+
+#actions-table td.folder table.records-table select
+{
+  width: 337px;
+}
+
+#actions-table td.folder table.records-table input, #actions-table td.folder table.records-table textarea
+{
+  width: 330px;
+}
+
+#actions-table td.folder table.records-table input.short
+{
+  width: 310px;
+}
+
+#actions-table td.folder table.records-table input.checkbox
+{
+  width: auto;
 }
 
 table.records-table td.msg

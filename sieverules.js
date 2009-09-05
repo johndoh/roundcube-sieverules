@@ -594,7 +594,7 @@ rcmail.sieverules_header_select = function(sel) {
 
 	document.getElementsByName('_test[]')[idx].value = testType;
 	document.getElementsByName('_header[]')[idx].value = header;
-	document.getElementsByName('_target[]')[idx].style.width = '150px'
+	document.getElementsByName('_target[]')[idx].className = '';
 	document.getElementsByName('_operator[]')[idx].selectedIndex = 0;
 	document.getElementsByName('_bodypart[]')[idx].style.display = 'none';
 
@@ -606,7 +606,7 @@ rcmail.sieverules_header_select = function(sel) {
 		document.getElementsByName('_spam_probability[]')[idx].style.display = 'none';
 		document.getElementsByName('_size_operator[]')[idx].style.display = '';
 		document.getElementsByName('_target[]')[idx].style.display = '';
-		document.getElementsByName('_target[]')[idx].style.width = '100px'
+		document.getElementsByName('_target[]')[idx].className = 'short';
 		document.getElementsByName('_units[]')[idx].style.display = '';
 	}
 	else if (header == 'spamtest') {
@@ -777,17 +777,17 @@ rcmail.sieverules_action_select = function(sel) {
 	document.getElementsByName('_redirect[]')[idx].style.display = 'none';
 	document.getElementsByName('_reject[]')[idx].style.display = 'none';
 	document.getElementsByName('_imapflags[]')[idx].style.display = 'none';
-	actoion_row.cells[1].childNodes[3].style.display = 'none';
-	actoion_row.cells[1].childNodes[5].style.display = 'none';
+	document.getElementsByName('_day[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+	document.getElementsByName('_nmethod[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
 
 	if (obj.value == 'fileinto' || obj.value == 'fileinto_copy')
 		document.getElementsByName('_folder[]')[idx].style.display = '';
 	else if (obj.value == 'reject' || obj.value == 'ereject')
 		document.getElementsByName('_reject[]')[idx].style.display = '';
 	else if (obj.value == 'vacation')
-		actoion_row.cells[1].childNodes[3].style.display = '';
+		document.getElementsByName('_day[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
 	else if (obj.value == 'notify' || obj.value == 'enotify')
-		actoion_row.cells[1].childNodes[5].style.display = '';
+		document.getElementsByName('_nmethod[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
 	else if (obj.value == 'redirect' || obj.value == 'redirect_copy')
 		document.getElementsByName('_redirect[]')[idx].style.display = '';
 	else if (obj.value == 'imapflags' || obj.value == 'imap4flags')
