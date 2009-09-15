@@ -215,6 +215,7 @@ class sieverules extends rcube_plugin
 			else
 				$this->script = $this->sieve->script->as_array();
 
+			rcmail_overwrite_action('plugin.sieverules');
 			$this->api->output->send('sieverules.sieverules');
 		}
 		else if (strlen($text) > 0 && strlen($buttons) > 0) {
@@ -229,6 +230,7 @@ class sieverules extends rcube_plugin
 		}
 		else {
 			$this->sieve->save();
+			rcmail_overwrite_action('plugin.sieverules');
 			$this->api->output->send('sieverules.sieverules');
 		}
 	}
