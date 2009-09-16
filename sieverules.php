@@ -5,7 +5,7 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.0
+ * @version 1.1
  * @author Philip Weir
  * @url http://roundcube.net/plugins/sieverules
  */
