@@ -1,6 +1,11 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 09 23
+==========
+ * Support folder name encoding
+ * Support multiple hosts
+
 2009 09 05
 ==========
  * Minor layout updates

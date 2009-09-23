@@ -14,7 +14,7 @@
 
 $sieverules_config = array();
 
-// managesieve server address
+// managesieve server address, use %h for user's IMAP hostname
 $sieverules_config['managesieve_host'] = 'localhost';
 
 // managesieve server port
@@ -26,6 +26,11 @@ $sieverules_config['usetls'] = FALSE;
 // folder delimiter - if your sieve system uses a different folder delimiter to
 // your IMAP server set it here, otherwise leave as null to use IMAP delimiter
 $sieverules_config['folder_delimiter'] = null;
+
+// Sieve RFC says that we should use UTF-8 endcoding for mailbox names,
+// but some implementations does not covert UTF-8 to modified UTF-7.
+// set to null for default behaviour
+$sieverules_config['folder_encoding'] = null;
 
 // include the IMAP root in the folder path when creating the rules
 $sieverules_config['include_imap_root'] = FALSE;

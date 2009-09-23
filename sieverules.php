@@ -5,7 +5,7 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.1
+ * @version 1.2
  * @author Philip Weir
  * @url http://roundcube.net/plugins/sieverules
  */
@@ -750,7 +750,7 @@ class sieverules extends rcube_plugin
 			// try to connect to managesieve server and to fetch the script
 			$this->sieve = new rcube_sieve($_SESSION['username'],
 						$rcmail->decrypt($_SESSION['password']),
-						$this->config['managesieve_host'],
+						str_replace('%h', $_SESSION['imap_host'], $this->config['managesieve_host']),
 						$this->config['managesieve_port'],
 						$this->config['usetls'],
 						$this->config['ruleset_name'], $this->home);
@@ -1442,6 +1442,9 @@ class sieverules extends rcube_plugin
 			$a_mailboxes = array();
 
 			foreach ($a_folders as $ifolder) {
+				if ($this->config['folder_encoding'])
+					$ifolder = $this->_mbox_encode($ifolder, $this->config['folder_encoding']);
+
 				if (!empty($this->config['folder_delimiter']))
 					rcmail_build_folder_tree($a_mailboxes, str_replace($delimiter, $this->config['folder_delimiter'], $ifolder), $this->config['folder_delimiter']);
 				else
@@ -1510,6 +1513,11 @@ class sieverules extends rcube_plugin
 
 	private function _strip_val($str) {
 		return trim(htmlspecialchars_decode($str));
+	}
+
+	private function _mbox_encode($text, $encoding)
+	{
+		return rcube_charset_convert($text, 'UTF7-IMAP', $encoding);
 	}
 }
 
