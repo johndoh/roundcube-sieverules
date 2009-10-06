@@ -224,7 +224,7 @@ class sieverules extends rcube_plugin
 			$out .= "&nbsp;&nbsp;" . $this->api->output->button(array('command' => 'plugin.sieverules.import', 'prop' => '_ruleset=_none_', 'type' => 'input', 'class' => 'button', 'label' => 'cancel'));
 
 			$out = html::tag('p', array('style' => 'text-align: center; padding: 10px;'), "\n" . $out);
-			$out = html::tag('div', array('id' => 'identity-title'), Q($this->gettext('importfilters'))) . $out;
+			$out = html::tag('div', array('id' => 'prefs-title', 'class' => 'boxtitle'), Q($this->gettext('importfilters'))) . $out;
 
 			return $out;
 		}
