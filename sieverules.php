@@ -18,7 +18,7 @@ class sieverules extends rcube_plugin
 	private $script;
 	private $action;
 	private $examples = array();
-	private $force_vacto = true;
+	private $force_vacto = false;
 
 	// default values: label => value
 	private $headers = array('subject' => 'header::Subject',
