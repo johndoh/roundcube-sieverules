@@ -579,7 +579,7 @@ rcmail.sieverules_rule_join_radio = function(value) {
 	var rulesTable = rcube_find_object('rules-table');
 
 	if (rulesTable.tBodies[0].rows.length == 3)
-		sieverule_addrule(rulesTable.tBodies[0].rows[0]);
+		rcmail.command('plugin.sieverules.add_rule','', rulesTable.tBodies[0].rows[0]);
 
 	rulesTable.style.display = (value == 'any' ? 'none' : '');
 }

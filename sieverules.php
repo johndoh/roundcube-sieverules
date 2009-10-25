@@ -5,7 +5,7 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.2
+ * @version 1.3
  * @author Philip Weir
  * @url http://roundcube.net/plugins/sieverules
  */
@@ -18,6 +18,7 @@ class sieverules extends rcube_plugin
 	private $script;
 	private $action;
 	private $examples = array();
+	private $force_vacto = true;
 
 	// default values: label => value
 	private $headers = array('subject' => 'header::Subject',
@@ -1161,8 +1162,8 @@ class sieverules extends rcube_plugin
 		$vac_style = 'display: none;';
 		$imapflags_style = 'display: none;';
 		$notify_style = 'display: none;';
-		$vacadvstyle = 'display: none;';
-		$vacshowadv = '';
+		$vacadvstyle = ($action['type'] != 'vacation' && $this->force_vacto) ? '' : 'display: none;';
+		$vacshowadv = ($action['type'] != 'vacation' && $this->force_vacto) ? '1' : '';
 		$noteadvstyle = 'display: none;';
 		$noteshowadv = '';
 
@@ -1211,6 +1212,7 @@ class sieverules extends rcube_plugin
 			$origsubject = $action['origsubject'];
 			$msg = htmlspecialchars($action['msg']);
 			$charset = $action['charset'];
+			$this->force_vacto = false;
 
 			// check advanced enabled
 			if (!empty($vacfrom) || !empty($vacto) || !empty($handle) || $charset != RCMAIL_CHARSET) {
@@ -1301,7 +1303,15 @@ class sieverules extends rcube_plugin
 				$select_id->add($sql_arr['email'], $sql_arr['email']);
 
 				$ffield_id = 'rcmfd_vac_' . $rowid . '_' . $sql_arr['identity_id'];
-				$curaddress = in_array($sql_arr['email'], $vacto_arr) ? $sql_arr['email'] : "";
+
+				if ($this->force_vacto) {
+					$curaddress = $sql_arr['email'];
+					$vacto .= (!empty($vacto) ? ',' : '') . $sql_arr['email'];
+				}
+				else {
+					$curaddress = in_array($sql_arr['email'], $vacto_arr) ? $sql_arr['email'] : "";
+				}
+
 				$input_address = new html_checkbox(array('id' => $ffield_id, 'name' => '_vacto_check_' . $rowid . '[]', 'value' => $sql_arr['email'], 'onclick' => JS_OBJECT_NAME . '.sieverules_toggle_vac_to(this, '. $rowid .')', 'class' => 'checkbox'));
 				$to_addresses .= $input_address->show($curaddress) . "&nbsp;" . html::label($ffield_id, Q($sql_arr['email'])) . "<br />";
 			}

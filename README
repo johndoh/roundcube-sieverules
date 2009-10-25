@@ -146,3 +146,7 @@ The structure of the rule file
 ==============================
 By default this plugin generates rules in the form `if ... elsif` if you would rather each rule was a separate if statement then change `$elsif` to false at the top of rcube_sieve_script.php. You may also want to change the text for $messages['sieveruleexp'] in your localisation. This is displayed at the top of the filter rules fieldset.
 By default this plugin uses \r\n to seperate lines (RFC 5228) if you want to use \n instead then change RCUBE_SIEVE_NEWLINE at the top of rcube_sieve_script.php
+
+:addresses line in vaction messages
+===================================
+To force the :addresses line to always be added to new vataction messages set $force_vacto to true in sieverules.php. This only works on new rules, existing :addresses selections for existing rules will always be respected.
