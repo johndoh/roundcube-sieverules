@@ -335,12 +335,12 @@ class sieverules extends rcube_plugin
 
 		rcmail::get_instance()->imap_init(TRUE);
 		$actions_table = new html_table(array('id' => 'actions-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 3));
-		$actions_table = $this->_action_row($ext, $actions_table, 'rowid', null, $attrib);
+		$actions_table = $this->_action_row($ext, $actions_table, 'rowid', null, $attrib, $example);
 
 		if (!isset($cur_script))
-			$actions_table = $this->_action_row($ext, $actions_table, 0, array(), $attrib);
+			$actions_table = $this->_action_row($ext, $actions_table, 0, array(), $attrib, $example);
 		else foreach ($cur_script['actions'] as $idx => $actions)
-			$actions_table = $this->_action_row($ext, $actions_table, $idx, $actions, $attrib);
+			$actions_table = $this->_action_row($ext, $actions_table, $idx, $actions, $attrib, $example);
 
 		$out .= html::tag('fieldset', null, html::tag('legend', null, Q($this->gettext('messagesactions')))
 				. Q($this->gettext('sieveactexp')). "<br /><br />"
@@ -1144,7 +1144,7 @@ class sieverules extends rcube_plugin
 		return $rules_table;
 	}
 
-	private function _action_row($ext, $actions_table, $rowid, $action, $attrib) {
+	private function _action_row($ext, $actions_table, $rowid, $action, $attrib, $example) {
 		$rcmail = rcmail::get_instance();
 		static $a_mailboxes;
 		$imgclass = null;
@@ -1212,10 +1212,10 @@ class sieverules extends rcube_plugin
 			$origsubject = $action['origsubject'];
 			$msg = htmlspecialchars($action['msg']);
 			$charset = $action['charset'];
-			$this->force_vacto = false;
+			if (!$example) $this->force_vacto = false;
 
 			// check advanced enabled
-			if (!empty($vacfrom) || !empty($vacto) || !empty($handle) || $charset != RCMAIL_CHARSET) {
+			if (!empty($vacfrom) || !empty($vacto) || !empty($handle) || $charset != RCMAIL_CHARSET || $this->force_vacto) {
 				$vacadvstyle = '';
 				$vacshowadv = '1';
 			}
