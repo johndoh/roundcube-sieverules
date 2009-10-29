@@ -33,11 +33,12 @@ class rcube_sieve {
 	private $sieve;
 	private $ruleset;
 	private $importers;
+	private $elsif;
 	public $error = false;
 	public $list = array();
 	public $script;
 
-	public function __construct($username, $password, $host, $port, $usetls, $ruleset, $dir) {
+	public function __construct($username, $password, $host, $port, $usetls, $ruleset, $dir, $elsif = true) {
 		$this->sieve = new Net_Sieve();
 
 		if (PEAR::isError($this->sieve->connect($host, $port, NULL, $usetls)))
@@ -47,6 +48,7 @@ class rcube_sieve {
 			return $this->_set_error(SIEVE_ERROR_LOGIN);
 
 		$this->ruleset = $ruleset;
+		$this->elsif = $elsif;
 		$this->get_script();
 
 		// init importers
@@ -149,7 +151,7 @@ class rcube_sieve {
 			$script = '';
 		}
 
-		$this->script = new rcube_sieve_script($script, $this->get_extensions());
+		$this->script = new rcube_sieve_script($script, $this->get_extensions(), $this->elsif);
 	}
 
 	private function _set_error($error) {

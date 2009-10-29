@@ -64,6 +64,10 @@ class sieverules extends rcube_plugin
 	function init_html()
 	{
 		$this->_load_config();
+		// always include all identities when creating vacation messages
+		if ($this->config['force_vacto'])
+			$this->force_vacto = $this->config['force_vacto'];
+
 		$this->_startup();
 
 		if ($this->config['adveditor'] == '2' && get_input_value('_override', RCUBE_INPUT_GET) != '1' && $this->action == 'plugin.sieverules') {
@@ -752,9 +756,8 @@ class sieverules extends rcube_plugin
 			$this->sieve = new rcube_sieve($_SESSION['username'],
 						$rcmail->decrypt($_SESSION['password']),
 						str_replace('%h', $_SESSION['imap_host'], $this->config['managesieve_host']),
-						$this->config['managesieve_port'],
-						$this->config['usetls'],
-						$this->config['ruleset_name'], $this->home);
+						$this->config['managesieve_port'], $this->config['usetls'],
+						$this->config['ruleset_name'], $this->home, isset($this->config['use_elsif']) ? $this->config['use_elsif'] : true);
 
 			$this->sieve_error = $this->sieve->error();
 

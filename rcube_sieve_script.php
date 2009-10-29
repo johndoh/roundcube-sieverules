@@ -37,8 +37,11 @@ define('SIEVE_ERROR_BAD_ACTION', 1);
 define('SIEVE_ERROR_NOT_FOUND', 2);
 
 // define constants for sieve file
-define('RCUBE_SIEVE_NEWLINE', "\r\n");
-define('RCUBE_SIEVE_INDENT', "\t");
+if (!defined('RCUBE_SIEVE_NEWLINE'))
+	define('RCUBE_SIEVE_NEWLINE', "\r\n");
+
+if (!defined('RCUBE_SIEVE_INDENT'))
+	define('RCUBE_SIEVE_INDENT', "\t");
 
 class rcube_sieve_script {
 	private $elsif = true;
@@ -56,8 +59,9 @@ class rcube_sieve_script {
 						);
 	public $raw = '';
 
-	public function __construct($script, $ext = array()) {
+	public function __construct($script, $ext = array(), $elsif = true) {
 		$this->raw = $script;
+		$this->elsif = $elsif;
 
 		// adjust supported extenstion to match sieve server
 		$this->supported = array_intersect($this->supported, $ext);
