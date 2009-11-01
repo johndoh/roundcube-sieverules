@@ -58,7 +58,6 @@
   right: 0px;
   bottom: 0px;
   border: 1px solid #999999;
-  overflow: auto;
   /* css hack for IE */
   height: expression(parseInt(this.parentNode.offsetHeight)+'px');
   width: expression((parseInt(this.parentNode.offsetWidth)-250)+'px');

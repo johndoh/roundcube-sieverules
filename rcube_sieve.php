@@ -34,6 +34,7 @@ class rcube_sieve {
 	private $ruleset;
 	private $importers;
 	private $elsif;
+	private $cache = true;
 	public $error = false;
 	public $list = array();
 	public $script;
@@ -92,6 +93,7 @@ class rcube_sieve {
 		if (PEAR::isError($this->sieve->setActive($this->ruleset)))
 			return $this->_set_error(SIEVE_ERROR_ACTIVATE);
 
+		if ($this->cache) $_SESSION['sieverules_script_cache'] = serialize($this->script);
 		return true;
 	}
 
@@ -135,6 +137,11 @@ class rcube_sieve {
 		if (!$this->sieve)
 			return false;
 
+		if ($this->cache && $_SESSION['sieverules_script_cache']) {
+			$this->script = unserialize($_SESSION['sieverules_script_cache']);
+			return;
+		}
+
 		$this->list = $this->sieve->listScripts();
 
 		if (PEAR::isError($this->list))
@@ -152,6 +159,7 @@ class rcube_sieve {
 		}
 
 		$this->script = new rcube_sieve_script($script, $this->get_extensions(), $this->elsif);
+		if ($this->cache) $_SESSION['sieverules_script_cache'] = serialize($this->script);
 	}
 
 	private function _set_error($error) {

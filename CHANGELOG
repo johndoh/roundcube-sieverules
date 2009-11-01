@@ -1,6 +1,11 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 10 31
+==========
+ * Use frames to avoid full page reloads
+ * Use rule cache to speed things up a little
+ 
 2009 09 23
 ==========
  * Support folder name encoding

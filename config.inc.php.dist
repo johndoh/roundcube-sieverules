@@ -79,7 +79,7 @@ $sieverules_config['predefined_rules'] = array();
 // 0 - Disabled, option not shown in the UI
 // 1 - Enabled, option shown in the UI
 // 2 - Option shown in the UI and used by default
-$sieverules_config['adveditor'] = '0';
+$sieverules_config['adveditor'] = 0;
 
 // Default (or global) sieve rule file
 $sieverules_config['default_file'] = '/etc/dovecot/sieve/default';

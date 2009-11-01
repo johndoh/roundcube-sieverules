@@ -58,11 +58,32 @@ if (window.rcmail) {
 				}
 			}, true);
 
-			rcmail.register_command('plugin.sieverules.add', function(id){ rcmail.goto_url('plugin.sieverules.add', '', true); }, true);
+			rcmail.register_command('plugin.sieverules.add', function(id){
+					if (rcmail.sieverules_examples) rcmail.sieverules_examples.clear_selection();
+					rcmail.sieverules_list.clear_selection();
+				    var add_url = '';
+
+				    var target = window;
+				    if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
+						add_url = '&_framed=1';
+						target = window.frames[rcmail.env.contentframe];
+						rcube_find_object(rcmail.env.contentframe).style.visibility = 'inherit';
+					}
+
+					target.location.href = rcmail.env.comm_path+'&_action=plugin.sieverules.add' + add_url;
+			}, true);
 			rcmail.enable_command('plugin.sieverules.add', true);
 		}
 		else if (rcmail.env.action == 'plugin.sieverules.setup') {
-			rcmail.register_command('plugin.sieverules.import', function(props){ rcmail.goto_url('plugin.sieverules.import', props, true); }, true);
+			rcmail.register_command('plugin.sieverules.import', function(props){
+			    var add_url = '';
+
+			    var target = window;
+			    if (rcmail.env.framed)
+					target = window.parent;
+
+				target.location.href = './?_task=settings&_action=plugin.sieverules.import&' + props;
+			}, true);
 			rcmail.enable_command('plugin.sieverules.import', true);
 		}
 		else if (rcmail.env.action == 'plugin.sieverules.advanced') {
@@ -174,7 +195,11 @@ if (window.rcmail) {
 			}, true);
 
 			rcmail.register_command('plugin.sieverules.save', function(){
-				var rows = rcmail.sieverules_list.rows;
+				var rows;
+				if (rcmail.env.framed)
+					rows = parent.rcmail.sieverules_list.rows;
+				else
+					rows = rcmail.sieverules_list.rows;
 				var input_name = rcube_find_object('_name');
 				var rule_join = document.getElementsByName('_join');
 				var headers = document.getElementsByName('_header[]');
@@ -335,8 +360,18 @@ if (window.rcmail) {
 			}, true);
 
 			rcmail.register_command('plugin.sieverules.delete', function(id){
-				if (confirm(rcmail.gettext('filterdeleteconfirm','sieverules')))
-					rcmail.goto_url('plugin.sieverules.delete', '_iid=' + rcmail.env.iid, true);
+				if (confirm(rcmail.gettext('filterdeleteconfirm','sieverules'))) {
+				    var add_url = '';
+
+				    var target = window;
+				    if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
+						add_url = '&_framed=1';
+						target = window.frames[rcmail.env.contentframe];
+						rcube_find_object(rcmail.env.contentframe).style.visibility = 'inherit';
+					}
+
+					target.location.href = rcmail.env.comm_path+'&_action=plugin.sieverules.delete&_iid=' + rcmail.env.iid;
+				}
 			}, true);
 
 			rcmail.enable_command('plugin.sieverules.save', 'plugin.sieverules.delete', true);
@@ -345,6 +380,7 @@ if (window.rcmail) {
 }
 
 rcmail.sieverules_select = function(list) {
+	if (rcmail.sieverules_examples) rcmail.sieverules_examples.clear_selection();
 	var id;
 
 	if (this.sieverules_timer)
@@ -362,6 +398,7 @@ rcmail.sieverules_keypress = function(list) {
 }
 
 rcmail.sieverules_ex_select = function(list) {
+	rcmail.sieverules_list.clear_selection();
 	if (list.multi_selecting)
 		return false;
 
@@ -515,63 +552,112 @@ rcmail.sieverules_load = function(id, action) {
 	return true;
 }
 
-rcmail.sieverules_update_list = function(_src, _dst) {
+rcmail.sieverules_update_list = function(action, param1, param2, param3, param4) {
 	var sid = rcmail.sieverules_list.get_single_selection();
 	var selection;
 	var rows = rcmail.sieverules_list.rows;
 	var rules = Array();
 
-	// create array of rules
-	for (var i = 0; i < rows.length; i++) {
-		rules[i] = rows[i].obj.cells[0].innerHTML;
+	switch(action) {
+	case 'add-first':
+		rcmail.sieverules_list.clear();
+	case 'add':
+		var newrow = document.createElement('tr');
 
-		if (sid == i) selection = rules[i];
-	}
+		if (param1 == -1) {
+			var cell = newrow.insertCell(0);
+			cell.setAttribute('colspan', '2');
+			cell.appendChild(document.createTextNode(param2));
+		}
+		else {
+			newrow.id = param1;
+			var cell = newrow.insertCell(0);
+			cell.appendChild(document.createTextNode(param2));
+			cell = newrow.insertCell(1);
+			cell.setAttribute('class', 'control');
 
-	// assign order
-	rules.splice(_dst, 0, rules[_src]);
+			param3 = param3.replace(/%url%/, rcmail.env.sieverules_moveup);
+			param3 = param3.replace(/\\'/g, '\'');
+			param4 = param4.replace(/%url%/, rcmail.env.sieverules_movedown);
+			param4 = param4.replace(/\\'/g, '\'');
 
-	if (parseInt(_src) < parseInt(_dst))
-		rules.splice(_src, 1);
-	else
-		rules.splice(parseInt(_src) + 1, 1);
+			cell.innerHTML = param3 + '&nbsp;' + param4;
+		}
 
-	// update table
-	for (var i = 0; i < rows.length; i++) {
-		rows[i].obj.cells[0].innerHTML = rules[i];
+		rcmail.sieverules_list.insert_row(newrow);
+		break;
+	case 'update':
+		rows[param1].obj.cells[0].innerHTML = param2;
+		break;
+	case 'delete':
+		rcmail.sieverules_list.clear_selection();
+		sid = null;
+	case 'reload':
+		rcmail.sieverules_list.clear();
+		rcmail.http_request('plugin.sieverules.update_list', '', false);
+		break;
+	case 'move':
+		// create array of rules
+		for (var i = 0; i < rows.length; i++) {
+			rules[i] = rows[i].obj.cells[0].innerHTML;
 
-		if (rules[i] == selection) sid = i;
-	}
+			if (sid == i) selection = rules[i];
+		}
 
-	// update iid of rule being editied
-	var iid;
-	if (iid = rcube_find_object('_iid')) {
-		if (iid.value != _src && iid.value != "") {
-			if (iid.value > _src && iid.value < _dst) {
-				sid = parseInt(iid.value) - 1;
+		// assign order
+		rules.splice(param2, 0, rules[param1]);
+
+		if (parseInt(param1) < parseInt(param2))
+			rules.splice(param1, 1);
+		else
+			rules.splice(parseInt(param1) + 1, 1);
+
+		// update table
+		for (var i = 0; i < rows.length; i++) {
+			rows[i].obj.cells[0].innerHTML = rules[i];
+
+			if (rules[i] == selection) sid = i;
+		}
+
+	    var target = window;
+	    if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe])
+			target = window.frames[rcmail.env.contentframe];
+
+		// update iid of rule being editied
+		var iid;
+		if (target.rcube_find_object && (iid = target.rcube_find_object('_iid'))) {
+			if (iid.value != param1 && iid.value != "") {
+				if (iid.value > param1 && iid.value < param2) {
+					sid = parseInt(iid.value) - 1;
+					rcmail.sieverules_list.highlight_row(sid);
+					rcmail.sieverules_list.select_row(sid);
+					iid.value = sid;
+					target.rcmail.env.iid = sid;
+				}
+				else if (iid.value < param1 && iid.value > param2) {
+					sid = parseInt(iid.value) + 1;
+					rcmail.sieverules_list.highlight_row(sid);
+					rcmail.sieverules_list.select_row(sid);
+					iid.value = sid;
+					target.rcmail.env.iid = sid;
+				}
+				else {
+					rcmail.sieverules_list.select_row(iid.value);
+				}
+			}
+			else if (iid.value != "") {
 				rcmail.sieverules_list.highlight_row(sid);
 				rcmail.sieverules_list.select_row(sid);
 				iid.value = sid;
-			}
-			else if (iid.value < _src && iid.value > _dst) {
-				sid = parseInt(iid.value) + 1;
-				rcmail.sieverules_list.highlight_row(sid);
-				rcmail.sieverules_list.select_row(sid);
-				iid.value = sid;
-			}
-			else {
-				rcmail.sieverules_list.select_row(iid.value);
+				target.rcmail.env.iid = sid;
 			}
 		}
-		else if (iid.value != "") {
+		else if (sid) {
 			rcmail.sieverules_list.highlight_row(sid);
 			rcmail.sieverules_list.select_row(sid);
-			iid.value = sid;
 		}
-	}
-	else if (sid) {
-		rcmail.sieverules_list.highlight_row(sid);
-		rcmail.sieverules_list.select_row(sid);
+
+		break;
 	}
 }
 
@@ -879,4 +965,17 @@ rcmail.sieverules_adveditor = function(sel) {
 		rcmail.goto_url('plugin.sieverules.advanced', '', true);
 	else
 		rcmail.goto_url('plugin.sieverules', '_override=1', true);
+}
+
+rcmail.sieverules_load_setup = function() {
+    var add_url = '';
+
+    var target = window;
+    if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
+		add_url = '&_framed=1';
+		target = window.frames[rcmail.env.contentframe];
+		rcube_find_object(rcmail.env.contentframe).style.visibility = 'inherit';
+	}
+
+	target.location.href = rcmail.env.comm_path+'&_action=plugin.sieverules.setup' + add_url;
 }

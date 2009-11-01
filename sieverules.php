@@ -5,7 +5,7 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.3
+ * @version 1.4
  * @author Philip Weir
  * @url http://roundcube.net/plugins/sieverules
  */
@@ -52,12 +52,13 @@ class sieverules extends rcube_plugin
 		$this->register_action('plugin.sieverules', array($this, 'init_html'));
 		$this->register_action('plugin.sieverules.add', array($this, 'init_html'));
 		$this->register_action('plugin.sieverules.edit', array($this, 'init_html'));
-		$this->register_action('plugin.sieverules.setup', array($this, 'init_html'));
+		$this->register_action('plugin.sieverules.setup', array($this, 'init_setup'));
 		$this->register_action('plugin.sieverules.advanced', array($this, 'init_html'));
 		$this->register_action('plugin.sieverules.move', array($this, 'move'));
 		$this->register_action('plugin.sieverules.save', array($this, 'save'));
 		$this->register_action('plugin.sieverules.delete', array($this, 'delete'));
 		$this->register_action('plugin.sieverules.import', array($this, 'import'));
+		$this->register_action('plugin.sieverules.update_list', array($this, 'gen_js_list'));
 		$this->include_script('sieverules.js');
 	}
 
@@ -70,7 +71,7 @@ class sieverules extends rcube_plugin
 
 		$this->_startup();
 
-		if ($this->config['adveditor'] == '2' && get_input_value('_override', RCUBE_INPUT_GET) != '1' && $this->action == 'plugin.sieverules') {
+		if ($this->config['adveditor'] == 2 && get_input_value('_override', RCUBE_INPUT_GET) != '1' && $this->action == 'plugin.sieverules') {
 			rcmail_overwrite_action('plugin.sieverules.advanced');
 			$this->action = 'plugin.sieverules.advanced';
 		}
@@ -82,6 +83,7 @@ class sieverules extends rcube_plugin
 		'sieveruleform' => array($this, 'gen_form'),
 		'advancededitor' => array($this, 'gen_advanced'),
 		'advswitch' => array($this, 'gen_advswitch'),
+		'sieverulesframe' => array($this, 'sieverules_frame'),
 		));
 
 		if ($this->action != 'plugin.sieverules.advanced')
@@ -100,7 +102,8 @@ class sieverules extends rcube_plugin
 		}
 		elseif ($this->action == 'plugin.sieverules.setup') {
 			$this->api->output->set_pagetitle($this->gettext('filters'));
-			$this->api->output->send('sieverules.setupsieverules');
+			$this->api->output->add_script(JS_OBJECT_NAME .".add_onload('". JS_OBJECT_NAME .".sieverules_load_setup()');");
+			$this->api->output->send('sieverules.sieverules');
 		}
 		elseif ($this->action == 'plugin.sieverules.advanced') {
 			$this->api->output->set_pagetitle($this->gettext('filters'));
@@ -110,6 +113,32 @@ class sieverules extends rcube_plugin
 			$this->api->output->set_pagetitle($this->gettext('filters'));
 			$this->api->output->send('sieverules.sieverules');
 		}
+	}
+
+	function init_setup()
+	{
+		$this->_load_config();
+		$this->_startup();
+
+		$this->api->output->add_handlers(array(
+		'sieverulessetup' => array($this, 'gen_setup'),
+		));
+
+		$this->api->output->set_pagetitle($this->gettext('filters'));
+		$this->api->output->send('sieverules.setupsieverules');
+	}
+
+	function sieverules_frame($attrib)
+	{
+		if (!$attrib['id'])
+			$attrib['id'] = 'rcmprefsframe';
+
+		$attrib['name'] = $attrib['id'];
+
+		$this->api->output->set_env('contentframe', $attrib['name']);
+		$this->api->output->set_env('blankpage', $attrib['src'] ? $this->api->output->abs_url($attrib['src']) : 'program/blank.gif');
+
+		return html::iframe($attrib);
 	}
 
 	function gen_advanced($attrib)
@@ -127,6 +156,8 @@ class sieverules extends rcube_plugin
 
 	function gen_list($attrib)
 	{
+		$this->api->output->set_env('sieverules_moveup', $attrib['upicon']);
+		$this->api->output->set_env('sieverules_movedown', $attrib['downicon']);
 		$this->api->output->add_label('sieverules.movingfilter');
 		$this->api->output->add_gui_object('sieverules_list', 'sieverules-table');
 
@@ -156,6 +187,34 @@ class sieverules extends rcube_plugin
 		return html::tag('div', array('id' => 'sieverules-list-filters'), $table->show());
 	}
 
+	function gen_js_list()
+	{
+		$this->_load_config();
+		$this->_startup();
+
+		if (sizeof($this->script) == 0) {
+			$this->api->output->command('sieverules_update_list', 'add', -1, rep_specialchars_output($this->gettext('nosieverules')));
+		}
+		else foreach($this->script as $idx => $filter) {
+			if ($filter['disabled'] == 1)
+				$filter_name = $filter['name'] . ' (' . $this->gettext('disabled') . ')';
+			else
+				$filter_name = $filter['name'];
+
+			$tmp_output = new rcube_template('settings');
+			$dst = $idx - 1;
+			$up_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => '%url%', 'alt' => 'sieverules.moveup', 'title' => 'sieverules.moveup'));
+			$up_link = str_replace("'", "\'", $up_link);
+			$dst = $idx + 2;
+			$down_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => '%url%', 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
+			$down_link = str_replace("'", "\'", $down_link);
+
+			$this->api->output->command('sieverules_update_list', 'add', 'rcmrow' . $idx, $filter_name, $up_link, $down_link);
+		}
+
+		$this->api->output->send();
+	}
+
 	function gen_examples()
 	{
 		if (sizeof($this->examples) > 0) {
@@ -179,7 +238,7 @@ class sieverules extends rcube_plugin
 
 	function gen_advswitch()
 	{
-		if ($this->config['adveditor'] == '1' or $this->config['adveditor'] == '2') {
+		if ($this->config['adveditor'] == 1 or $this->config['adveditor'] == 2) {
 			$this->api->output->add_label('sieverules.switchtoadveditor');
 			$input_adv = new html_checkbox(array('id' => 'adveditor', 'onclick' => JS_OBJECT_NAME . '.sieverules_adveditor(this);', 'value' => '1'));
 			$out = html::label('adveditor', Q($this->gettext('adveditor'))) . $input_adv->show($this->action == 'plugin.sieverules.advanced' ? '1' : '');
@@ -267,6 +326,11 @@ class sieverules extends rcube_plugin
 			$cur_script = $this->script[$iid];
 			$this->api->output->set_env('iid', $iid);
 			$example = false;
+
+			if (isset($this->script[$iid])) {
+				$this->api->output->add_script("if (parent.". JS_OBJECT_NAME .".sieverules_examples) parent.". JS_OBJECT_NAME .".sieverules_examples.clear_selection();");
+				$this->api->output->add_script("parent.". JS_OBJECT_NAME .".sieverules_list.highlight_row(".$iid.");");
+			}
 		}
 
 		if (sizeof($this->config['predefined_rules']) > 0) {
@@ -367,7 +431,7 @@ class sieverules extends rcube_plugin
 		$result = $this->sieve->save();
 
 		if ($result)
-			$this->api->output->command('sieverules_update_list', $src , $dst);
+			$this->api->output->command('sieverules_update_list', 'move', $src , $dst);
 		else
 			$this->api->output->command('display_message', $this->gettext('filtersaveerror'), 'error');
 
@@ -380,7 +444,7 @@ class sieverules extends rcube_plugin
 		$this->_startup();
 
 		$script = trim(get_input_value('_script', RCUBE_INPUT_POST));
-		if ($script != '' && ($this->config['adveditor'] == '1' || $this->config['adveditor'] == '2')) {
+		if ($script != '' && ($this->config['adveditor'] == 1 || $this->config['adveditor'] == 2)) {
 			$script = $this->_strip_val($script);
 			$save = $this->sieve->save($script);
 
@@ -399,7 +463,7 @@ class sieverules extends rcube_plugin
 		}
 		else {
 			$name = trim(get_input_value('_name', RCUBE_INPUT_POST));
-			$fid = trim(get_input_value('_iid', RCUBE_INPUT_POST));
+			$iid = trim(get_input_value('_iid', RCUBE_INPUT_POST));
 			$join = trim(get_input_value('_join', RCUBE_INPUT_POST));
 			$disabled = trim(get_input_value('_disable', RCUBE_INPUT_POST));
 
@@ -595,31 +659,50 @@ class sieverules extends rcube_plugin
 				$i++;
 			}
 
-			if (!isset($this->script[$fid]))
-				$fid = $this->sieve->script->add_rule($script);
+			if (!isset($this->script[$iid]))
+				$result = $this->sieve->script->add_rule($script);
 			else
-				$fid = $this->sieve->script->update_rule($fid, $script);
+				$result = $this->sieve->script->update_rule($iid, $script);
 
-			if ($fid === true)
+			if ($result === true)
 				$save = $this->sieve->save();
 
-			if ($save && $fid === true) {
+			if ($save && $result === true) {
 				$this->api->output->command('display_message', $this->gettext('filtersaved'), 'confirmation');
+
+				if ($script['disabled'] == 1)
+					$filter_name = $script['name'] . ' (' . $this->gettext('disabled') . ')';
+				else
+					$filter_name = $script['name'];
+
+				$dst = $iid - 1;
+				$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => '%url%', 'alt' => 'sieverules.moveup', 'title' => 'sieverules.moveup'));
+				$up_link = str_replace("'", "\'", $up_link);
+				$dst = $iid + 2;
+				$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => '%url%', 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
+				$down_link = str_replace("'", "\'", $down_link);
+
+				if (!isset($this->script[$iid]) && sizeof($this->script) == 0)
+					$this->api->output->add_script("parent.". JS_OBJECT_NAME .".sieverules_update_list('add-first', 'rcmrow". $iid ."', '". $filter_name ."', '". $up_link ."', '". $down_link ."');");
+				elseif (!isset($this->script[$iid]))
+					$this->api->output->add_script("parent.". JS_OBJECT_NAME .".sieverules_update_list('add', 'rcmrow". $iid ."', '". $filter_name ."', '". $up_link ."', '". $down_link ."');");
+				else
+					$this->api->output->add_script("parent.". JS_OBJECT_NAME .".sieverules_update_list('update', ". $iid .", '". $filter_name ."');");
 			}
 			else {
-				if ($fid == SIEVE_ERROR_BAD_ACTION)
+				if ($result == SIEVE_ERROR_BAD_ACTION)
 					$this->api->output->command('display_message', $this->gettext('filteractionerror'), 'error');
-				elseif ($fid == SIEVE_ERROR_NOT_FOUND)
+				elseif ($result == SIEVE_ERROR_NOT_FOUND)
 					$this->api->output->command('display_message', $this->gettext('filtermissingerror'), 'error');
 				else
 					$this->api->output->command('display_message', $this->gettext('filtersaveerror'), 'error');
 			}
 
 			// update rule list
-			if ($this->sieve_error)
-				$this->script = array();
-			else
-				$this->script = $this->sieve->script->as_array();
+ 			if ($this->sieve_error)
+ 				$this->script = array();
+ 			else
+ 				$this->script = $this->sieve->script->as_array();
 
 			// go to next step
 			rcmail_overwrite_action('plugin.sieverules.edit');
@@ -641,8 +724,10 @@ class sieverules extends rcube_plugin
 				$result = $this->sieve->save();
 		}
 
-		if ($result === true)
+		if ($result === true) {
 			$this->api->output->command('display_message', $this->gettext('filterdeleted'), 'confirmation');
+			$this->api->output->add_script("parent.". JS_OBJECT_NAME .".sieverules_update_list('delete', ". $ids .");");
+		}
 		elseif ($result == SIEVE_ERROR_NOT_FOUND)
 			$this->api->output->command('display_message', $this->gettext('filtermissingerror'), 'error');
 		else
@@ -655,9 +740,10 @@ class sieverules extends rcube_plugin
 			$this->script = $this->sieve->script->as_array();
 
 		// go to sieverules page
-		rcmail_overwrite_action('plugin.sieverules');
-		$this->action = 'plugin.sieverules';
-		$this->init_html();
+		// rcmail_overwrite_action('plugin.sieverules.edit');
+		// $this->action = 'plugin.sieverules.edit';
+		// $this->init_html();
+		$this->api->output->add_script("parent.". JS_OBJECT_NAME .".show_contentframe(false);");
 	}
 
 	function import()
