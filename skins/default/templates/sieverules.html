@@ -25,7 +25,11 @@
     left: <roundcube:exp expression="!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter+5 : 250" />px;
     <roundcube:exp expression="browser:ie ? ('width:expression((parseInt(mainscreen.offsetWidth)-'.(!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter+5 : 250).')+\\'px\\');') : ''" />
 }
-
+<roundcube:if condition="config:sieverules_multiplerules == true" />
+#mainscreen {
+	top: 120px;
+}
+<roundcube:endif />
 </style>
 
 </head>
@@ -35,6 +39,15 @@
 <roundcube:include file="/includes/header.html" />
 <roundcube:include file="/includes/settingstabs.html" />
 
+<roundcube:if condition="config:sieverules_multiplerules == true" />
+<div id="rulesets">
+<roundcube:object name="rulelist" />
+<roundcube:button command="plugin.sieverules.ruleset_dialog" type="image" alt="sieverules.newruleset" title="sieverules.newruleset" image="/this/add.png" />
+<roundcube:button command="plugin.sieverules.ruleset_dialog" prop="rename_ruleset" type="image" alt="sieverules.renameruleset" title="sieverules.renameruleset" image="/this/rename.png" />
+<roundcube:button command="plugin.sieverules.del_ruleset" type="image" alt="sieverules.delruleset" title="sieverules.delruleset" imageAct="/this/delete.png" imagePas="/this/deletePas.png" />
+<roundcube:button command="plugin.sieverules.activate_ruleset" type="image" alt="sieverules.activateruleset" title="sieverules.activateruleset" imageAct="/this/enable.png" imagePas="/this/enablePas.png" />
+</div>
+<roundcube:endif />
 <div id="mainscreen">
 
 <div id="sieverules-list">
@@ -61,7 +74,9 @@
 
 <p id="listbuttons">
 <roundcube:button command="plugin.sieverules.add" type="input" label="sieverules.newfilter" class="button" />
+<roundcube:if condition="config:sieverules_adveditor == 1 || config:sieverules_adveditor == 2" />
 <roundcube:object name="advswitch" />
+<roundcube:endif />
 </p>
 
 </body>

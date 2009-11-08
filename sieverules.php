@@ -5,20 +5,20 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.4
+ * @version 1.5
  * @author Philip Weir
  * @url http://roundcube.net/plugins/sieverules
  */
 class sieverules extends rcube_plugin
 {
 	public $task = 'settings';
-	private $config;
 	private $sieve;
 	private $sieve_error;
 	private $script;
 	private $action;
 	private $examples = array();
 	private $force_vacto = false;
+	private $current_ruleset;
 
 	// default values: label => value
 	private $headers = array('subject' => 'header::Subject',
@@ -47,8 +47,23 @@ class sieverules extends rcube_plugin
 
 	function init()
 	{
-		$this->action = rcmail::get_instance()->action;
+		$rcmail = rcmail::get_instance();
+		$this->load_config();
+
+		if ($rcmail->config->get('sieverules_multiplerules') && get_input_value('_ruleset', RCUBE_INPUT_GET))
+			$this->current_ruleset = get_input_value('_ruleset', RCUBE_INPUT_GET);
+		elseif ($rcmail->config->get('sieverules_multiplerules') && $_SESSION['sieverules_current_ruleset'])
+			$this->current_ruleset = $_SESSION['sieverules_current_ruleset'];
+		elseif ($rcmail->config->get('sieverules_multiplerules'))
+			$this->current_ruleset = false;
+		else
+			$this->current_ruleset = $rcmail->config->get('sieverules_ruleset_name');
+
+		$this->action = $rcmail->action;
+
 		$this->add_texts('localization/', array('filters'));
+		$this->include_script('sieverules.js');
+
 		$this->register_action('plugin.sieverules', array($this, 'init_html'));
 		$this->register_action('plugin.sieverules.add', array($this, 'init_html'));
 		$this->register_action('plugin.sieverules.edit', array($this, 'init_html'));
@@ -59,19 +74,39 @@ class sieverules extends rcube_plugin
 		$this->register_action('plugin.sieverules.delete', array($this, 'delete'));
 		$this->register_action('plugin.sieverules.import', array($this, 'import'));
 		$this->register_action('plugin.sieverules.update_list', array($this, 'gen_js_list'));
-		$this->include_script('sieverules.js');
+		$this->register_action('plugin.sieverules.del_ruleset', array($this, 'delete_ruleset'));
+		$this->register_action('plugin.sieverules.rename_ruleset', array($this, 'rename_ruleset'));
+		$this->register_action('plugin.sieverules.enable_ruleset', array($this, 'enable_ruleset'));
+		$this->register_action('plugin.sieverules.copy_filter', array($this, 'copy_filter'));
 	}
 
 	function init_html()
 	{
-		$this->_load_config();
+		$rcmail = rcmail::get_instance();
+
 		// always include all identities when creating vacation messages
-		if ($this->config['force_vacto'])
-			$this->force_vacto = $this->config['force_vacto'];
+		if ($rcmail->config->get('sieverules_force_vacto'))
+			$this->force_vacto = $rcmail->config->get('sieverules_force_vacto');
 
 		$this->_startup();
 
-		if ($this->config['adveditor'] == 2 && get_input_value('_override', RCUBE_INPUT_GET) != '1' && $this->action == 'plugin.sieverules') {
+		if ($rcmail->config->get('sieverules_multiplerules') && $this->current_ruleset === false) {
+			if ($ruleset = $this->sieve->get_active()) {
+				$this->current_ruleset = $this->sieve->get_active();
+			}
+			else {
+				$this->current_ruleset = $rcmail->config->get('sieverules_ruleset_name');
+				$this->_startup();
+				rcmail_overwrite_action('plugin.sieverules.setup');
+				$this->action = 'plugin.sieverules.setup';
+			}
+		}
+
+		if ($rcmail->config->get('sieverules_multiplerules'))
+			$_SESSION['sieverules_current_ruleset'] = $this->current_ruleset;
+
+		$this->api->output->set_env('ruleset', $this->current_ruleset);
+		if ($rcmail->config->get('sieverules_adveditor') == 2 && get_input_value('_override', RCUBE_INPUT_GET) != '1' && $this->action == 'plugin.sieverules') {
 			rcmail_overwrite_action('plugin.sieverules.advanced');
 			$this->action = 'plugin.sieverules.advanced';
 		}
@@ -83,6 +118,7 @@ class sieverules extends rcube_plugin
 		'sieveruleform' => array($this, 'gen_form'),
 		'advancededitor' => array($this, 'gen_advanced'),
 		'advswitch' => array($this, 'gen_advswitch'),
+		'rulelist' => array($this, 'gen_rulelist'),
 		'sieverulesframe' => array($this, 'sieverules_frame'),
 		));
 
@@ -117,7 +153,6 @@ class sieverules extends rcube_plugin
 
 	function init_setup()
 	{
-		$this->_load_config();
 		$this->_startup();
 
 		$this->api->output->add_handlers(array(
@@ -158,7 +193,7 @@ class sieverules extends rcube_plugin
 	{
 		$this->api->output->set_env('sieverules_moveup', $attrib['upicon']);
 		$this->api->output->set_env('sieverules_movedown', $attrib['downicon']);
-		$this->api->output->add_label('sieverules.movingfilter');
+		$this->api->output->add_label('sieverules.movingfilter', 'loading');
 		$this->api->output->add_gui_object('sieverules_list', 'sieverules-table');
 
 		$table = new html_table(array('id' => 'sieverules-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 2));
@@ -189,11 +224,10 @@ class sieverules extends rcube_plugin
 
 	function gen_js_list()
 	{
-		$this->_load_config();
 		$this->_startup();
 
 		if (sizeof($this->script) == 0) {
-			$this->api->output->command('sieverules_update_list', 'add', -1, rep_specialchars_output($this->gettext('nosieverules')));
+			$this->api->output->command('sieverules_update_list', 'add-first', -1, rep_specialchars_output($this->gettext('nosieverules')));
 		}
 		else foreach($this->script as $idx => $filter) {
 			if ($filter['disabled'] == 1)
@@ -209,7 +243,7 @@ class sieverules extends rcube_plugin
 			$down_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => '%url%', 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
 			$down_link = str_replace("'", "\'", $down_link);
 
-			$this->api->output->command('sieverules_update_list', 'add', 'rcmrow' . $idx, $filter_name, $up_link, $down_link);
+			$this->api->output->command('sieverules_update_list', $idx == 0 ? 'add-first' : 'add', 'rcmrow' . $idx, $filter_name, $up_link, $down_link);
 		}
 
 		$this->api->output->send();
@@ -238,40 +272,106 @@ class sieverules extends rcube_plugin
 
 	function gen_advswitch()
 	{
-		if ($this->config['adveditor'] == 1 or $this->config['adveditor'] == 2) {
-			$this->api->output->add_label('sieverules.switchtoadveditor');
-			$input_adv = new html_checkbox(array('id' => 'adveditor', 'onclick' => JS_OBJECT_NAME . '.sieverules_adveditor(this);', 'value' => '1'));
-			$out = html::label('adveditor', Q($this->gettext('adveditor'))) . $input_adv->show($this->action == 'plugin.sieverules.advanced' ? '1' : '');
-			return html::tag('div', array('id' => 'advancedmode'), $out);
+		$this->api->output->add_label('sieverules.switchtoadveditor');
+		$input_adv = new html_checkbox(array('id' => 'adveditor', 'onclick' => JS_OBJECT_NAME . '.sieverules_adveditor(this);', 'value' => '1'));
+		$out = html::label('adveditor', Q($this->gettext('adveditor'))) . $input_adv->show($this->action == 'plugin.sieverules.advanced' ? '1' : '');
+		return html::tag('div', array('id' => 'advancedmode'), $out);
+	}
+
+	function gen_rulelist($attrib)
+	{
+		$this->api->output->add_label('sieverules.delrulesetconf', 'sieverules.rulesetexists');
+
+		$rulesets = array();
+		foreach ($this->sieve->list as $ruleset) {
+			array_push($rulesets, $ruleset);
+		}
+		sort($rulesets);
+		$activeruleset = $this->sieve->get_active();
+
+		// new/rename ruleset dialog
+		$out = '';
+		$table = new html_table(array('cols' => 2));
+		$table->set_row_attribs(array('id' => 'sieverulesrsdialog_input'));
+		$table->add('title', html::label('sieverulesrsdialog_name', Q($this->gettext('name'))));
+		$table->add(null, html::tag('input', array('type' => 'text', 'id' => 'sieverulesrsdialog_name', 'name' => '_name', 'value' => '')));
+
+		$select_ruleset = new html_select(array('id' => 'sieverulesrsdialog_ruleset'));
+		if (sizeof($this->sieve->list) == 1) {
+			$select_ruleset->add(Q($this->gettext('nosieverulesets')), '');
+		}
+		else foreach ($rulesets as $ruleset) {
+			if ($ruleset !== $this->current_ruleset)
+				$select_ruleset->add(Q($ruleset), Q($ruleset));
 		}
 
-		return '';
+		$table->set_row_attribs(array('id' => 'sieverulesrsdialog_select'));
+		$table->add('title', html::label('sieverulesrsdialog_ruleset', Q($this->gettext('selectruleset'))));
+		$table->add(null, $select_ruleset->show());
+
+		$buttons = html::tag('input', array('type' => 'hidden', 'id' => 'sieverulesrsdialog_action', 'value' => ''));
+		$buttons .= html::tag('input', array('type' => 'button', 'class' => 'button mainaction', 'value' => $this->gettext('save'), 'onclick' => JS_OBJECT_NAME . '.sieverulesdialog_submit();')) . '&nbsp;';
+		$buttons .= html::tag('input', array('type' => 'button', 'class' => 'button', 'value' => $this->gettext('cancel'), 'onclick' => 'rcube_find_object(\'sieverulesrsdialog\').style.display = \'none\';'));
+
+		$out .= html::tag('h3', array('id' => 'sieverulesrsdialog_add'), Q($this->gettext('newruleset')));
+		$out .= html::tag('h3', array('id' => 'sieverulesrsdialog_edit', 'style' => 'display: none;'), Q($this->gettext('renameruleset')));
+		$out .= html::tag('h3', array('id' => 'sieverulesrsdialog_copyto', 'style' => 'display: none;'), Q($this->gettext('copytoruleset')));
+		$out .= html::tag('h3', array('id' => 'sieverulesrsdialog_copyfrom', 'style' => 'display: none;'), Q($this->gettext('copyfromruleset')));
+		$out .= $table->show();
+		$out .= html::p(array('class' => 'formbuttons'), $buttons);
+		$out = html::tag('form', array(), $out);
+		$out = html::div(array('id' => 'sieverulesrsdialog', 'style' => 'display: none;'), $out);
+
+		// add overlay input box to html page
+		$this->api->output->add_footer($out);
+
+		$select_ruleset = new html_select(array('id' => 'rulelist', 'onchange' => JS_OBJECT_NAME . '.sieverules_select_ruleset(this);'));
+
+		if (sizeof($this->sieve->list) == 0) {
+			$select_ruleset->add(Q($this->gettext('nosieverulesets')), '');
+		}
+		else foreach ($rulesets as $ruleset) {
+			if ($ruleset === $activeruleset)
+				$select_ruleset->add(Q(str_replace('%s', $ruleset, $this->gettext('activeruleset'))), Q($ruleset));
+			else
+				$select_ruleset->add(Q($ruleset), Q($ruleset));
+		}
+
+		return html::label('rulelist', Q($this->gettext('selectruleset'))) . $select_ruleset->show($this->current_ruleset);
 	}
 
 	function gen_setup()
 	{
+		$rcmail = rcmail::get_instance();
 		$text = '';
 		$buttons = '';
 
-		if (!empty($this->config['default_file']) && is_readable($this->config['default_file'])) {
+		if ($rcmail->config->get('sieverules_default_file', false) && is_readable($rcmail->config->get('sieverules_default_file'))) {
 			$text .= "<br /><br />" . $this->gettext('importdefault');
-			$buttons .= $this->api->output->button(array('command' => 'plugin.sieverules.import', 'prop' => '_ruleset=_default_', 'type' => 'input', 'class' => 'button', 'label' => 'sieverules.usedefaultfilter'));
+			$buttons .= $this->api->output->button(array('command' => 'plugin.sieverules.import', 'prop' => '_import=_default_', 'type' => 'input', 'class' => 'button', 'label' => 'sieverules.usedefaultfilter'));
 		}
 
 		$type = '';
 		$ruleset = '';
-		if (sizeof($this->sieve->list) > 0) {
+		if (sizeof($this->sieve->list) > 1) {
 			if ($result = $this->sieve->check_import()) {
 				list($type, $name, $ruleset) = $result;
 				$text .= "<br /><br />" . str_replace('%s', $name, $this->gettext('importother'));
 				$buttons .= (strlen($buttons) > 0) ? '&nbsp;&nbsp;' : '';
-				$buttons .= $this->api->output->button(array('command' => 'plugin.sieverules.import', 'prop' => '_type=' . $type . '&_ruleset=' . $ruleset, 'type' => 'input', 'class' => 'button', 'label' => 'sieverules.importfilter'));
+				$buttons .= $this->api->output->button(array('command' => 'plugin.sieverules.import', 'prop' => '_type=' . $type . '&_import=' . $ruleset, 'type' => 'input', 'class' => 'button', 'label' => 'sieverules.importfilter'));
+			}
+
+			if ($rcmail->config->get('sieverules_multiplerules', false)) {
+				$text .= "<br /><br />" . $this->gettext('copyexisting');
+				$buttons .= (strlen($buttons) > 0) ? '&nbsp;&nbsp;' : '';
+				$buttons .= $this->api->output->button(array('command' => 'plugin.sieverules.ruleset_dialog_setup', 'prop' => 'copyfrom_ruleset', 'type' => 'input', 'class' => 'button', 'label' => 'sieverules.copyexistingfilter'));
 			}
 		}
 
-		if ($this->config['auto_load_default'] && strlen($text) > 0 && strlen($buttons) > 0 && $type == '' && $ruleset == '') {
-			$this->sieve->script->add_text(file_get_contents($this->config['default_file']));
+		if ($rcmail->config->get('sieverules_auto_load_default') && is_readable($rcmail->config->get('sieverules_default_file')) && strlen($text) > 0 && strlen($buttons) > 0 && $type == '' && $ruleset == '') {
+			$this->sieve->script->add_text(file_get_contents($rcmail->config->get('sieverules_default_file')));
 			$this->sieve->save();
+			if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
 
 			// update rule list
 			if ($this->sieve_error)
@@ -279,13 +379,19 @@ class sieverules extends rcube_plugin
 			else
 				$this->script = $this->sieve->script->as_array();
 
-			rcmail_overwrite_action('plugin.sieverules');
-			$this->api->output->send('sieverules.sieverules');
+			if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
+				$this->api->output->add_script("parent.location.reload();");
+			}
+			else {
+				// go to sieverules page
+				rcmail_overwrite_action('plugin.sieverules');
+				$this->api->output->send('sieverules.sieverules');
+			}
 		}
 		else if (strlen($text) > 0 && strlen($buttons) > 0) {
 			$out = "<br />". $this->gettext('noexistingfilters') . $text . "<br /><br /><br />\n";
 			$out .= $buttons;
-			$out .= "&nbsp;&nbsp;" . $this->api->output->button(array('command' => 'plugin.sieverules.import', 'prop' => '_ruleset=_none_', 'type' => 'input', 'class' => 'button', 'label' => 'cancel'));
+			$out .= "&nbsp;&nbsp;" . $this->api->output->button(array('command' => 'plugin.sieverules.import', 'prop' => '_import=_none_', 'type' => 'input', 'class' => 'button', 'label' => 'cancel'));
 
 			$out = html::tag('p', array('style' => 'text-align: center; padding: 10px;'), "\n" . $out);
 			$out = html::tag('div', array('id' => 'prefs-title', 'class' => 'boxtitle'), Q($this->gettext('importfilters'))) . $out;
@@ -294,13 +400,22 @@ class sieverules extends rcube_plugin
 		}
 		else {
 			$this->sieve->save();
-			rcmail_overwrite_action('plugin.sieverules');
-			$this->api->output->send('sieverules.sieverules');
+			if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
+
+			if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
+				$this->api->output->add_script("parent.location.reload();");
+			}
+			else {
+				// go to sieverules page
+				rcmail_overwrite_action('plugin.sieverules');
+				$this->api->output->send('sieverules.sieverules');
+			}
 		}
 	}
 
 	function gen_form($attrib)
 	{
+		$rcmail = rcmail::get_instance();
 		$this->api->output->add_label(
 			'sieverules.norulename', 'sieverules.ruleexists', 'sieverules.noheader',
 			'sieverules.headerbadchars', 'sieverules.noheadervalue', 'sieverules.sizewrongformat',
@@ -333,9 +448,9 @@ class sieverules extends rcube_plugin
 			}
 		}
 
-		if (sizeof($this->config['predefined_rules']) > 0) {
+		if (sizeof($rcmail->config->get('sieverules_predefined_rules')) > 0) {
 			$predefined = array();
-			foreach($this->config['predefined_rules'] as $idx => $data)
+			foreach($rcmail->config->get('sieverules_predefined_rules') as $idx => $data)
 				array_push($predefined, array($data['type'], $data['header'], $data['operator'], $data['extra'], $data['target']));
 
 			$this->api->output->set_env('predefined_rules', $predefined);
@@ -387,13 +502,13 @@ class sieverules extends rcube_plugin
 		$join_type .= "&nbsp;" . html::label($field_id, Q($this->gettext('filterany')));
 
 		$rules_table = new html_table(array('id' => 'rules-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 5));
-		$rules_table = $this->_rule_row($ext, $rules_table, null, $this->config['predefined_rules'], $attrib);
+		$rules_table = $this->_rule_row($ext, $rules_table, null, $rcmail->config->get('sieverules_predefined_rules'), $attrib);
 
 		if (!$join_any) {
 			if (!isset($cur_script))
-				$rules_table = $this->_rule_row($ext, $rules_table, array(), $this->config['predefined_rules'], $attrib);
+				$rules_table = $this->_rule_row($ext, $rules_table, array(), $rcmail->config->get('sieverules_predefined_rules'), $attrib);
 			else foreach ($cur_script['tests'] as $rules)
-				$rules_table = $this->_rule_row($ext, $rules_table, $rules, $this->config['predefined_rules'], $attrib);
+				$rules_table = $this->_rule_row($ext, $rules_table, $rules, $rcmail->config->get('sieverules_predefined_rules'), $attrib);
 		}
 
 		$out .= html::tag('fieldset', null, html::tag('legend', null, Q($this->gettext('messagesrules')))
@@ -421,7 +536,6 @@ class sieverules extends rcube_plugin
 
 	function move()
 	{
-		$this->_load_config();
 		$this->_startup();
 
 		$src = get_input_value('_src', RCUBE_INPUT_GET);
@@ -440,11 +554,11 @@ class sieverules extends rcube_plugin
 
 	function save()
 	{
-		$this->_load_config();
+		$rcmail = rcmail::get_instance();
 		$this->_startup();
 
 		$script = trim(get_input_value('_script', RCUBE_INPUT_POST));
-		if ($script != '' && ($this->config['adveditor'] == 1 || $this->config['adveditor'] == 2)) {
+		if ($script != '' && ($rcmail->config->get('sieverules_adveditor') == 1 || $rcmail->config->get('sieverules_adveditor') == 2)) {
 			$script = $this->_strip_val($script);
 			$save = $this->sieve->save($script);
 
@@ -604,9 +718,9 @@ class sieverules extends rcube_plugin
 						$folder = $this->_strip_val($folders[$idx]);
 						$rcmail = rcmail::get_instance();
 						$rcmail->imap_init(TRUE);
-						$script['actions'][$i]['target'] = $this->config['include_imap_root'] ? $rcmail->imap->mod_mailbox($folder) : $folder;
-						if (!empty($this->config['folder_delimiter']))
-							$script['actions'][$i]['target'] = str_replace($rcmail->imap->get_hierarchy_delimiter(), $this->config['folder_delimiter'], $script['actions'][$i]['target']);
+						$script['actions'][$i]['target'] = $rcmail->config->get('sieverules_include_imap_root') ? $rcmail->imap->mod_mailbox($folder) : $folder;
+						if ($rcmail->config->get('sieverules_folder_delimiter', false))
+							$script['actions'][$i]['target'] = str_replace($rcmail->imap->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $script['actions'][$i]['target']);
 						break;
 					case 'redirect':
 					case 'redirect_copy':
@@ -667,6 +781,9 @@ class sieverules extends rcube_plugin
 			if ($result === true)
 				$save = $this->sieve->save();
 
+			if ($save && $result === true && !$rcmail->config->get('sieverules_multiplerules', false))
+				$save = $this->sieve->set_active($this->current_ruleset);
+
 			if ($save && $result === true) {
 				$this->api->output->command('display_message', $this->gettext('filtersaved'), 'confirmation');
 
@@ -713,7 +830,6 @@ class sieverules extends rcube_plugin
 
 	function delete()
 	{
-		$this->_load_config();
 		$this->_startup();
 
 		$result = false;
@@ -739,24 +855,31 @@ class sieverules extends rcube_plugin
 		else
 			$this->script = $this->sieve->script->as_array();
 
-		// go to sieverules page
-		// rcmail_overwrite_action('plugin.sieverules.edit');
-		// $this->action = 'plugin.sieverules.edit';
-		// $this->init_html();
-		$this->api->output->add_script("parent.". JS_OBJECT_NAME .".show_contentframe(false);");
+		if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
+			$this->api->output->add_script("parent.". JS_OBJECT_NAME .".show_contentframe(false);");
+		}
+		else {
+			// go to sieverules page
+			rcmail_overwrite_action('plugin.sieverules.edit');
+			$this->action = 'plugin.sieverules.edit';
+			$this->init_html();
+		}
 	}
 
 	function import()
 	{
-		$this->_load_config();
+		$rcmail = rcmail::get_instance();
 		$this->_startup();
 
 		$type = get_input_value('_type', RCUBE_INPUT_GET);
-		$ruleset = get_input_value('_ruleset', RCUBE_INPUT_GET);
+		$ruleset = get_input_value('_import', RCUBE_INPUT_GET);
 		if ($ruleset == '_default_') {
-			if (!empty($this->config['default_file']) && is_readable($this->config['default_file'])) {
-				$this->sieve->script->add_text(file_get_contents($this->config['default_file']));
+			if ($rcmail->config->get('sieverules_default_file', false) && is_readable($rcmail->config->get('sieverules_default_file'))) {
+				$this->sieve->script->add_text(file_get_contents($rcmail->config->get('sieverules_default_file')));
 				$save = $this->sieve->save();
+
+				if ($save && !$rcmail->config->get('sieverules_multiplerules', false))
+					$save = $this->sieve->set_active($this->current_ruleset);
 
 				if ($save)
 					$this->api->output->command('display_message', $this->gettext('filterimported'), 'confirmation');
@@ -785,6 +908,7 @@ class sieverules extends rcube_plugin
 				}
 
 				$this->sieve->save();
+				if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
 
 				// update rule list
 				if ($this->sieve_error)
@@ -794,6 +918,10 @@ class sieverules extends rcube_plugin
 			}
 		} elseif ($ruleset == '_none_') {
 			$this->sieve->save();
+			if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
+		} elseif ($ruleset == '_copy_') {
+			$this->rename_ruleset(true);
+			return;
 		} elseif ($type != '' && $ruleset != '') {
 			$import = $this->sieve->do_import($type, $ruleset);
 
@@ -813,25 +941,74 @@ class sieverules extends rcube_plugin
 		$this->init_html();
 	}
 
-	private function _load_config()
+	function delete_ruleset()
 	{
-		$fpath = $this->home.'/config.inc.php';
-		if (is_file($fpath) && is_readable($fpath)) {
-			ob_start();
-			include($fpath);
-			$this->config = (array)$sieverules_config;
-			ob_end_clean();
+		$this->_startup();
+		$this->sieve->del_script($this->current_ruleset);
+
+		$this->current_ruleset = get_input_value('_next', RCUBE_INPUT_GET);
+
+		rcmail_overwrite_action('plugin.sieverules');
+		$this->action = 'plugin.sieverules';
+		$this->init_html();
+	}
+
+	function rename_ruleset($makeCopy = false)
+	{
+		$this->_startup();
+		$script = $this->sieve->script->as_text();
+		$active = $this->sieve->get_active() == $this->current_ruleset ? true : false;
+		if (!$makeCopy) $this->sieve->del_script($this->current_ruleset);
+
+		$this->current_ruleset = get_input_value('_new', RCUBE_INPUT_GET);
+		$this->sieve->set_ruleset($this->current_ruleset);
+		$this->sieve->save($script);
+		if ($active) $this->sieve->set_active($this->current_ruleset);
+
+		rcmail_overwrite_action('plugin.sieverules');
+		$this->action = 'plugin.sieverules';
+		$this->init_html();
+	}
+
+	function enable_ruleset()
+	{
+		$this->_startup();
+		$activeruleset = get_input_value('_ruleset', RCUBE_INPUT_GET);
+		$this->sieve->set_active($activeruleset);
+
+		$rulesets = array();
+		foreach ($this->sieve->list as $ruleset) {
+			array_push($rulesets, $ruleset);
 		}
-		else {
-			raise_error(array(
-				'code' => 527,
-				'type' => 'php',
-				'message' => "Failed to load SieveRules plugin config"), TRUE, TRUE);
+		sort($rulesets);
+
+		foreach ($rulesets as $ruleset) {
+			if ($ruleset === $activeruleset)
+				$this->api->output->command('sieverules_add_ruleset', Q($ruleset), Q(str_replace('%s', $ruleset, $this->gettext('activeruleset'))));
+			else
+				$this->api->output->command('sieverules_add_ruleset', Q($ruleset), Q($ruleset));
 		}
+
+		$this->api->output->send();
+	}
+
+	function copy_filter()
+	{
+		$this->_startup();
+		$script = $this->script[get_input_value('_iid', RCUBE_INPUT_GET)];
+		$this->current_ruleset = get_input_value('_dest', RCUBE_INPUT_GET);
+		$this->_startup();
+		$this->sieve->script->add_rule($script);
+		$this->sieve->save();
+
+		$this->api->output->command('display_message', $this->gettext('filtercopied'), 'confirmation');
+		$this->api->output->send();
 	}
 
 	private function _startup()
 	{
+		$rcmail = rcmail::get_instance();
+
 		if (!$this->sieve) {
 			include('Net_Sieve.php');
 			include('rcube_sieve.php');
@@ -841,15 +1018,15 @@ class sieverules extends rcube_plugin
 			// try to connect to managesieve server and to fetch the script
 			$this->sieve = new rcube_sieve($_SESSION['username'],
 						$rcmail->decrypt($_SESSION['password']),
-						str_replace('%h', $_SESSION['imap_host'], $this->config['managesieve_host']),
-						$this->config['managesieve_port'], $this->config['usetls'],
-						$this->config['ruleset_name'], $this->home, isset($this->config['use_elsif']) ? $this->config['use_elsif'] : true);
+						str_replace('%h', $_SESSION['imap_host'], $rcmail->config->get('sieverules_host')),
+						$rcmail->config->get('sieverules_port'), $rcmail->config->get('sieverules_usetls'),
+						$this->current_ruleset, $this->home, $rcmail->config->get('sieverules_use_elsif', true));
 
 			$this->sieve_error = $this->sieve->error();
 
 			if ($this->sieve_error == SIEVE_ERROR_NOT_EXISTS) {
 				// load default rule set
-				if ((!empty($this->config['default_file']) && is_readable($this->config['default_file'])) || sizeof($this->sieve->list) > 0) {
+				if (($rcmail->config->get('sieverules_default_file', false) && is_readable($rcmail->config->get('sieverules_default_file'))) || sizeof($this->sieve->list) > 0) {
 					rcmail_overwrite_action('plugin.sieverules.setup');
 					$this->action = 'plugin.sieverules.setup';
 				}
@@ -878,12 +1055,18 @@ class sieverules extends rcube_plugin
 				$this->script = $this->sieve->script->as_array();
 
 			// load example filters
-			if (!empty($this->config['example_file']) && is_readable($this->config['example_file']))
-				$this->examples = $this->sieve->script->parse_text(file_get_contents($this->config['example_file']));
+			if ($rcmail->config->get('sieverules_example_file', false) && is_readable($rcmail->config->get('sieverules_example_file')))
+				$this->examples = $this->sieve->script->parse_text(file_get_contents($rcmail->config->get('sieverules_example_file')));
+		}
+		else {
+			$this->sieve->set_ruleset($this->current_ruleset);
+			$this->script = $this->sieve->script->as_array();
 		}
 	}
 
-	private function _rule_row($ext, $rules_table, $rule, $predefined_rules, $attrib) {
+	private function _rule_row($ext, $rules_table, $rule, $predefined_rules, $attrib)
+	{
+		$rcmail = rcmail::get_instance();
 		$imgclass = null;
 
 		if (!isset($rule)) {
@@ -1109,7 +1292,7 @@ class sieverules extends rcube_plugin
 		$rules_table->add('target', $select_spam_probability->show($spam_probability) . $input_target->show($target) . "&nbsp;" . $select_units->show($units));
 
 		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_rule', 'type' => 'image', 'image' => $attrib['addicon'], 'alt' => 'sieverules.addsieverule', 'title' => 'sieverules.addsieverule'));
-		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_rule', 'type' => 'image', 'image' => $attrib['deleteicon'], 'alt' => 'sieverules.deletesieverule', 'title' => 'sieverules.deletesieverule'));
+		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_rule', 'type' => 'image', 'imageact' => $attrib['deleteicon'], 'imagepas' => $attrib['deleteiconpas'], 'alt' => 'sieverules.deletesieverule', 'title' => 'sieverules.deletesieverule'));
 		$rules_table->add('control', $add_button . "&nbsp;" . $delete_button);
 
 		if (isset($rule))
@@ -1125,10 +1308,10 @@ class sieverules extends rcube_plugin
 		$col2 = '';
 		$col3 = '';
 		$col4 = '';
-		sort($this->config['other_headers']);
-		$col_length = sizeof($this->config['other_headers']) / 4;
+		sort($rcmail->config->get('sieverules_other_headers'));
+		$col_length = sizeof($rcmail->config->get('sieverules_other_headers')) / 4;
 		$col_length = ceil($col_length);
-		foreach ($this->config['other_headers'] as $idx => $xheader) {
+		foreach ($rcmail->config->get('sieverules_other_headers') as $idx => $xheader) {
 			$input_xheader = new html_radiobutton(array('id' => $xheader . '_' . $rowid, 'name' => '_xheaders_' . $rowid  . '[]', 'value' => $xheader, 'onclick' => JS_OBJECT_NAME . '.sieverules_set_xheader(this)', 'class' => 'radio'));
 			$xheader_show = $input_xheader->show($header) . "&nbsp;" . html::label($xheader . '_' . $rowid, Q($xheader));
 
@@ -1233,7 +1416,8 @@ class sieverules extends rcube_plugin
 		return $rules_table;
 	}
 
-	private function _action_row($ext, $actions_table, $rowid, $action, $attrib, $example) {
+	private function _action_row($ext, $actions_table, $rowid, $action, $attrib, $example)
+	{
 		$rcmail = rcmail::get_instance();
 		static $a_mailboxes;
 		$imgclass = null;
@@ -1277,9 +1461,9 @@ class sieverules extends rcube_plugin
 
 		if ($action['type'] == 'fileinto' || $action['type'] == 'fileinto_copy') {
 			$method = $action['type'];
-			$folder = $this->config['include_imap_root'] ? $rcmail->imap->mod_mailbox($action['target'], 'out') : $action['target'];
-			if (!empty($this->config['folder_delimiter']))
-				$folder = str_replace($rcmail->imap->get_hierarchy_delimiter(), $this->config['folder_delimiter'], $folder);
+			$folder = $rcmail->config->get('sieverules_include_imap_root') ? $rcmail->imap->mod_mailbox($action['target'], 'out') : $action['target'];
+			if ($rcmail->config->get('sieverules_folder_delimiter', false))
+				$folder = str_replace($rcmail->imap->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $folder);
 		}
 		elseif ($action['type'] == 'reject' || $action['type'] == 'ereject') {
 			$folder_style = 'display: none;';
@@ -1346,34 +1530,34 @@ class sieverules extends rcube_plugin
 		}
 
 		$select_action = new html_select(array('name' => "_act[]", 'onchange' => JS_OBJECT_NAME . '.sieverules_action_select(this)'));
-
-		if (in_array('fileinto', $ext) && $this->config['allowed_actions']['fileinto'])
+		$allowed_actions = $rcmail->config->get('sieverules_allowed_actions', array());
+		if (in_array('fileinto', $ext) && $allowed_actions['fileinto'])
 			$select_action->add(Q($this->gettext('messagemoveto')), 'fileinto');
-		if (in_array('fileinto', $ext) && in_array('copy', $ext) && $this->config['allowed_actions']['fileinto'])
+		if (in_array('fileinto', $ext) && in_array('copy', $ext) && $allowed_actions['fileinto'])
 			$select_action->add(Q($this->gettext('messagecopyto')), 'fileinto_copy');
-		if (in_array('vacation', $ext) && $this->config['allowed_actions']['vacation'])
+		if (in_array('vacation', $ext) && $allowed_actions['vacation'])
 			$select_action->add(Q($this->gettext('messagevacation')), 'vacation');
-		if (in_array('reject', $ext) && $this->config['allowed_actions']['reject'])
+		if (in_array('reject', $ext) && $allowed_actions['reject'])
 			$select_action->add(Q($this->gettext('messagereject')), 'reject');
-		elseif (in_array('ereject', $ext) && $this->config['allowed_actions']['reject'])
+		elseif (in_array('ereject', $ext) && $allowed_actions['reject'])
 			$select_action->add(Q($this->gettext('messagereject')), 'ereject');
-		if (in_array('imapflags', $ext) && $this->config['allowed_actions']['imapflags'])
+		if (in_array('imapflags', $ext) && $allowed_actions['imapflags'])
 			$select_action->add(Q($this->gettext('messageimapflags')), 'imapflags');
-		elseif (in_array('imap4flags', $ext) && $this->config['allowed_actions']['imapflags'])
+		elseif (in_array('imap4flags', $ext) && $allowed_actions['imapflags'])
 			$select_action->add(Q($this->gettext('messageimapflags')), 'imap4flags');
-		if (in_array('notify', $ext) && $this->config['allowed_actions']['notify'])
+		if (in_array('notify', $ext) && $allowed_actions['notify'])
 			$select_action->add(Q($this->gettext('messagenotify')), 'notify');
-		elseif (in_array('enotify', $ext) && $this->config['allowed_actions']['notify'])
+		elseif (in_array('enotify', $ext) && $allowed_actions['notify'])
 			$select_action->add(Q($this->gettext('messagenotify')), 'enotify');
-		if ($this->config['allowed_actions']['redirect'])
+		if ($allowed_actions['redirect'])
 			$select_action->add(Q($this->gettext('messageredirect')), 'redirect');
-		if (in_array('copy', $ext) && $this->config['allowed_actions']['redirect'])
+		if (in_array('copy', $ext) && $allowed_actions['redirect'])
 			$select_action->add(Q($this->gettext('messageredirectcopy')), 'redirect_copy');
-		if ($this->config['allowed_actions']['keep'])
+		if ($allowed_actions['keep'])
 			$select_action->add(Q($this->gettext('messagekeep')), 'keep');
-		if ($this->config['allowed_actions']['discard'])
+		if ($allowed_actions['discard'])
 			$select_action->add(Q($this->gettext('messagediscard')), 'discard');
-		if ($this->config['allowed_actions']['stop'])
+		if ($allowed_actions['stop'])
 			$select_action->add(Q($this->gettext('messagestop')), 'stop');
 
 		$actions_table->add('action', $select_action->show($method));
@@ -1541,11 +1725,11 @@ class sieverules extends rcube_plugin
 			$a_mailboxes = array();
 
 			foreach ($a_folders as $ifolder) {
-				if ($this->config['folder_encoding'])
-					$ifolder = $this->_mbox_encode($ifolder, $this->config['folder_encoding']);
+				if ($rcmail->config->get('sieverules_folder_encoding'))
+					$ifolder = $this->_mbox_encode($ifolder, $rcmail->config->get('sieverules_folder_encoding'));
 
-				if (!empty($this->config['folder_delimiter']))
-					rcmail_build_folder_tree($a_mailboxes, str_replace($delimiter, $this->config['folder_delimiter'], $ifolder), $this->config['folder_delimiter']);
+				if ($rcmail->config->get('sieverules_folder_delimiter', false))
+					rcmail_build_folder_tree($a_mailboxes, str_replace($delimiter, $rcmail->config->get('sieverules_folder_delimiter'), $ifolder), $rcmail->config->get('sieverules_folder_delimiter'));
 				else
 					rcmail_build_folder_tree($a_mailboxes, $ifolder, $delimiter);
 			}
@@ -1563,9 +1747,9 @@ class sieverules extends rcube_plugin
 		$actions_table->add('folder', $input_folderlist->show($folder) . $input_address->show($address) . $vacs_table->show() . $notify_table->show() . $input_imapflags->show($flags) . $input_reject->show($reject));
 
 		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_action', 'type' => 'image', 'image' => $attrib['addicon'], 'alt' => 'sieverules.addsieveact', 'title' => 'sieverules.addsieveact'));
-		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_action', 'type' => 'image', 'image' => $attrib['deleteicon'], 'alt' => 'sieverules.deletesieveact', 'title' => 'sieverules.deletesieveact'));
+		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_action', 'type' => 'image', 'imageact' => $attrib['deleteicon'], 'imagepas' => $attrib['deleteiconpas'], 'alt' => 'sieverules.deletesieveact', 'title' => 'sieverules.deletesieveact'));
 
-		if ($this->config['multiple_actions'])
+		if ($rcmail->config->get('sieverules_multiple_actions'))
 			$actions_table->add('control', $add_button . "&nbsp;" . $delete_button);
 		else
 			$actions_table->add('control', "&nbsp;");
@@ -1573,7 +1757,8 @@ class sieverules extends rcube_plugin
 		return $actions_table;
 	}
 
-	private function _in_headerarray($needle, $haystack) {
+	private function _in_headerarray($needle, $haystack)
+	{
 		foreach ($haystack as $data) {
 			$args = explode("::", $data);
 			if ($args[1] == $needle)
@@ -1584,7 +1769,8 @@ class sieverules extends rcube_plugin
 	}
 
 	// coppied from rcube_template.php
-	private function _charset_selector($attrib, $charset) {
+	private function _charset_selector($attrib, $charset)
+	{
 		$charsets = array(
 			'US-ASCII'		=> 'ASCII (English)',
 			'EUC-JP'		=> 'EUC-JP (Japanese)',
@@ -1610,7 +1796,8 @@ class sieverules extends rcube_plugin
 		return $select->show($charset);
 	}
 
-	private function _strip_val($str) {
+	private function _strip_val($str)
+	{
 		return trim(htmlspecialchars_decode($str));
 	}
 

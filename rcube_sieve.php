@@ -50,7 +50,14 @@ class rcube_sieve {
 
 		$this->ruleset = $ruleset;
 		$this->elsif = $elsif;
-		$this->get_script();
+
+		if ($this->ruleset !== false) {
+			$this->get_script();
+		}
+		else {
+			$this->ruleset = $this->get_active();
+			$this->get_script();
+		}
 
 		// init importers
 		$dir = slashify(realpath(slashify($dir) . 'importFilters/'));
@@ -90,10 +97,7 @@ class rcube_sieve {
 		if (PEAR::isError($this->sieve->installScript($this->ruleset, $script)))
 			return $this->_set_error(SIEVE_ERROR_INSTALL);
 
-		if (PEAR::isError($this->sieve->setActive($this->ruleset)))
-			return $this->_set_error(SIEVE_ERROR_ACTIVATE);
-
-		if ($this->cache) $_SESSION['sieverules_script_cache'] = serialize($this->script);
+		if ($this->cache) $_SESSION['sieverules_script_cache_' . $this->ruleset] = serialize($this->script);
 		return true;
 	}
 
@@ -138,7 +142,8 @@ class rcube_sieve {
 			return false;
 
 		if ($this->cache && $_SESSION['sieverules_script_cache']) {
-			$this->script = unserialize($_SESSION['sieverules_script_cache']);
+			$this->list = unserialize($_SESSION['sieverules_scripts_list']);
+			$this->script = unserialize($_SESSION['sieverules_script_cache_' . $this->ruleset]);
 			return;
 		}
 
@@ -159,7 +164,30 @@ class rcube_sieve {
 		}
 
 		$this->script = new rcube_sieve_script($script, $this->get_extensions(), $this->elsif);
-		if ($this->cache) $_SESSION['sieverules_script_cache'] = serialize($this->script);
+		if ($this->cache) {
+			$_SESSION['sieverules_scripts_list'] = serialize($this->list);
+			$_SESSION['sieverules_script_cache_' . $this->ruleset] = serialize($this->script);
+		}
+	}
+
+	public function get_active() {
+		return $this->sieve->getActive();
+	}
+
+	public function set_active($ruleset) {
+		if (PEAR::isError($this->sieve->setActive($ruleset)))
+			return $this->_set_error(SIEVE_ERROR_ACTIVATE);
+
+		return true;
+	}
+
+	public function del_script($script) {
+		return $this->sieve->removeScript($script);
+	}
+
+	public function set_ruleset($ruleset) {
+		$this->ruleset = $ruleset;
+		$this->get_script();
 	}
 
 	private function _set_error($error) {

@@ -110,6 +110,16 @@ $labels['spamlevelequals'] = 'is equal to';
 $labels['i;ascii-casemap'] = 'case-insensitive string match';
 $labels['i;octet'] = 'exact string match';
 $labels['i;ascii-numeric'] = 'numeric match';
+$labels['selectruleset'] = 'Select ruleset';
+$labels['activeruleset'] = '%s (active)';
+$labels['activateruleset'] = 'Activate this ruleset';
+$labels['newruleset'] = 'Create a new ruleset';
+$labels['delruleset'] = 'Delete this ruleset';
+$labels['renameruleset'] = 'Rename this ruleset';
+$labels['copy'] = 'Copy';
+$labels['copyexistingfilter'] = 'Copy existing filters';
+$labels['copytoruleset'] = 'Copy filter to another ruleset';
+$labels['copyfromruleset'] = 'Copy filters from existing ruleset';
 
 $messages = array();
 $messages['nosieverules'] = 'No filters found.';
@@ -155,5 +165,10 @@ $messages['badoperator'] = 'Sorry the operator you selected cannot be used in th
 $messages['filteractionerror'] = 'The action you requested is not supported by the server';
 $messages['filtermissingerror'] = 'Unable to find the rule requested';
 $messages['contentpartexp'] = 'The MIME-type or specific part of the message which should be tested. For example: `message/rfc822`, `text/html`, `audio/mp3` or `image`.';
+$messages['delrulesetconf'] = 'Are you sure you want to delete this ruleset?';
+$messages['rulesetexists'] = 'A ruleset with this name already exists. Please enter another';
+$messages['copyexisting'] = '<b>Copy exiting ruleset:</b> Would you like to copy filters from an existing ruleset into your current set?';
+$messages['filtercopied'] = 'Filter copied successfully';
+$messages['nosieverulesets'] = 'No rulesets found.';
 
 ?>

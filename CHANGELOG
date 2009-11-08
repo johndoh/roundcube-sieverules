@@ -1,11 +1,17 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 11 08
+==========
+ * Add support for multiple rulesets
+ * Use core config function (WARNING: Complete re-write of config file!)
+ * Some JS cleanup
+
 2009 10 31
 ==========
  * Use frames to avoid full page reloads
  * Use rule cache to speed things up a little
- 
+
 2009 09 23
 ==========
  * Support folder name encoding
