@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 11 09
+==========
+ * Fix bug in detection of vacation charset
+
 2009 11 08
 ==========
  * Add support for multiple rulesets

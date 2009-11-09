@@ -1779,7 +1779,7 @@ class sieverules extends rcube_plugin
 			'GB2312'		=> 'GB2312 (Chinese)',
 			'ISO-2022-JP'	=> 'ISO-2022-JP (Japanese)',
 			'ISO-8859-1'	=> 'ISO-8859-1 (Latin-1)',
-			'ISO-8859-2'	=> 'ISO-8895-2 (Central European)',
+			'ISO-8859-2'	=> 'ISO-8859-2 (Central European)',
 			'ISO-8859-7'	=> 'ISO-8859-7 (Greek)',
 			'ISO-8859-9'	=> 'ISO-8859-9 (Turkish)',
 			'Windows-1251'	=> 'Windows-1251 (Cyrillic)',

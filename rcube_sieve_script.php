@@ -663,7 +663,7 @@ class rcube_sieve_script {
 		$content = trim($content);
 
 		if (preg_match('/^:mime\s+text:(.*)\.$/sm', $content, $matches)) {
-			$parts = explode("\r?\n", $matches[1], 4);
+			$parts = preg_split("/\r?\n/", $matches[1], 4);
 			$text = trim($parts[3]);
 		}
 		elseif (preg_match('/^text:(.*)\.$/sm', $content, $matches))
@@ -679,7 +679,8 @@ class rcube_sieve_script {
 		$content = trim($content);
 
 		if (preg_match('/^:mime\s+text:(.*)\.$/sm', $content, $matches)) {
-			$parts = explode("\r?\n", $matches[1], 4);
+			$parts = preg_split("/\r?\n/", $matches[1], 4);
+
 			$charset = trim(substr($parts[1], stripos($parts[1], "charset=") + 8));
 		}
 
