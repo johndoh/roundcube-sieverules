@@ -518,7 +518,7 @@ class rcube_sieve_script {
 						$origsubject = "1";
 					}
 
-					if (function_exists("mb_decode_mimeheader")) $matches[5] = mb_decode_mimeheader($matches[5]);
+//					if (function_exists("mb_decode_mimeheader")) $matches[5] = mb_decode_mimeheader($matches[5]);
 
 					$result[] = array('type' => 'vacation',
 									'days' => $matches[1],
