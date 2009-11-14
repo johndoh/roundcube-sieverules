@@ -20,6 +20,7 @@ vacation
 body
 copy
 spamtest (Vladislav Bogdanov - cyrus-imapd patch http://bubble.nsys.by/projects/patches/cyrus-imapd/)
+variables
 
 Install
 =======

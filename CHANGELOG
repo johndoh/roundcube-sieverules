@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 11 14
+==========
+ * Allow appending of original subject to vacation messages (requires variables extension in sieve)
+
 2009 11 09
 ==========
  * Fix bug in detection of vacation charset

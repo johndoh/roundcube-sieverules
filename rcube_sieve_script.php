@@ -166,6 +166,7 @@ class rcube_sieve_script {
 
 	public function as_text() {
 		$script = '';
+		$variables = '';
 		$exts = array();
 
 		// rules
@@ -326,7 +327,6 @@ class rcube_sieve_script {
 						case 'vacation':
 							array_push($exts, 'vacation');
 							$action['subject'] = $this->_escape_string($action['subject']);
-							if ($action['origsubject'] == '1') $action['subject'] .= " \${1}";
 
 // 							// encoding subject header with mb_encode provides better results with asian characters
 // 							if (function_exists("mb_encode_mimeheader"))
@@ -335,6 +335,20 @@ class rcube_sieve_script {
 // 								$action['subject'] = mb_encode_mimeheader($action['subject'], $action['charset'], 'Q');
 // 								mb_internal_encoding(RCMAIL_CHARSET);
 // 							}
+
+							// append original subject
+							if ($action['origsubject'] == '1') {
+								array_push($exts, 'variables');
+
+								$variables .= 'set "subject" "";' . RCUBE_SIEVE_NEWLINE;
+								$variables .= 'if header :matches "subject" "*" {' . RCUBE_SIEVE_NEWLINE;
+								$variables .= RCUBE_SIEVE_INDENT . 'set "subject" "${1}";' . RCUBE_SIEVE_NEWLINE;
+								$variables .= '}' . RCUBE_SIEVE_NEWLINE;
+
+								$action['subject'] = trim($action['subject']);
+								if (substr($action['subject'], -1, 1) != ":") $action['subject'] .= ":";
+								$action['subject'] .= " \${subject}";
+							}
 
 							$actions .= RCUBE_SIEVE_INDENT . "vacation" . RCUBE_SIEVE_NEWLINE;
 							$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":days ". $action['days'] . RCUBE_SIEVE_NEWLINE;
@@ -392,10 +406,13 @@ class rcube_sieve_script {
 			}
 		}
 
+		if ($variables)
+			$variables .= RCUBE_SIEVE_NEWLINE;
+
 		// requires
 		$exts = array_unique($exts);
 		if (sizeof($exts))
-			$script = 'require ["' . implode('","', $exts) . "\"];" . RCUBE_SIEVE_NEWLINE . $script;
+			$script = 'require ["' . implode('","', $exts) . "\"];" . RCUBE_SIEVE_NEWLINE . RCUBE_SIEVE_NEWLINE . $variables . $script;
 
 		// author
 		if ($script)
@@ -513,8 +530,8 @@ class rcube_sieve_script {
 				}
 				elseif(preg_match('/^vacation\s+:days\s+([0-9]+)\s+(:addresses\s+\[(.*?[^\\\])\]\s+)?(:subject\s+(".*?[^"\\\]")\s+)?(:handle\s+(".*?[^"\\\]")\s+)?(:from\s+(".*?[^"\\\]")\s+)?(.*);$/sm', $content, $matches)) {
 					$origsubject = "";
-					if (substr($matches[5], -5, 4) == "\${1}") {
-						$matches[5] = trim(substr($matches[5], 0, -5)) . "\"";
+					if (substr($matches[5], -13, 12) == ": \${subject}") {
+						$matches[5] = trim(substr($matches[5], 0, -13)) . "\"";
 						$origsubject = "1";
 					}
 

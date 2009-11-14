@@ -1633,11 +1633,17 @@ class sieverules extends rcube_plugin
 		$field_id = 'rcmfd_sievevacsubject_'. $rowid;
 		$input_subject = new html_inputfield(array('id' => $field_id, 'name' => '_subject[]'));
 		$vacs_table->add(null, html::label($field_id, Q($this->gettext('subject'))));
-		$field_id = 'rcmfd_sievevacsubject_orig_'. $rowid;
-		$input_origsubject = new html_checkbox(array('id' => $field_id, 'value' => '1', 'onclick' => JS_OBJECT_NAME . '.sieverules_toggle_vac_osubj(this, '. $rowid .')'));
-		$input_vacosubj = new html_hiddenfield(array('id' => 'rcmfd_sievevactoh_'. $rowid, 'name' => '_orig_subject[]', 'value' => $origsubject));
-		$vacs_table->add(array('colspan' => 2), $input_subject->show($subject)); // . "<br />" . $input_origsubject->show($origsubject) . "&nbsp;" . html::label($field_id, Q($this->gettext('sieveorigsubj'))) . $input_vacosubj->show()
+		$vacs_table->add(array('colspan' => 2), $input_subject->show($subject));
 		$vacs_table->add_row();
+
+		if (in_array('variables', $ext)) {
+			$field_id = 'rcmfd_sievevacsubject_orig_'. $rowid;
+			$input_origsubject = new html_checkbox(array('id' => $field_id, 'value' => '1', 'onclick' => JS_OBJECT_NAME . '.sieverules_toggle_vac_osubj(this, '. $rowid .')', 'class' => 'checkbox'));
+			$input_vacosubj = new html_hiddenfield(array('id' => 'rcmfd_sievevactoh_'. $rowid, 'name' => '_orig_subject[]', 'value' => $origsubject));
+			$vacs_table->add(null, '&nbsp;');
+			$vacs_table->add(array('colspan' => 2), $input_origsubject->show($origsubject) . "&nbsp;" . html::label($field_id, Q($this->gettext('sieveorigsubj'))) . $input_vacosubj->show());
+			$vacs_table->add_row();
+		}
 
 		$field_id = 'rcmfd_sievevacmag_'. $rowid;
 		$input_msg = new html_textarea(array('id' => $field_id, 'name' => '_msg[]', 'rows' => '5', 'cols' => '40'));
