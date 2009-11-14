@@ -308,11 +308,15 @@ class rcube_sieve_script {
 							$actions .= RCUBE_SIEVE_INDENT . "fileinto :copy \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
 							break;
 						case 'redirect':
-							$actions .= RCUBE_SIEVE_INDENT . "redirect \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
+							$tokens = preg_split('/[,;\s]/', $action['target']);
+							foreach ($tokens as $email)
+								$actions .= RCUBE_SIEVE_INDENT . "redirect \"" . $this->_escape_string($email) . "\";" . RCUBE_SIEVE_NEWLINE;
 							break;
 						case 'redirect_copy':
 							array_push($exts, 'copy');
-							$actions .= RCUBE_SIEVE_INDENT . "redirect :copy \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
+							$tokens = preg_split('/[,;\s]/', $action['target']);
+							foreach ($tokens as $email)
+								$actions .= RCUBE_SIEVE_INDENT . "redirect :copy \"" . $this->_escape_string($email) . "\";" . RCUBE_SIEVE_NEWLINE;
 							break;
 						case 'reject':
 						case 'ereject':

@@ -4,6 +4,7 @@ Roundcube Webmail SieveRules
 2009 11 14
 ==========
  * Allow appending of original subject to vacation messages (requires variables extension in sieve)
+ * Parse multiple email addresses when setting redirect
 
 2009 11 09
 ==========
