@@ -191,8 +191,6 @@ class sieverules extends rcube_plugin
 
 	function gen_list($attrib)
 	{
-		$this->api->output->set_env('sieverules_moveup', $attrib['upicon']);
-		$this->api->output->set_env('sieverules_movedown', $attrib['downicon']);
 		$this->api->output->add_label('sieverules.movingfilter', 'loading');
 		$this->api->output->add_gui_object('sieverules_list', 'sieverules-table');
 
@@ -216,6 +214,10 @@ class sieverules extends rcube_plugin
 			$dst = $idx + 2;
 			$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $attrib['downicon'], 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
 
+			// set imagesin sesstion for JS refresh
+			$_SESSION['sieverules_upicon'] = $attrib['upicon'];
+			$_SESSION['sieverules_downicon'] = $attrib['downicon'];
+
 			$table->add('control', $up_link . '&nbsp;' . $down_link);
 		}
 
@@ -237,10 +239,10 @@ class sieverules extends rcube_plugin
 
 			$tmp_output = new rcube_template('settings');
 			$dst = $idx - 1;
-			$up_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => '%url%', 'alt' => 'sieverules.moveup', 'title' => 'sieverules.moveup'));
+			$up_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $_SESSION['sieverules_upicon'], 'alt' => 'sieverules.moveup', 'title' => 'sieverules.moveup'));
 			$up_link = str_replace("'", "\'", $up_link);
 			$dst = $idx + 2;
-			$down_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => '%url%', 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
+			$down_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $_SESSION['sieverules_downicon'], 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
 			$down_link = str_replace("'", "\'", $down_link);
 
 			$this->api->output->command('sieverules_update_list', $idx == 0 ? 'add-first' : 'add', 'rcmrow' . $idx, $filter_name, $up_link, $down_link);
@@ -793,10 +795,10 @@ class sieverules extends rcube_plugin
 					$filter_name = $script['name'];
 
 				$dst = $iid - 1;
-				$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => '%url%', 'alt' => 'sieverules.moveup', 'title' => 'sieverules.moveup'));
+				$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $_SESSION['sieverules_upicon'], 'alt' => 'sieverules.moveup', 'title' => 'sieverules.moveup'));
 				$up_link = str_replace("'", "\'", $up_link);
 				$dst = $iid + 2;
-				$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => '%url%', 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
+				$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $_SESSION['sieverules_downicon'], 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
 				$down_link = str_replace("'", "\'", $down_link);
 
 				if (!isset($this->script[$iid]) && sizeof($this->script) == 0)

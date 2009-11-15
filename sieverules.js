@@ -680,9 +680,7 @@ rcmail.sieverules_update_list = function(action, param1, param2, param3, param4)
 			cell = newrow.insertCell(1);
 			cell.setAttribute('class', 'control');
 
-			param3 = param3.replace(/%url%/, rcmail.env.sieverules_moveup);
 			param3 = param3.replace(/\\'/g, '\'');
-			param4 = param4.replace(/%url%/, rcmail.env.sieverules_movedown);
 			param4 = param4.replace(/\\'/g, '\'');
 
 			cell.innerHTML = param3 + '&nbsp;' + param4;
