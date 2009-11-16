@@ -22,28 +22,28 @@ class sieverules extends rcube_plugin
 
 	// default values: label => value
 	private $headers = array('subject' => 'header::Subject',
-  					'from' => 'address::Sender',
-  					'to' => 'address::To',
-  					'cc' => 'address::Cc',
-  					'bcc' => 'address::Bcc',
-  					'envelopeto' => 'envelope::To',
-  					'envelopefrom' => 'envelope::From'
-  					);
+					'from' => 'address::Sender',
+					'to' => 'address::To',
+					'cc' => 'address::Cc',
+					'bcc' => 'address::Bcc',
+					'envelopeto' => 'envelope::To',
+					'envelopefrom' => 'envelope::From'
+					);
 
 	private $operators = array('filtercontains' => 'contains',
-  					'filternotcontains' => 'notcontains',
-  					'filteris' => 'is',
-  					'filterisnot' => 'notis',
-  					'filterexists' => 'exists',
-  					'filternotexists' => 'notexists'
-  					);
+					'filternotcontains' => 'notcontains',
+					'filteris' => 'is',
+					'filterisnot' => 'notis',
+					'filterexists' => 'exists',
+					'filternotexists' => 'notexists'
+					);
 
 	private $flags = array('flagread' => '\\\\Seen',
-  					'flagdeleted' => '\\\\Deleted',
-  					'flaganswered' => '\\\\Answered',
-  					'flagdraft' => '\\\\Draft',
-  					'flagflagged' => '\\\\Flagged'
-  					);
+					'flagdeleted' => '\\\\Deleted',
+					'flaganswered' => '\\\\Answered',
+					'flagdraft' => '\\\\Draft',
+					'flagflagged' => '\\\\Flagged'
+					);
 
 	function init()
 	{
@@ -462,7 +462,7 @@ class sieverules extends rcube_plugin
 
 		$out = $form_start;
 
-		$hidden_iid = new html_hiddenfield(array('name' => '_iid', 'value' =>  $iid));
+		$hidden_iid = new html_hiddenfield(array('name' => '_iid', 'value' => $iid));
 		$out .= $hidden_iid->show();
 
 		// 'any' flag
@@ -1076,8 +1076,8 @@ class sieverules extends rcube_plugin
 			$imgclass = 'nohtc';
 		}
 
-	  	if (in_array('regex', $ext) || in_array('relational', $ext) || in_array('subaddress', $ext))
-	  		$this->operators['filteradvoptions'] = 'advoptions';
+		if (in_array('regex', $ext) || in_array('relational', $ext) || in_array('subaddress', $ext))
+			$this->operators['filteradvoptions'] = 'advoptions';
 
 		$header_style = 'visibility: hidden;';
 		$op_style = '';
@@ -1314,7 +1314,7 @@ class sieverules extends rcube_plugin
 		$col_length = sizeof($rcmail->config->get('sieverules_other_headers')) / 4;
 		$col_length = ceil($col_length);
 		foreach ($rcmail->config->get('sieverules_other_headers') as $idx => $xheader) {
-			$input_xheader = new html_radiobutton(array('id' => $xheader . '_' . $rowid, 'name' => '_xheaders_' . $rowid  . '[]', 'value' => $xheader, 'onclick' => JS_OBJECT_NAME . '.sieverules_set_xheader(this)', 'class' => 'radio'));
+			$input_xheader = new html_radiobutton(array('id' => $xheader . '_' . $rowid, 'name' => '_xheaders_' . $rowid . '[]', 'value' => $xheader, 'onclick' => JS_OBJECT_NAME . '.sieverules_set_xheader(this)', 'class' => 'radio'));
 			$xheader_show = $input_xheader->show($header) . "&nbsp;" . html::label($xheader . '_' . $rowid, Q($xheader));
 
 			if ($idx < $col_length)
@@ -1356,33 +1356,33 @@ class sieverules extends rcube_plugin
 		$field_id = 'rcmfd_advoperator_'. $rowid;
 		$select_advop = new html_select(array('id' => $field_id, 'name' => "_advoperator[]", 'onchange' => JS_OBJECT_NAME . '.sieverules_rule_advop_select(this)'));
 
-	  	if (in_array('regex', $ext)) {
-		  	$select_advop->add(Q($this->gettext('filterregex')), 'regex');
-		  	$select_advop->add(Q($this->gettext('filternotregex')), 'notregex');
+		if (in_array('regex', $ext)) {
+			$select_advop->add(Q($this->gettext('filterregex')), 'regex');
+			$select_advop->add(Q($this->gettext('filternotregex')), 'notregex');
 		}
 
-	  	if (in_array('relational', $ext)) {
-		  	$select_advop->add(Q($this->gettext('countisgreaterthan')), 'count "gt"');
-		  	$select_advop->add(Q($this->gettext('countisgreaterthanequal')), 'count "ge"');
-		  	$select_advop->add(Q($this->gettext('countislessthan')), 'count "lt"');
-		  	$select_advop->add(Q($this->gettext('countislessthanequal')), 'count "le"');
-		  	$select_advop->add(Q($this->gettext('countequals')), 'count "eq"');
-		  	$select_advop->add(Q($this->gettext('countnotequals')), 'count "ne"');
-		  	$select_advop->add(Q($this->gettext('valueisgreaterthan')), 'value "gt"');
-		  	$select_advop->add(Q($this->gettext('valueisgreaterthanequal')), 'value "ge"');
-		  	$select_advop->add(Q($this->gettext('valueislessthan')), 'value "lt"');
-		  	$select_advop->add(Q($this->gettext('valueislessthanequal')), 'value "le"');
-		  	$select_advop->add(Q($this->gettext('valueequals')), 'value "eq"');
-		  	$select_advop->add(Q($this->gettext('valuenotequals')), 'value "ne"');
+		if (in_array('relational', $ext)) {
+			$select_advop->add(Q($this->gettext('countisgreaterthan')), 'count "gt"');
+			$select_advop->add(Q($this->gettext('countisgreaterthanequal')), 'count "ge"');
+			$select_advop->add(Q($this->gettext('countislessthan')), 'count "lt"');
+			$select_advop->add(Q($this->gettext('countislessthanequal')), 'count "le"');
+			$select_advop->add(Q($this->gettext('countequals')), 'count "eq"');
+			$select_advop->add(Q($this->gettext('countnotequals')), 'count "ne"');
+			$select_advop->add(Q($this->gettext('valueisgreaterthan')), 'value "gt"');
+			$select_advop->add(Q($this->gettext('valueisgreaterthanequal')), 'value "ge"');
+			$select_advop->add(Q($this->gettext('valueislessthan')), 'value "lt"');
+			$select_advop->add(Q($this->gettext('valueislessthanequal')), 'value "le"');
+			$select_advop->add(Q($this->gettext('valueequals')), 'value "eq"');
+			$select_advop->add(Q($this->gettext('valuenotequals')), 'value "ne"');
 		}
 
 		if (in_array('subaddress', $ext)) {
-		  	$select_advop->add(Q($this->gettext('userpart')), 'user');
-		  	$select_advop->add(Q($this->gettext('notuserpart')), 'notuser');
-		  	$select_advop->add(Q($this->gettext('detailpart')), 'detail');
-		  	$select_advop->add(Q($this->gettext('notdetailpart')), 'notdetail');
-		  	$select_advop->add(Q($this->gettext('domainpart')), 'domain');
-		  	$select_advop->add(Q($this->gettext('notdomainpart')), 'notdomain');
+			$select_advop->add(Q($this->gettext('userpart')), 'user');
+			$select_advop->add(Q($this->gettext('notuserpart')), 'notuser');
+			$select_advop->add(Q($this->gettext('detailpart')), 'detail');
+			$select_advop->add(Q($this->gettext('notdetailpart')), 'notdetail');
+			$select_advop->add(Q($this->gettext('domainpart')), 'domain');
+			$select_advop->add(Q($this->gettext('notdomainpart')), 'notdomain');
 		}
 
 		$advanced_table->add(array('style' => 'white-space: normal;', 'class' => 'selheader'), html::label($field_id, Q($this->gettext('operator'))));
@@ -1622,7 +1622,7 @@ class sieverules extends rcube_plugin
 
 		$field_id = 'rcmfd_sievevachandle_'. $rowid;
 		$input_handle = new html_inputfield(array('id' => $field_id, 'name' => '_handle[]', 'class' => 'short'));
-		$vacs_table->set_row_attribs(array('class' => 'disabled', 'style' => 'display: none')); // 'style' =>  $vacadvstyle
+		$vacs_table->set_row_attribs(array('class' => 'disabled', 'style' => 'display: none')); // 'style' => $vacadvstyle
 		$vacs_table->add(null, html::label($field_id, Q($this->gettext('sievevachandle'))));
 		$vacs_table->add(null, $input_handle->show($handle));
 		$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);

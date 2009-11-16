@@ -61,10 +61,10 @@ if (window.rcmail) {
 			rcmail.register_command('plugin.sieverules.add', function(id){
 					if (rcmail.sieverules_examples) rcmail.sieverules_examples.clear_selection();
 					rcmail.sieverules_list.clear_selection();
-				    var add_url = '';
+					var add_url = '';
 
-				    var target = window;
-				    if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
+					var target = window;
+					if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
 						add_url = '&_framed=1';
 						target = window.frames[rcmail.env.contentframe];
 						rcube_find_object(rcmail.env.contentframe).style.visibility = 'inherit';
@@ -150,18 +150,18 @@ if (window.rcmail) {
 		}
 		else if (rcmail.env.action == 'plugin.sieverules.setup') {
 			rcmail.register_command('plugin.sieverules.import', function(props){
-			    var add_url = '';
+				var add_url = '';
 
-			    var target = window;
-			    if (rcmail.env.framed)
+				var target = window;
+				if (rcmail.env.framed)
 					target = window.parent;
 
 				target.location.href = './?_task=settings&_action=plugin.sieverules.import&' + props;
 			}, true);
 
 			rcmail.register_command('plugin.sieverules.ruleset_dialog_setup', function(props, obj){
-			    var target = window;
-			    if (rcmail.env.framed)
+				var target = window;
+				if (rcmail.env.framed)
 					target = window.parent;
 
 				target.rcube_find_object('sieverulesrsdialog_add').style.display = 'none';
@@ -457,10 +457,10 @@ if (window.rcmail) {
 
 			rcmail.register_command('plugin.sieverules.delete', function(id){
 				if (confirm(rcmail.gettext('filterdeleteconfirm','sieverules'))) {
-				    var add_url = '';
+					var add_url = '';
 
-				    var target = window;
-				    if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
+					var target = window;
+					if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
 						add_url = '&_framed=1';
 						target = window.frames[rcmail.env.contentframe];
 						rcube_find_object(rcmail.env.contentframe).style.visibility = 'inherit';
@@ -728,8 +728,8 @@ rcmail.sieverules_update_list = function(action, param1, param2, param3, param4)
 			if (rules[i] == selection) sid = i;
 		}
 
-	    var target = window;
-	    if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe])
+		var target = window;
+		if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe])
 			target = window.frames[rcmail.env.contentframe];
 
 		// update iid of rule being editied
@@ -1077,10 +1077,10 @@ rcmail.sieverules_adveditor = function(sel) {
 }
 
 rcmail.sieverules_load_setup = function() {
-    var add_url = '';
+	var add_url = '';
 
-    var target = window;
-    if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
+	var target = window;
+	if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
 		add_url = '&_framed=1';
 		target = window.frames[rcmail.env.contentframe];
 		rcube_find_object(rcmail.env.contentframe).style.visibility = 'inherit';
@@ -1138,8 +1138,8 @@ rcmail.sieverulesdialog_submit = function() {
 
 	rcube_find_object('sieverulesrsdialog').style.display = 'none';
 
-    var target = window;
-    if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe])
+	var target = window;
+	if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe])
 		target = window.frames[rcmail.env.contentframe];
 
 	if (action == 'rename_ruleset')

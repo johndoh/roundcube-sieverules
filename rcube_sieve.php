@@ -77,7 +77,7 @@ class rcube_sieve {
 			}
 		}
 		closedir($handle);
-    }
+	}
 
 	public function __destruct() {
 		$this->sieve->disconnect();
@@ -85,7 +85,7 @@ class rcube_sieve {
 
 	public function error() {
 		return $this->error ? $this->error : false;
-    }
+	}
 
 	public function save($script = '') {
 		if (!$script)
@@ -158,7 +158,7 @@ class rcube_sieve {
 			if (PEAR::isError($script))
 				return $this->_set_error(SIEVE_ERROR_OTHER);
 		}
-      	else {
+		else {
 			$this->_set_error(SIEVE_ERROR_NOT_EXISTS);
 			$script = '';
 		}
