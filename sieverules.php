@@ -649,13 +649,6 @@ class sieverules extends rcube_plugin
 						$script['tests'][$i]['operator'] = $sizeop;
 						$script['tests'][$i]['target'] = $target.$sizeunit;
 						break;
-					case 'body':
-						$script['tests'][$i]['bodypart'] = $bodypart;
-
-						if ($bodypart == 'content')
-							$script['tests'][$i]['contentpart'] = $contentpart;
-						else
-							$script['tests'][$i]['contentpart'] = '';
 					case 'spamtest':
 						$spamtestop = $this->_strip_val($spamtestops[$idx]);
 
@@ -663,6 +656,13 @@ class sieverules extends rcube_plugin
 						$script['tests'][$i]['operator'] = $spamtestop;
 						$script['tests'][$i]['target'] = $target;
 						break;
+					case 'body':
+						$script['tests'][$i]['bodypart'] = $bodypart;
+
+						if ($bodypart == 'content')
+							$script['tests'][$i]['contentpart'] = $contentpart;
+						else
+							$script['tests'][$i]['contentpart'] = '';
 					case 'exists':
 					case 'header':
 					case 'address':
