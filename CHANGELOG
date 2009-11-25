@@ -1,6 +1,11 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 11 25
+==========
+ * Allow default headers, operators and flags to be overridden
+ * Fix bug in body action
+
 2009 11 16
 ==========
  * Allow file header to be overridden

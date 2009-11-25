@@ -59,6 +59,16 @@ class sieverules extends rcube_plugin
 		else
 			$this->current_ruleset = $rcmail->config->get('sieverules_ruleset_name');
 
+		// override default values
+		if ($rcmail->config->get('sieverules_default_headers'))
+			$this->headers = $rcmail->config->get('sieverules_default_headers');
+
+		if ($rcmail->config->get('sieverules_default_operators'))
+			$this->operators = $rcmail->config->get('sieverules_default_operators');
+
+		if ($rcmail->config->get('sieverules_default_flags'))
+			$this->flags = $rcmail->config->get('sieverules_default_flags');
+
 		$this->action = $rcmail->action;
 
 		$this->add_texts('localization/', array('filters'));

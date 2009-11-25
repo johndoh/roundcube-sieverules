@@ -152,3 +152,7 @@ By default this plugin places a simple comment at the top of the rule file to sh
 :addresses line in vaction messages
 ===================================
 To force the :addresses line to always be added to new vataction messages set $rcmail_config['sieverules_force_vacto'] = true in your config. This only works on new rules, existing :addresses selections for existing rules will always be respected.
+
+Default values for header, operator and flag drop downs
+=======================================================
+The default values for these drop downs are set in sieverules.php but they can be overridden by setting the array in the config for $rcmail_config['sieverules_default_headers'], $rcmail_config['sieverules_default_operators'] or $rcmail_config['sieverules_default_flags'].
