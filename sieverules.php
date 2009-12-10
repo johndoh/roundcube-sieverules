@@ -336,8 +336,8 @@ class sieverules extends rcube_plugin
 
 		// add overlay input box to html page
 		$this->api->output->add_footer($out);
-
-		$select_ruleset = new html_select(array('id' => 'rulelist', 'onchange' => JS_OBJECT_NAME . '.sieverules_select_ruleset(this);'));
+		$action = ($this->action == 'plugin.sieverules.advanced') ? 'plugin.sieverules.advanced' : 'plugin.sieverules';
+		$select_ruleset = new html_select(array('id' => 'rulelist', 'onchange' => JS_OBJECT_NAME . '.sieverules_select_ruleset(this, \''. $action .'\');'));
 
 		if (sizeof($this->sieve->list) == 0) {
 			$select_ruleset->add(Q($this->gettext('nosieverulesets')), '');

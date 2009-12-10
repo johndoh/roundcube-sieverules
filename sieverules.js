@@ -1089,9 +1089,9 @@ rcmail.sieverules_load_setup = function() {
 	target.location.href = rcmail.env.comm_path+'&_action=plugin.sieverules.setup' + add_url;
 }
 
-rcmail.sieverules_select_ruleset = function(obj) {
+rcmail.sieverules_select_ruleset = function(obj, action) {
 	var idx = obj.selectedIndex;
-	window.location.href = rcmail.env.comm_path+'&_action=plugin.sieverules&_ruleset=' + obj.options[idx].value;
+	window.location.href = rcmail.env.comm_path+'&_action='+action+'&_ruleset=' + obj.options[idx].value;
 }
 
 rcmail.sieverules_add_ruleset = function(val, text) {

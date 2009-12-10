@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 12 10
+==========
+ * Add ruleset selector to advanced editor
+
 2009 11 25
 ==========
  * Allow default headers, operators and flags to be overridden

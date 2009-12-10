@@ -5,6 +5,15 @@
 <roundcube:include file="/includes/links.html" />
 <link rel="stylesheet" type="text/css" href="/this/sieverules.css" />
 <script type="text/javascript" src="/functions.js"></script>
+
+<style type="text/css">
+
+<roundcube:if condition="config:sieverules_multiplerules == true" />
+#mainscreen {
+	top: 120px;
+}
+<roundcube:endif />
+</style>
 </head>
 <body>
 
@@ -12,6 +21,15 @@
 <roundcube:include file="/includes/header.html" />
 <roundcube:include file="/includes/settingstabs.html" />
 
+<roundcube:if condition="config:sieverules_multiplerules == true" />
+<div id="rulesets">
+<roundcube:object name="rulelist" />
+<roundcube:button command="plugin.sieverules.ruleset_dialog" type="image" alt="sieverules.newruleset" title="sieverules.newruleset" image="/this/add.png" />
+<roundcube:button command="plugin.sieverules.ruleset_dialog" prop="rename_ruleset" type="image" alt="sieverules.renameruleset" title="sieverules.renameruleset" image="/this/rename.png" />
+<roundcube:button command="plugin.sieverules.del_ruleset" type="image" alt="sieverules.delruleset" title="sieverules.delruleset" imageAct="/this/delete.png" imagePas="/this/deletePas.png" />
+<roundcube:button command="plugin.sieverules.activate_ruleset" type="image" alt="sieverules.activateruleset" title="sieverules.activateruleset" imageAct="/this/enable.png" imagePas="/this/enablePas.png" />
+</div>
+<roundcube:endif />
 <div id="mainscreen">
 
 <div id="sieverules-advanced">
