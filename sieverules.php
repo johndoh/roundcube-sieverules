@@ -1441,18 +1441,20 @@ class sieverules extends rcube_plugin
 
 		$help_icon = html::img(array('src' => $attrib['helpicon'], 'alt' => $this->gettext('messagehelp'), 'border' => 0));
 
-		$folder_style = '';
-		$redirect_style = 'display: none;';
-		$reject_style = 'display: none;';
-		$vac_style = 'display: none;';
-		$imapflags_style = 'display: none;';
-		$notify_style = 'display: none;';
 		$vacadvstyle = ($action['type'] != 'vacation' && $this->force_vacto) ? '' : 'display: none;';
 		$vacshowadv = ($action['type'] != 'vacation' && $this->force_vacto) ? '1' : '';
 		$noteadvstyle = 'display: none;';
 		$noteshowadv = '';
 
-		$method = 'fileinto';
+		$allowed_actions = $rcmail->config->get('sieverules_allowed_actions', array());
+		// set default action
+		foreach ($allowed_actions as $action => $enabled) {
+			if ($enabled) {
+				$method = $action;
+				break;
+			}
+		}
+
 		$folder = 'INBOX';
 		$reject = '';
 		$vacfrom = null;
@@ -1474,20 +1476,15 @@ class sieverules extends rcube_plugin
 		if ($action['type'] == 'fileinto' || $action['type'] == 'fileinto_copy') {
 			$method = $action['type'];
 			$folder = $rcmail->config->get('sieverules_include_imap_root') ? $rcmail->imap->mod_mailbox($action['target'], 'out') : $action['target'];
+
 			if ($rcmail->config->get('sieverules_folder_delimiter', false))
 				$folder = str_replace($rcmail->imap->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $folder);
 		}
 		elseif ($action['type'] == 'reject' || $action['type'] == 'ereject') {
-			$folder_style = 'display: none;';
-			$reject_style = '';
-
 			$method = $action['type'];
 			$reject = htmlspecialchars($action['target']);
 		}
 		elseif ($action['type'] == 'vacation') {
-			$folder_style = 'display: none;';
-			$vac_style = '';
-
 			$method = 'vacation';
 			$days = $action['days'];
 			$vacfrom = $action['from'];
@@ -1506,23 +1503,14 @@ class sieverules extends rcube_plugin
 			}
 		}
 		elseif ($action['type'] == 'redirect' || $action['type'] == 'redirect_copy') {
-			$folder_style = 'display: none;';
-			$redirect_style = '';
-
 			$method = $action['type'];
 			$address = $action['target'];
 		}
 		elseif ($action['type'] == 'imapflags' || $action['type'] == 'imap4flags') {
-			$folder_style = 'display: none;';
-			$imapflags_style = '';
-
 			$method = $action['type'];
 			$flags = $action['target'];
 		}
 		elseif ($action['type'] == 'notify' || $action['type'] == 'enotify') {
-			$folder_style = 'display: none;';
-			$notify_style = '';
-
 			$method = $action['type'];
 			$nfrom = htmlspecialchars($action['from']);
 			$nimpt = htmlspecialchars($action['importance']);
@@ -1537,12 +1525,10 @@ class sieverules extends rcube_plugin
 			}
 		}
 		elseif ($action['type'] == 'discard' || $action['type'] == 'keep' || $action['type'] == 'stop') {
-			$folder_style = 'display: none;';
 			$method = $action['type'];
 		}
 
 		$select_action = new html_select(array('name' => "_act[]", 'onchange' => JS_OBJECT_NAME . '.sieverules_action_select(this)'));
-		$allowed_actions = $rcmail->config->get('sieverules_allowed_actions', array());
 		if (in_array('fileinto', $ext) && $allowed_actions['fileinto'])
 			$select_action->add(Q($this->gettext('messagemoveto')), 'fileinto');
 		if (in_array('fileinto', $ext) && in_array('copy', $ext) && $allowed_actions['fileinto'])
@@ -1574,7 +1560,7 @@ class sieverules extends rcube_plugin
 
 		$actions_table->add('action', $select_action->show($method));
 
-		$vacs_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 3, 'style' => $vac_style));
+		$vacs_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 3, 'style' => ($method == 'vacation') ? '' : 'display: none;'));
 
 		$to_addresses = "";
 		$vacto_arr = explode(",", $vacto);
@@ -1672,7 +1658,7 @@ class sieverules extends rcube_plugin
 		$input_advopts = new html_checkbox(array('id' => 'vadvopts' . $rowid, 'name' => '_vadv_opts[]', 'onclick' => JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1', 'class' => 'checkbox'));
 		$vacs_table->add(array('colspan' => '3', 'style' => 'text-align: right'), html::label('vadvopts' . $rowid, Q($this->gettext('advancedoptions'))) . $input_advopts->show($vacshowadv));
 
-		$notify_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 3, 'style' => $notify_style));
+		$notify_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 3, 'style' => ($method == 'notify' || $method == 'enotify') ? '' : 'display: none;'));
 
 		$user_identities = $rcmail->user->list_identities();
 		if (count($user_identities)) {
@@ -1753,12 +1739,12 @@ class sieverules extends rcube_plugin
 			}
 		}
 
-		$input_folderlist = new html_select(array('name' => '_folder[]', 'style' => $folder_style));
+		$input_folderlist = new html_select(array('name' => '_folder[]', 'style' => ($method == 'fileinto' || $method == 'fileinto_copy') ? '' : 'display: none;'));
 		rcmail_render_folder_tree_select($a_mailboxes, $mbox_name, 100, $input_folderlist, false);
 
-		$input_address = new html_inputfield(array('name' => '_redirect[]', 'style' => $redirect_style));
-		$input_reject = new html_textarea(array('name' => '_reject[]', 'rows' => '5', 'cols' => '40', 'style' => $reject_style));
-		$input_imapflags = new html_select(array('name' => '_imapflags[]', 'style' => $imapflags_style));
+		$input_address = new html_inputfield(array('name' => '_redirect[]', 'style' => ($method == 'redirect' || $method == 'redirect_copy') ? '' : 'display: none;'));
+		$input_reject = new html_textarea(array('name' => '_reject[]', 'rows' => '5', 'cols' => '40', 'style' => ($method == 'reject' || $method == 'ereject') ? '' : 'display: none;'));
+		$input_imapflags = new html_select(array('name' => '_imapflags[]', 'style' => ($method == 'imapflags' || $method == 'imap4flags') ? '' : 'display: none;'));
 		foreach($this->flags as $name => $val)
 			$input_imapflags->add(Q($this->gettext($name)), Q($val));
 

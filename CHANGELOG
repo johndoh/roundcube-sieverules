@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2009 12 30
+==========
+ * Fix default display when fileinto action is disabled
+
 2009 12 10
 ==========
  * Add ruleset selector to advanced editor
