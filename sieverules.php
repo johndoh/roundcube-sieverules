@@ -1448,9 +1448,9 @@ class sieverules extends rcube_plugin
 
 		$allowed_actions = $rcmail->config->get('sieverules_allowed_actions', array());
 		// set default action
-		foreach ($allowed_actions as $action => $enabled) {
+		foreach ($allowed_actions as $key => $enabled) {
 			if ($enabled) {
-				$method = $action;
+				$method = $key;
 				break;
 			}
 		}
