@@ -5,7 +5,7 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.5
+ * @version 1.6
  * @author Philip Weir
  * @url http://roundcube.net/plugins/sieverules
  */
@@ -1446,14 +1446,41 @@ class sieverules extends rcube_plugin
 		$noteadvstyle = 'display: none;';
 		$noteshowadv = '';
 
-		$allowed_actions = $rcmail->config->get('sieverules_allowed_actions', array());
-		// set default action
-		foreach ($allowed_actions as $key => $enabled) {
-			if ($enabled) {
-				$method = $key;
-				break;
-			}
-		}
+		// setup allowed actions
+		$allowed_actions = array();
+		$config_actions = $rcmail->config->get('sieverules_allowed_actions', array());
+		if (in_array('fileinto', $ext) && ($config_actions['fileinto'] || $action['type'] == 'fileinto'))
+			$allowed_actions['fileinto'] = $this->gettext('messagemoveto');
+		if (in_array('fileinto', $ext) && in_array('copy', $ext) && ($config_actions['fileinto'] || $action['type'] == 'fileinto'))
+			$allowed_actions['fileinto_copy'] = $this->gettext('messagecopyto');
+		if (in_array('vacation', $ext) && ($config_actions['vacation'] || $action['type'] == 'vacation'))
+			$allowed_actions['vacation'] = $this->gettext('messagevacation');
+		if (in_array('reject', $ext) && ($config_actions['reject'] || $action['type'] == 'reject'))
+			$allowed_actions['reject'] =  $this->gettext('messagereject');
+		elseif (in_array('ereject', $ext) && ($config_actions['reject'] || $action['type'] == 'ereject'))
+			$allowed_actions['ereject'] = $this->gettext('messagereject');
+		if (in_array('imapflags', $ext) && ($config_actions['imapflags'] || $action['type'] == 'imapflags'))
+			$allowed_actions['imapflags'] = $this->gettext('messageimapflags');
+		elseif (in_array('imap4flags', $ext) && ($config_actions['imapflags'] || $action['type'] == 'imap4flags'))
+			$allowed_actions['imap4flags'] = $this->gettext('messageimapflags');
+		if (in_array('notify', $ext) && ($config_actions['notify'] || $action['type'] == 'notify'))
+			$allowed_actions['notify'] = $this->gettext('messagenotify');
+		elseif (in_array('enotify', $ext) && ($config_actions['notify'] || $action['type'] == 'enotify'))
+			$allowed_actions['enotify'] = $this->gettext('messagenotify');
+		if ($config_actions['redirect'] || $action['type'] == 'redirect')
+			$allowed_actions['redirect'] = $this->gettext('messageredirect');
+		if (in_array('copy', $ext) && ($config_actions['redirect'] || $action['type'] == 'redirect_copy'))
+			$allowed_actions['redirect_copy'] = $this->gettext('messageredirectcopy');
+		if ($config_actions['keep'] || $action['type'] == 'keep')
+			$allowed_actions['keep'] = $this->gettext('messagekeep');
+		if ($config_actions['discard'] || $action['type'] == 'discard')
+			$allowed_actions['discard'] = $this->gettext('messagediscard');
+		if ($config_actions['stop'] || $action['type'] == 'stop')
+			$allowed_actions['stop'] = $this->gettext('messagestop');
+
+		// set the default action
+		reset($allowed_actions);
+		$method = key($allowed_actions);
 
 		$folder = 'INBOX';
 		$reject = '';
@@ -1529,35 +1556,8 @@ class sieverules extends rcube_plugin
 		}
 
 		$select_action = new html_select(array('name' => "_act[]", 'onchange' => JS_OBJECT_NAME . '.sieverules_action_select(this)'));
-		if (in_array('fileinto', $ext) && ($allowed_actions['fileinto'] || $method == 'fileinto'))
-			$select_action->add(Q($this->gettext('messagemoveto')), 'fileinto');
-		if (in_array('fileinto', $ext) && in_array('copy', $ext) && ($allowed_actions['fileinto'] || $method == 'fileinto'))
-			$select_action->add(Q($this->gettext('messagecopyto')), 'fileinto_copy');
-		if (in_array('vacation', $ext) && ($allowed_actions['vacation'] || $method == 'vacation'))
-			$select_action->add(Q($this->gettext('messagevacation')), 'vacation');
-		if (in_array('reject', $ext) && ($allowed_actions['reject'] || $method == 'reject'))
-			$select_action->add(Q($this->gettext('messagereject')), 'reject');
-		elseif (in_array('ereject', $ext) && ($allowed_actions['reject'] || $method == 'ereject'))
-			$select_action->add(Q($this->gettext('messagereject')), 'ereject');
-		if (in_array('imapflags', $ext) && ($allowed_actions['imapflags'] || $method == 'imapflags'))
-			$select_action->add(Q($this->gettext('messageimapflags')), 'imapflags');
-		elseif (in_array('imap4flags', $ext) && ($allowed_actions['imapflags'] || $method == 'imap4flags'))
-			$select_action->add(Q($this->gettext('messageimapflags')), 'imap4flags');
-		if (in_array('notify', $ext) && ($allowed_actions['notify'] || $method == 'notify'))
-			$select_action->add(Q($this->gettext('messagenotify')), 'notify');
-		elseif (in_array('enotify', $ext) && ($allowed_actions['notify'] || $method == 'enotify'))
-			$select_action->add(Q($this->gettext('messagenotify')), 'enotify');
-		if ($allowed_actions['redirect'] || $method == 'redirect')
-			$select_action->add(Q($this->gettext('messageredirect')), 'redirect');
-		if (in_array('copy', $ext) && ($allowed_actions['redirect'] || $method == 'redirect_copy'))
-			$select_action->add(Q($this->gettext('messageredirectcopy')), 'redirect_copy');
-		if ($allowed_actions['keep'] || $method == 'keep')
-			$select_action->add(Q($this->gettext('messagekeep')), 'keep');
-		if ($allowed_actions['discard'] || $method == 'discard')
-			$select_action->add(Q($this->gettext('messagediscard')), 'discard');
-		if ($allowed_actions['stop'] || $method == 'stop')
-			$select_action->add(Q($this->gettext('messagestop')), 'stop');
-
+		foreach ($allowed_actions as $value => $text)
+			$select_action->add(Q($text), $value);
 		$actions_table->add('action', $select_action->show($method));
 
 		$vacs_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 3, 'style' => ($method == 'vacation') ? '' : 'display: none;'));
