@@ -1529,33 +1529,33 @@ class sieverules extends rcube_plugin
 		}
 
 		$select_action = new html_select(array('name' => "_act[]", 'onchange' => JS_OBJECT_NAME . '.sieverules_action_select(this)'));
-		if (in_array('fileinto', $ext) && $allowed_actions['fileinto'])
+		if (in_array('fileinto', $ext) && ($allowed_actions['fileinto'] || $method == 'fileinto'))
 			$select_action->add(Q($this->gettext('messagemoveto')), 'fileinto');
-		if (in_array('fileinto', $ext) && in_array('copy', $ext) && $allowed_actions['fileinto'])
+		if (in_array('fileinto', $ext) && in_array('copy', $ext) && ($allowed_actions['fileinto'] || $method == 'fileinto'))
 			$select_action->add(Q($this->gettext('messagecopyto')), 'fileinto_copy');
-		if (in_array('vacation', $ext) && $allowed_actions['vacation'])
+		if (in_array('vacation', $ext) && ($allowed_actions['vacation'] || $method == 'vacation'))
 			$select_action->add(Q($this->gettext('messagevacation')), 'vacation');
-		if (in_array('reject', $ext) && $allowed_actions['reject'])
+		if (in_array('reject', $ext) && ($allowed_actions['reject'] || $method == 'reject'))
 			$select_action->add(Q($this->gettext('messagereject')), 'reject');
-		elseif (in_array('ereject', $ext) && $allowed_actions['reject'])
+		elseif (in_array('ereject', $ext) && ($allowed_actions['reject'] || $method == 'ereject'))
 			$select_action->add(Q($this->gettext('messagereject')), 'ereject');
-		if (in_array('imapflags', $ext) && $allowed_actions['imapflags'])
+		if (in_array('imapflags', $ext) && ($allowed_actions['imapflags'] || $method == 'imapflags'))
 			$select_action->add(Q($this->gettext('messageimapflags')), 'imapflags');
-		elseif (in_array('imap4flags', $ext) && $allowed_actions['imapflags'])
+		elseif (in_array('imap4flags', $ext) && ($allowed_actions['imapflags'] || $method == 'imap4flags'))
 			$select_action->add(Q($this->gettext('messageimapflags')), 'imap4flags');
-		if (in_array('notify', $ext) && $allowed_actions['notify'])
+		if (in_array('notify', $ext) && ($allowed_actions['notify'] || $method == 'notify'))
 			$select_action->add(Q($this->gettext('messagenotify')), 'notify');
-		elseif (in_array('enotify', $ext) && $allowed_actions['notify'])
+		elseif (in_array('enotify', $ext) && ($allowed_actions['notify'] || $method == 'enotify'))
 			$select_action->add(Q($this->gettext('messagenotify')), 'enotify');
-		if ($allowed_actions['redirect'])
+		if ($allowed_actions['redirect'] || $method == 'redirect')
 			$select_action->add(Q($this->gettext('messageredirect')), 'redirect');
-		if (in_array('copy', $ext) && $allowed_actions['redirect'])
+		if (in_array('copy', $ext) && ($allowed_actions['redirect'] || $method == 'redirect_copy'))
 			$select_action->add(Q($this->gettext('messageredirectcopy')), 'redirect_copy');
-		if ($allowed_actions['keep'])
+		if ($allowed_actions['keep'] || $method == 'keep')
 			$select_action->add(Q($this->gettext('messagekeep')), 'keep');
-		if ($allowed_actions['discard'])
+		if ($allowed_actions['discard'] || $method == 'discard')
 			$select_action->add(Q($this->gettext('messagediscard')), 'discard');
-		if ($allowed_actions['stop'])
+		if ($allowed_actions['stop'] || $method == 'stop')
 			$select_action->add(Q($this->gettext('messagestop')), 'stop');
 
 		$actions_table->add('action', $select_action->show($method));
