@@ -637,7 +637,7 @@ class rcube_sieve_script {
 									'not' 		=> $match[$size-7] ? true : false,
 									'operator'	=> $match[$size-5], // is/contains/matches
 									'header' 	=> $this->_parse_list($match[$size-2]), // header(s)
-									'target'	=> $this->_parse_list($match[$size-1]), // string(s)
+									'target'	=> $this->_parse_list($match[$size-1], ($match[$size-5] == 'regex' ? true : false)), // string(s)
 									'comparator' => trim($match[$size-3])
 								);
 				}
@@ -672,7 +672,7 @@ class rcube_sieve_script {
 									'contentpart' => $contentpart,
 									'operator'	=> $match[$size-4], // is/contains/matches
 									'header' 	=> 'body', // header(s)
-									'target'	=> $this->_parse_list($match[$size-1]), // string(s)
+									'target'	=> $this->_parse_list($match[$size-1], ($match[$size-4] == 'regex' ? true : false)), // string(s)
 									'comparator' => trim($match[$size-2])
 								);
 				}
@@ -725,13 +725,16 @@ class rcube_sieve_script {
 		}
 	}
 
-	private function _parse_list($content) {
+	private function _parse_list($content, $regex = false) {
 		$result = array();
 
 		for ($x=0, $len=strlen($content); $x<$len; $x++) {
 			switch ($content[$x]) {
 				case '\\':
-					$str .= $content[++$x];
+					if ($regex)
+						$str .= $content[$x];
+					else
+						$str .= $content[++$x];
 					break;
 				case '"':
 					if (isset($str)) {
