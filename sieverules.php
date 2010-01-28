@@ -569,7 +569,7 @@ class sieverules extends rcube_plugin
 		$rcmail = rcmail::get_instance();
 		$this->_startup();
 
-		$script = trim(get_input_value('_script', RCUBE_INPUT_POST));
+		$script = trim(get_input_value('_script', RCUBE_INPUT_POST, true));
 		if ($script != '' && ($rcmail->config->get('sieverules_adveditor') == 1 || $rcmail->config->get('sieverules_adveditor') == 2)) {
 			$script = $this->_strip_val($script);
 			$save = $this->sieve->save($script);
