@@ -94,10 +94,12 @@ $rcmail_config['sieverules_example_file'] = '/etc/dovecot/sieve/example';
 // Force the :addresses line to always be added to new vataction rules
 // Some sieve setups require that the :address part of a vactaion rule is always present for the message to be sent
 // Cyrus setups need this to option set to true
-$rcmail_config['sieverules_force_vacto'] = false;
+$rcmail_config['sieverules_force_vacto'] = FALSE;
 
-// Rule files can be written as one if/else if statement or as a series of unrelated if statements
-$rcmail_config['sieverules_use_elsif'] = true;
+// The rule file can be written as one IF/ELSIF statement or as a series of unrelated IF statements
+// TRUE  - one IF/ELSIF statement (default)
+// FALSE -  a series of unrelated IF statements
+$rcmail_config['sieverules_use_elsif'] = TRUE;
 
 // For information on customising the rule file see "The structure of the rule file" in the README
 // For information on customising the contents of the drop downs see "Default values for header, operator and flag drop downs" in the README
