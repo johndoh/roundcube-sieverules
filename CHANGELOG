@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2010 01 29
+==========
+ * Add hidden options to config file
+
 2010 01 28
 ==========
  * Fix handeling of text in <> in adv editor

@@ -524,7 +524,7 @@ class sieverules extends rcube_plugin
 		}
 
 		$out .= html::tag('fieldset', null, html::tag('legend', null, Q($this->gettext('messagesrules')))
-				 . Q($this->gettext('sieveruleexp')) . "<br /><br />"
+				 . Q((!$rcmail->config->get('sieverules_use_elsif', true)) ? $this->gettext('sieveruleexp_stop'): $this->gettext('sieveruleexp')) . "<br /><br />"
 				 . $join_type . "<br /><br />"
 				 . $rules_table->show());
 

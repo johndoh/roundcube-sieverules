@@ -150,6 +150,7 @@ $messages['vacnomsg'] = 'Please enter some text for your message';
 $messages['notifynomethod'] = 'Please enter a method by which the notification should be sent';
 $messages['notifynomsg'] = 'Please enter some text for your message';
 $messages['sieveruleexp'] = 'Please define one or more rules against which each message will be tested. Filters are run in the order in which they appear on the left of this screen, if a match is found no further filters will be tested.';
+$messages['sieveruleexp_stop'] = 'Please define one or more rules against which each message will be tested. Filters are run in the order in which they appear on the left of this screen until a \'Stop\' action is met.';
 $messages['sieveactexp'] = 'Please select from the options below. These actions will be performed for any message matching the above rule(s).';
 $messages['sieveheadershlp'] = 'Below are some examples of other headers that can be tested by the filters. Select a header to add it to the rule or enter a custom one in the box above.';
 $messages['movingfilter'] = 'Moving filter...';
