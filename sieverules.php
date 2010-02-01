@@ -201,6 +201,10 @@ class sieverules extends rcube_plugin
 
 	function gen_list($attrib)
 	{
+		// set imagesin sesstion for JS refresh
+		$_SESSION['sieverules_upicon'] = $attrib['upicon'];
+		$_SESSION['sieverules_downicon'] = $attrib['downicon'];
+
 		$this->api->output->add_label('sieverules.movingfilter', 'loading');
 		$this->api->output->add_gui_object('sieverules_list', 'sieverules-table');
 
@@ -223,10 +227,6 @@ class sieverules extends rcube_plugin
 			$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $attrib['upicon'], 'alt' => 'sieverules.moveup', 'title' => 'sieverules.moveup'));
 			$dst = $idx + 2;
 			$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $attrib['downicon'], 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
-
-			// set imagesin sesstion for JS refresh
-			$_SESSION['sieverules_upicon'] = $attrib['upicon'];
-			$_SESSION['sieverules_downicon'] = $attrib['downicon'];
 
 			$table->add('control', $up_link . '&nbsp;' . $down_link);
 		}
