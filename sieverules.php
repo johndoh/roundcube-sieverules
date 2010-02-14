@@ -22,7 +22,7 @@ class sieverules extends rcube_plugin
 
 	// default values: label => value
 	private $headers = array('subject' => 'header::Subject',
-					'from' => 'address::Sender',
+					'from' => 'address::From',
 					'to' => 'address::To',
 					'cc' => 'address::Cc',
 					'bcc' => 'address::Bcc',
@@ -1326,10 +1326,11 @@ class sieverules extends rcube_plugin
 		$col2 = '';
 		$col3 = '';
 		$col4 = '';
-		sort($rcmail->config->get('sieverules_other_headers'));
-		$col_length = sizeof($rcmail->config->get('sieverules_other_headers')) / 4;
+		$other_headers = $rcmail->config->get('sieverules_other_headers');
+		sort($other_headers);
+		$col_length = sizeof($other_headers) / 4;
 		$col_length = ceil($col_length);
-		foreach ($rcmail->config->get('sieverules_other_headers') as $idx => $xheader) {
+		foreach ($other_headers as $idx => $xheader) {
 			$input_xheader = new html_radiobutton(array('id' => $xheader . '_' . $rowid, 'name' => '_xheaders_' . $rowid . '[]', 'value' => $xheader, 'onclick' => JS_OBJECT_NAME . '.sieverules_set_xheader(this)', 'class' => 'radio'));
 			$xheader_show = $input_xheader->show($header) . "&nbsp;" . html::label($xheader . '_' . $rowid, Q($xheader));
 

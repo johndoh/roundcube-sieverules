@@ -59,7 +59,7 @@ $rcmail_config['sieverules_other_headers'] = array(
 											'Resent-From', 'Resent-To', 'X-Mailer', 'X-MailingList',
 											'X-Spam-Status', 'X-Priority', 'Importance', 'X-MSMail-Priority',
 											'Precedence', 'Return-Path', 'Received', 'Auto-Submitted',
-											'X-Spam-Flag', 'X-Spam-Tests'
+											'X-Spam-Flag', 'X-Spam-Tests', 'Sender',
 											);
 
 // Predefined rules

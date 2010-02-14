@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2010 02 14
+==========
+ * The Sender header is not always present, test From by default instead
+
 2010 01 29
 ==========
  * Add hidden options to config file
