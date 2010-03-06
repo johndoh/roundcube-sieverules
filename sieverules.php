@@ -528,7 +528,7 @@ class sieverules extends rcube_plugin
 				 . $join_type . "<br /><br />"
 				 . $rules_table->show());
 
-		rcmail::get_instance()->imap_init(TRUE);
+		rcmail::get_instance()->imap_connect();
 		$actions_table = new html_table(array('id' => 'actions-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 3));
 		$actions_table = $this->_action_row($ext, $actions_table, 'rowid', null, $attrib, $example);
 
@@ -729,7 +729,7 @@ class sieverules extends rcube_plugin
 					case 'fileinto_copy':
 						$folder = $this->_strip_val($folders[$idx]);
 						$rcmail = rcmail::get_instance();
-						$rcmail->imap_init(TRUE);
+						$rcmail->imap_connect();
 						$script['actions'][$i]['target'] = $rcmail->config->get('sieverules_include_imap_root') ? $rcmail->imap->mod_mailbox($folder) : $folder;
 						if ($rcmail->config->get('sieverules_folder_delimiter', false))
 							$script['actions'][$i]['target'] = str_replace($rcmail->imap->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $script['actions'][$i]['target']);

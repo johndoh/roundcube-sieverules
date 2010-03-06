@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2010 03 06
+==========
+ * Use imap_connect after r3278
+
 2010 02 14
 ==========
  * The Sender header is not always present, test From by default instead
