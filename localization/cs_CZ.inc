@@ -1,5 +1,5 @@
 <?php
-/* Author: Jan Smitka <jan@smitka.org> */
+/* Author: Jan Smitka */
 
 $labels = array();
 $labels['filters'] = 'Filtry';

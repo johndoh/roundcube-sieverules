@@ -1,5 +1,5 @@
 <?php
-/* Author: Zoltan Nagy (nzolt|at|dotweb|dot|hu) */
+/* Author: Zoltan Nagy */
 
 $labels = array();
 $labels['filters'] = 'Szűrők';
