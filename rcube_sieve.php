@@ -34,7 +34,7 @@ class rcube_sieve {
 	private $ruleset;
 	private $importers;
 	private $elsif;
-	private $cache = true;
+	private $cache = false;
 	public $error = false;
 	public $list = array();
 	public $script;
