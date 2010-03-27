@@ -31,7 +31,9 @@ $rcmail_config['sieverules_folder_delimiter'] = null;
 $rcmail_config['sieverules_folder_encoding'] = null;
 
 // include the IMAP root in the folder path when creating the rules
-$rcmail_config['sieverules_include_imap_root'] = FALSE;
+// set to false to never include the IMAP root in the folder path
+// set to null for default behaviour
+$rcmail_config['sieverules_include_imap_root'] = null;
 
 // ruleset name
 $rcmail_config['sieverules_ruleset_name'] = 'roundcube';

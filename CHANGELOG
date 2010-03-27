@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2010 03 27
+==========
+ * Use same folder path as RC by default
+
 2010 03 06
 ==========
  * Use imap_connect after r3278
