@@ -102,8 +102,11 @@ class rcube_sieve {
 	}
 
 	public function get_extensions() {
-		if ($this->sieve)
-			return $this->sieve->getExtensions();
+		if ($this->sieve) {
+			$ext = $this->sieve->getExtensions();
+			$ext = array_map('strtolower', (array) $ext);
+			return $ext;
+		}
 	}
 
 	public function check_import() {

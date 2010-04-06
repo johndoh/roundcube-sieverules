@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2010 04 06
+==========
+ * Update to Net_Sieve 1.2.0
+
 2010 03 27
 ==========
  * Use same folder path as RC by default
