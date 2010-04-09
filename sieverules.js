@@ -667,6 +667,7 @@ rcmail.sieverules_update_list = function(action, param1, param2, param3, param4)
 			rcmail.sieverules_list.remove_row(0);
 
 		var newrow = document.createElement('tr');
+		rcmail.sieverules_list.insert_row(newrow);
 
 		if (param1 == -1) {
 			var cell = newrow.insertCell(0);
@@ -678,15 +679,13 @@ rcmail.sieverules_update_list = function(action, param1, param2, param3, param4)
 			var cell = newrow.insertCell(0);
 			cell.appendChild(document.createTextNode(param2));
 			cell = newrow.insertCell(1);
-			cell.setAttribute('class', 'control');
+			cell.className = 'control';
 
 			param3 = param3.replace(/\\'/g, '\'');
 			param4 = param4.replace(/\\'/g, '\'');
 
 			cell.innerHTML = param3 + '&nbsp;' + param4;
 		}
-
-		rcmail.sieverules_list.insert_row(newrow);
 		break;
 	case 'update':
 		rows[param1].obj.cells[0].innerHTML = param2;
@@ -698,10 +697,10 @@ rcmail.sieverules_update_list = function(action, param1, param2, param3, param4)
 		rcmail.sieverules_list.clear();
 
 		var newrow = document.createElement('tr');
+		rcmail.sieverules_list.insert_row(newrow);
 		var cell = newrow.insertCell(0);
 		cell.setAttribute('colspan', '2');
 		cell.appendChild(document.createTextNode(rcmail.gettext('loading','')));
-		rcmail.sieverules_list.insert_row(newrow);
 
 		rcmail.http_request('plugin.sieverules.update_list', '', false);
 		break;
