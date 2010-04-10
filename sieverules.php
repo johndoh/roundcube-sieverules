@@ -7,7 +7,6 @@
  *
  * @version 1.7
  * @author Philip Weir
- * @url http://roundcube.net/plugins/sieverules
  */
 class sieverules extends rcube_plugin
 {
