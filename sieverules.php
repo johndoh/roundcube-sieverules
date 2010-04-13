@@ -391,7 +391,7 @@ class sieverules extends rcube_plugin
 				$this->script = $this->sieve->script->as_array();
 
 			if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
-				$this->api->output->add_script("parent.location.reload();");
+				$this->api->output->add_script("parent.". JS_OBJECT_NAME .".goto_url('plugin.sieverules');");
 			}
 			else {
 				// go to sieverules page
@@ -414,7 +414,7 @@ class sieverules extends rcube_plugin
 			if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
 
 			if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
-				$this->api->output->add_script("parent.location.reload();");
+				$this->api->output->add_script("parent.". JS_OBJECT_NAME .".goto_url('plugin.sieverules');");
 			}
 			else {
 				// go to sieverules page
