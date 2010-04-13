@@ -33,7 +33,7 @@ class srimport_avelsieve
 				}
 				elseif (isset($name[$i])) {
 					if (trim($token)) {
-						$content .= "if " . $token . "\n";
+						$content .= $token . "\n";
 						$i++;
 					}
 				}
