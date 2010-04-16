@@ -1,6 +1,6 @@
 <?php
 /* Author: Cédric Nirousset */
-    
+
 $labels = array();
 $labels['filters'] = 'Filtres';
 $labels['managefilters'] = 'Gestion des filtres sur les mails entrants';
@@ -60,7 +60,7 @@ $labels['messagevacation'] = 'Message d\'absence';
 $labels['messagekeep'] = 'Garder le message';
 $labels['messagediscard'] = 'Refuser le message';
 $labels['messagenotify'] = 'Envoyer la notification';
-$labels['messagestop'] = 'Arrêter les filters en cours';
+$labels['messagestop'] = 'Arrêter les filtres en cours';
 $labels['messagehelp'] = 'Qu\'est-ce que c\'est ?';
 $labels['sieveorigsubj'] = 'Ajouter le sujet original à la réponse';
 $labels['sievevachandle'] = 'Traiter';
@@ -110,6 +110,16 @@ $labels['spamlevelequals'] = 'est égale à';
 $labels['i;ascii-casemap'] = 'insensible à la casse';
 $labels['i;octet'] = 'correspondance exacte';
 $labels['i;ascii-numeric'] = 'correspondance numérique';
+$labels['selectruleset'] = 'Sélectionner un groupe de règles';
+$labels['activeruleset'] = '%s (actif)';
+$labels['activateruleset'] = 'Activer ce groupe de règles';
+$labels['newruleset'] = 'Créer un nouveau groupe de règles';
+$labels['delruleset'] = 'Effacer ce groupe de règles';
+$labels['renameruleset'] = 'Renomer ce groupe de règles';
+$labels['copy'] = 'Copier';
+$labels['copyexistingfilter'] = 'Copier les filtres éxistants';
+$labels['copytoruleset'] = 'Copier le filtre dans un autre groupe de règles';
+$labels['copyfromruleset'] = 'Copier des filtres depuis un autre groupe de règles';
 
 $messages = array();
 $messages['nosieverules'] = 'Aucun filtre trouvé.';
@@ -140,6 +150,7 @@ $messages['vacnomsg'] = 'Veuillez entrer du texte pour votre message';
 $messages['notifynomethod'] = 'Veuillez entrer la méthode par laquellela notification doit être envoyé';
 $messages['notifynomsg'] = 'veuillez entrer du texte pour votre message';
 $messages['sieveruleexp'] = 'Veuillez définir une ou plusieurs règles pour le filtre. Les filtres sont exécutés dans l\'ordre dans lequel ils apparaissent sur la gauche de l\'écran. Si un filtre est exécuté, plus aucun autre filtre ne sera testé.';
+$messages['sieveruleexp_stop'] = 'Veuillez définir une ou plusieurs règles pour le filtre. Les filtres sont exécutés dans l\'ordre dans lequel ils apparaissent sur la gauche de l\'écran, et ce, jusqu\'à ce qu\'une action d\'arrêt des filtres soit exécutée.';
 $messages['sieveactexp'] = 'Veuillez définir une ou plusieurs actions ci-dessous. Ces actions seront exécutés pour chaque message qui correspondra au règles ci-dessus.';
 $messages['sieveheadershlp'] = 'Voici ci-dessous une liste d\'exemple d\'entête que vous pouvez utilisez dans votre règle. Sélectionnez-en une pour l\'ajouter à la règle ou entrez-en une manuellement dans le champs texte ci-dessous.';
 $messages['movingfilter'] = 'Déplacement du filtre...';
@@ -155,5 +166,10 @@ $messages['badoperator'] = 'Désolé, l\'opérateur que vous avez sélectionner 
 $messages['filteractionerror'] = 'L\'action demandée n\'est pas supportée par le serveur';
 $messages['filtermissingerror'] = 'Impossible de trouver la règle demandée';
 $messages['contentpartexp'] = 'Le MIME-type our la partie spécifique du message qui doit être testé. Par exemple : `message/rfc822`, `text/html`, `audio/mp3` ou `image`.';
+$messages['delrulesetconf'] = 'Êtes vous sûr de vouloir effacer ce groupe de règles ?';
+$messages['rulesetexists'] = 'Un groupe de règles porte déjà ce nom. Veuillez en choisir un autre.';
+$messages['copyexisting'] = '<b>Copie d\'un groupe de règles éxistant :</b> Voulez vous copier les filtres d\'un groupe de règles éxistant dans le groupe courant ?';
+$messages['filtercopied'] = 'Filtre copié avec succès';
+$messages['nosieverulesets'] = 'Aucun groupe de règles trouvé.';
 
 ?>
