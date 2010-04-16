@@ -728,13 +728,19 @@ class rcube_sieve_script {
 	private function _parse_list($content, $regex = false) {
 		$result = array();
 
+		if ($regex) {
+			if (preg_match('/^"(.*)"$/', $content, $matches));
+				$content = $matches[1];
+
+			$content = str_replace('\"', '"', $content);
+			return $content;
+		}
+
 		for ($x=0, $len=strlen($content); $x<$len; $x++) {
 			switch ($content[$x]) {
 				case '\\':
-					if ($regex)
-						$str .= $content[$x];
-					else
-						$str .= $content[++$x];
+					$str .= $content[++$x];
+
 					break;
 				case '"':
 					if (isset($str)) {
