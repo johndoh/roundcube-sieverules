@@ -39,7 +39,7 @@
  * @copyright 2002-2003 Richard Heyes
  * @copyright 2006-2008 Anish Mistry
  * @license   http://www.opensource.org/licenses/bsd-license.php BSD
- * @version   SVN: $Id: Sieve.php 297276 2010-04-01 13:11:07Z yunosh $
+ * @version   SVN: $Id: Sieve.php 298158 2010-04-19 09:43:30Z yunosh $
  * @link      http://pear.php.net/package/Net_Sieve
  */
 
@@ -83,7 +83,7 @@ define('NET_SIEVE_STATE_TRANSACTION', 3, true);
  * @copyright 2002-2003 Richard Heyes
  * @copyright 2006-2008 Anish Mistry
  * @license   http://www.opensource.org/licenses/bsd-license.php BSD
- * @version   Release: 1.2.0
+ * @version   Release: 1.2.1
  * @link      http://pear.php.net/package/Net_Sieve
  * @link      http://www.ietf.org/rfc/rfc3028.txt RFC 3028 (Sieve: A Mail
  *            Filtering Language)
@@ -690,7 +690,7 @@ class Net_Sieve
         if (PEAR::isError($result = $this->_sendStringResponse(base64_encode($response)))) {
             return $result;
         }
-        if (PEAR::isError($result = $this->_doCmd())) {
+        if (PEAR::isError($result = $this->_doCmd('', true))) {
             return $result;
         }
         if ($this->_toUpper(substr($result, 0, 2)) == 'OK') {
