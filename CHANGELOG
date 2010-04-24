@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2010 04 24
+==========
+ * Add support for date extension
+
 2010 04 19
 ==========
  * Update to Net_Sieve 1.2.1

@@ -27,6 +27,7 @@
  |   * Added support for stop action                                     |
  |   * Added support for body and copy                                   |
  |   * Added support for spamtest (Vladislav Bogdanov)                   |
+ |   * Added support for date                                            |
  +-----------------------------------------------------------------------+
 
  $Id: $
@@ -59,6 +60,7 @@ class rcube_sieve_script {
 						'notify',
 						'enotify',
 						'spamtest',
+						'date',
 						);
 	public $raw = '';
 
@@ -279,6 +281,57 @@ class rcube_sieve_script {
 								$tests[$i] .= ' "' . $this->_escape_string($test['target']) . '"';
 
 							break;
+						case 'date':
+							array_push($exts, 'date');
+							if ($test['operator'] == 'regex')
+								array_push($exts, 'regex');
+							elseif (substr($test['operator'], 0, 5) == 'count' || substr($test['operator'], 0, 5) == 'value')
+								array_push($exts, 'relational');
+
+							$tests[$i] .= ($test['not'] ? 'not ' : '');
+							$tests[$i] .= $test['header'];
+
+							$timezone = rcmail::get_instance()->config->get('timezone', 'auto');
+							if ($timezone != 'auto') {
+								$server_time = gmdate('U');
+								$user_time = format_date(time(), 'U');
+
+								if ($server_time == $user_time) {
+									$zone = '+0000';
+								}
+								else if ($user_time > $server_time) {
+									$user_time -= $server_time;
+
+									// hours
+									$zone = '+' . str_pad(intval(intval($user_time) / 3600), 2, "0", STR_PAD_LEFT);
+									// minutes
+									$zone .= str_pad(intval(($user_time / 60) % 60), 2, "0", STR_PAD_LEFT);
+								}
+								else {
+									$server_time -= $user_time;
+
+									// hours
+									$zone = '-' . str_pad(intval(intval($server_time) / 3600), 2, "0", STR_PAD_LEFT);
+									// minutes
+									$zone .= str_pad(intval(($server_time / 60) % 60), 2, "0", STR_PAD_LEFT);
+								}
+
+								$tests[$i] .= ' :zone ' . $zone;
+							}
+
+							$tests[$i] .= ' :' . $test['operator'];
+
+							if ($test['comparator'] != '') {
+								if ($test['comparator'] != 'i;ascii-casemap' && $test['comparator'] != 'i;octet')
+									array_push($exts, 'comparator-' . $test['comparator']);
+
+								$tests[$i] .= ' :comparator "' . $test['comparator'] . '"';
+							}
+
+							$tests[$i] .= ' "' . $this->_escape_string($test['datepart']) . '"';
+							$tests[$i] .= ' "' . $this->_escape_string($test['target']) . '"';
+
+							break;
 					}
 
 					$i++;
@@ -467,7 +520,7 @@ class rcube_sieve_script {
 	private function _tokenize_rule($content) {
 		$result = NULL;
 
-		if (preg_match('/^(if|elsif|else)\s+((true|not\s+true|allof|anyof|exists|header|not|size|envelope|address|spamtest)\s+(.*))\s+\{(.*)\}$/sm', trim($content), $matches)) {
+		if (preg_match('/^(if|elsif|else)\s+((true|not\s+true|allof|anyof|exists|header|not|size|envelope|address|spamtest|date|currentdate)\s+(.*))\s+\{(.*)\}$/sm', trim($content), $matches)) {
 			list($tests, $join) = $this->_parse_tests(trim($matches[2]));
 			$actions = $this->_parse_actions(trim($matches[5]));
 
@@ -606,6 +659,8 @@ class rcube_sieve_script {
 		$patterns[] = '(not\s+)?(body)(\s+:(raw|text|content\s+".*?[^\\\]"))?\s+:(contains|is|matches|regex)((\s+))(".*?[^\\\]")';
 		$patterns[] = '(not\s+)?(body)(\s+:(raw|text|content\s+".*?[^\\\]"))?\s+:(count\s+".*?[^\\\]"|value\s+".*?[^\\\]")(\s+:comparator\s+"(.*?[^\\\])")?\s+\[(.*?[^\\\]")\]';
 		$patterns[] = '(not\s+)?(body)(\s+:(raw|text|content\s+".*?[^\\\]"))?\s+:(count\s+".*?[^\\\]"|value\s+".*?[^\\\]")(\s+:comparator\s+"(.*?[^\\\])")?\s+(".*?[^\\\]")';
+		$patterns[] = '(not\s+)?(date|currentdate)(\s+:zone\s+([\+\-][0-9]{4}))?\s+:(contains|is|matches|regex)((\s+))(".*?[^\\\]"\s+)?(".*?[^\\\]")\s+(".*?[^\\\]")';
+		$patterns[] = '(not\s+)?(date|currentdate)(\s+:zone\s+([\+\-][0-9]{4}))?\s+:(count\s+".*?[^\\\]"|value\s+".*?[^\\\]")(\s+:comparator\s+"(.*?[^\\\])")?(\s+".*?[^\\\]")?\s+(".*?[^\\\]")\s+(".*?[^\\\]")';
 
 		// join patterns...
 		$pattern = '/(' . implode(')|(', $patterns) . ')/';
@@ -674,6 +729,18 @@ class rcube_sieve_script {
 									'header' 	=> 'body', // header(s)
 									'target'	=> $this->_parse_list($match[$size-1], ($match[$size-4] == 'regex' ? true : false)), // string(s)
 									'comparator' => trim($match[$size-2])
+								);
+				}
+				elseif (preg_match('/^(not\s+)?(date|currentdate)/', $match[0])) {
+					$result[] = array(
+									'type' 		=> 'date',
+									'not' 		=> $match[$size-10] ? true : false,
+									'header' 	=> $match[$size-9], // header
+									'operator' 	=> $match[$size-6], // is/contains/matches
+									'datepart' 	=> $this->_parse_list($match[$size-2]),
+									'target'	=> $this->_parse_list($match[$size-1], ($match[$size-5] == 'regex' ? true : false)), // string(s)
+									'field'		=> $match[$size-3], // received
+									'comparator' => trim($match[$size-4])
 								);
 				}
 			}

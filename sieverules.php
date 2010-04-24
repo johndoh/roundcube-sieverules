@@ -5,7 +5,7 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.7
+ * @version 1.8
  * @author Philip Weir
  */
 class sieverules extends rcube_plugin
@@ -427,6 +427,7 @@ class sieverules extends rcube_plugin
 	function gen_form($attrib)
 	{
 		$rcmail = rcmail::get_instance();
+		$this->include_script('jquery.maskedinput.js');
 		$this->api->output->add_label(
 			'sieverules.norulename', 'sieverules.ruleexists', 'sieverules.noheader',
 			'sieverules.headerbadchars', 'sieverules.noheadervalue', 'sieverules.sizewrongformat',
@@ -434,7 +435,7 @@ class sieverules extends rcube_plugin
 			'sieverules.vacdayswrongformat', 'sieverules.vacnomsg', 'sieverules.notifynomethod',
 			'sieverules.notifynomsg', 'sieverules.filterdeleteconfirm', 'sieverules.ruledeleteconfirm',
 			'sieverules.actiondeleteconfirm', 'sieverules.notifyinvalidmethod', 'sieverules.nobodycontentpart',
-			'sieverules.badoperator');
+			'sieverules.badoperator','sieverules.baddateformat','sieverules.badtimeformat');
 
 		$ext = $this->sieve->get_extensions();
 		$iid = get_input_value('_iid', RCUBE_INPUT_GPC);
@@ -622,6 +623,9 @@ class sieverules extends rcube_plugin
 			$nmethods = $_POST['_nmethod'];
 			$noptions = $_POST['_noption'];
 			$nmsgs = $_POST['_nmsg'];
+			$dateparts = $_POST['_datepart'];
+			$weekdays = $_POST['_weekday'];
+			$advweekdays = $_POST['_advweekday'];
 
 			$script = array();
 			$script['join'] = ($join == 'allof') ? true : false;
@@ -648,6 +652,9 @@ class sieverules extends rcube_plugin
 				$target = $this->_strip_val($targets[$idx]);
 				$advtarget = $this->_strip_val($advtargets[$idx]);
 				$comparator = $this->_strip_val($comparators[$idx]);
+				$datepart = $this->_strip_val($dateparts[$idx]);
+				$weekday = $this->_strip_val($weekdays[$idx]);
+				$advweekday = $this->_strip_val($advweekdays[$idx]);
 
 				switch ($type) {
 					case 'size':
@@ -665,6 +672,13 @@ class sieverules extends rcube_plugin
 						$script['tests'][$i]['operator'] = $spamtestop;
 						$script['tests'][$i]['target'] = $target;
 						break;
+					case 'date':
+						if ($datepart == 'weekday') {
+							$target = $weekday;
+							$advtarget = $advweekday;
+						}
+
+						$script['tests'][$i]['datepart'] = $datepart;
 					case 'body':
 						$script['tests'][$i]['bodypart'] = $bodypart;
 
@@ -1101,8 +1115,12 @@ class sieverules extends rcube_plugin
 		$target_style = '';
 		$units_style = 'display: none;';
 		$bodypart_style = 'display: none;';
+		$datepart_style = 'display: none;';
 		$advcontentpart_style = 'display: none;';
 		$spam_prob_style = 'display: none;';
+		$weekdays_style = 'display: none;';
+		$advweekdays_style = 'display: none;';
+		$advtarget_style = '';
 
 		$test = 'header';
 		$selheader = 'Subject';
@@ -1129,7 +1147,7 @@ class sieverules extends rcube_plugin
 
 		if ($predefined > -1) {
 			$op_style = 'display: none;';
-			$target_style = 'display: none;' ;
+			$target_style = 'display: none;';
 			$selheader = $rule['type'] . '::predefined_' . $predefined;
 			$test = $rule['type'];
 
@@ -1158,7 +1176,7 @@ class sieverules extends rcube_plugin
 			}
 		}
 		elseif ((isset($rule['type']) && $rule['type'] != 'exists') && in_array($rule['type'] . '::' . $rule['header'], $this->headers)) {
-			$target_style = $rule['operator'] == 'exists' ? 'display: none;' : '' ;
+			$target_style = $rule['operator'] == 'exists' ? 'display: none;' : '';
 
 			$selheader = $rule['type'] . '::' . $rule['header'];
 			$test = $rule['type'];
@@ -1167,7 +1185,7 @@ class sieverules extends rcube_plugin
 			$target = htmlspecialchars($rule['target']);
 		}
 		elseif ((isset($rule['type']) && $rule['type'] == 'exists') && $this->_in_headerarray($rule['header'], $this->headers) != false) {
-			$target_style = $rule['operator'] == 'exists' ? 'display: none;' : '' ;
+			$target_style = $rule['operator'] == 'exists' ? 'display: none;' : '';
 
 			$selheader = $this->_in_headerarray($rule['header'], $this->headers) . '::' . $rule['header'];
 			$test = $rule['type'];
@@ -1206,7 +1224,7 @@ class sieverules extends rcube_plugin
 		}
 		elseif (isset($rule['type']) && $rule['type'] == 'spamtest') {
 			$op_style = 'display: none;';
-			$target_style = 'display: none;' ;
+			$target_style = 'display: none;';
 			$spamtestop_style = '';
 			$spam_prob_style = '';
 
@@ -1217,9 +1235,27 @@ class sieverules extends rcube_plugin
 			$target = $rule['target'];
 			$spam_probability = $rule['target'];
 		}
+		elseif (isset($rule['type']) && $rule['type'] == 'date') {
+			$header_style = 'display: none;';
+			$datepart_style = '';
+
+			if ($rule['datepart'] == 'weekday') {
+				$target_style = 'display: none;';
+				$advtarget_style = 'display: none;';
+				$weekdays_style = '';
+				$advweekdays_style = '';
+			}
+
+			$test = $rule['type'];
+			$selheader = 'date::' . $rule['header'];
+			$header = $rule['header'];
+			$datepart = $rule['datepart'];
+			$op = ($rule['not'] ? 'not' : '') . $rule['operator'];
+			$target = $rule['target'];
+		}
 		elseif (isset($rule['type']) && $rule['type'] != 'true') {
 			$header_style = '';
-			$target_style = $rule['operator'] == 'exists' ? 'display: none;' : '' ;
+			$target_style = $rule['operator'] == 'exists' ? 'display: none;' : '';
 
 			$selheader = 'header::other';
 			$test = 'header';
@@ -1247,10 +1283,11 @@ class sieverules extends rcube_plugin
 		if (in_array('spamtest', $ext))
 			$select_header->add(Q($this->gettext('spamtest')), Q('spamtest::spamtest'));
 
-		foreach($predefined_rules as $idx => $data) {
-			if (($data['type'] == 'envelope' && in_array('envelope', $ext)) || $data['type'] != 'envelope')
-				$select_header->add(Q($data['name']), Q($data['type'] . '::predefined_' . $idx));
-		}
+		foreach($predefined_rules as $idx => $data)
+			$select_header->add(Q($data['name']), Q($data['type'] . '::predefined_' . $idx));
+
+		if (in_array('date', $ext))
+			$select_header->add(Q($this->gettext('arrival')), Q('date::currentdate'));
 
 		$select_header->add(Q($this->gettext('size')), Q('size::size'));
 		$select_header->add(Q($this->gettext('otherheader')), Q('header::other'));
@@ -1266,7 +1303,11 @@ class sieverules extends rcube_plugin
 		$select_bodypart->add(Q($this->gettext('raw')), Q('raw'));
 		$select_bodypart->add(Q($this->gettext('text')), Q('text'));
 		$select_bodypart->add(Q($this->gettext('other')), Q('content'));
-		$rules_table->add('header', $input_header->show($header) . $help_button . $select_bodypart->show($bodypart));
+		$select_datepart = new html_select(array('name' => '_datepart[]', 'onchange' => JS_OBJECT_NAME . '.sieverules_datepart_select(this)','style' => $datepart_style));
+		$select_datepart->add(Q($this->gettext('date')), Q('date'));
+		$select_datepart->add(Q($this->gettext('time')), Q('time'));
+		$select_datepart->add(Q($this->gettext('weekday')), Q('weekday'));
+		$rules_table->add('header', $input_header->show($header) . $help_button . $select_bodypart->show($bodypart) . $select_datepart->show($datepart));
 
 		$select_op = new html_select(array('name' => "_operator[]", 'onchange' => JS_OBJECT_NAME . '.sieverules_rule_op_select(this)', 'style' => $op_style));
 		foreach($this->operators as $name => $val)
@@ -1306,7 +1347,16 @@ class sieverules extends rcube_plugin
 		$select_spam_probability->add(Q("90%"), '9');
 		$select_spam_probability->add(Q("100%"), '10');
 
-		$rules_table->add('target', $select_spam_probability->show($spam_probability) . $input_target->show($target) . "&nbsp;" . $select_units->show($units));
+		$select_weekdays = new html_select(array('name' => "_weekday[]", 'style' => $weekdays_style, 'class' => 'long'));
+		$select_weekdays->add(Q($this->gettext('sunday')), '0');
+		$select_weekdays->add(Q($this->gettext('monday')), '1');
+		$select_weekdays->add(Q($this->gettext('tuesday')), '2');
+		$select_weekdays->add(Q($this->gettext('wednesday')), '3');
+		$select_weekdays->add(Q($this->gettext('thursday')), '4');
+		$select_weekdays->add(Q($this->gettext('friday')), '5');
+		$select_weekdays->add(Q($this->gettext('saturday')), '6');
+
+		$rules_table->add('target', $select_weekdays->show($target) . $select_spam_probability->show($spam_probability) . $input_target->show($target) . "&nbsp;" . $select_units->show($units));
 
 		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_rule', 'type' => 'image', 'image' => $attrib['addicon'], 'alt' => 'sieverules.addsieverule', 'title' => 'sieverules.addsieverule'));
 		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_rule', 'type' => 'image', 'imageact' => $attrib['deleteicon'], 'imagepas' => $attrib['deleteiconpas'], 'alt' => 'sieverules.deletesieverule', 'title' => 'sieverules.deletesieverule'));
@@ -1421,10 +1471,19 @@ class sieverules extends rcube_plugin
 		$advanced_table->add(array('style' => 'white-space: normal;', 'class' => 'selheader'), html::label($field_id, Q($this->gettext('comparator'))));
 		$advanced_table->add(array('style' => 'white-space: normal;'), $select_comparator->show($rule['comparator']));
 
+		$select_advweekdays = new html_select(array('name' => "_advweekday[]", 'style' => $advweekdays_style));
+		$select_advweekdays->add(Q($this->gettext('sunday')), '0');
+		$select_advweekdays->add(Q($this->gettext('monday')), '1');
+		$select_advweekdays->add(Q($this->gettext('tuesday')), '2');
+		$select_advweekdays->add(Q($this->gettext('wednesday')), '3');
+		$select_advweekdays->add(Q($this->gettext('thursday')), '4');
+		$select_advweekdays->add(Q($this->gettext('friday')), '5');
+		$select_advweekdays->add(Q($this->gettext('saturday')), '6');
+
 		$field_id = 'rcmfd_advtarget_'. $rowid;
-		$input_advtarget = new html_inputfield(array('id' => $field_id, 'name' => '_advtarget[]'));
+		$input_advtarget = new html_inputfield(array('id' => $field_id, 'name' => '_advtarget[]', 'style' => $advtarget_style));
 		$advanced_table->add(array('style' => 'white-space: normal;', 'class' => 'selheader'), html::label($field_id, Q($this->gettext('teststring'))));
-		$advanced_table->add(array('style' => 'white-space: normal;'), $input_advtarget->show($target));
+		$advanced_table->add(array('style' => 'white-space: normal;'), $input_advtarget->show($target) . $select_advweekdays->show($target));
 
 		if (!($showadvanced && $predefined == -1))
 			$rules_table->set_row_attribs(array('style' => 'display: none;'));

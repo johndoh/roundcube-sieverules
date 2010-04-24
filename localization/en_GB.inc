@@ -120,6 +120,8 @@ $labels['copy'] = 'Copy';
 $labels['copyexistingfilter'] = 'Copy existing filters';
 $labels['copytoruleset'] = 'Copy filter to another ruleset';
 $labels['copyfromruleset'] = 'Copy filters from existing ruleset';
+$labels['time'] = 'Time';
+$labels['weekday'] = 'Weekday';
 
 $messages = array();
 $messages['nosieverules'] = 'No filters found.';
@@ -171,5 +173,7 @@ $messages['rulesetexists'] = 'A ruleset with this name already exists. Please en
 $messages['copyexisting'] = '<b>Copy exiting ruleset:</b> Would you like to copy filters from an existing ruleset into your current set?';
 $messages['filtercopied'] = 'Filter copied successfully';
 $messages['nosieverulesets'] = 'No rulesets found.';
+$messages['baddateformat'] = 'Error: Please enter the date in the format YYYY-MM-DD';
+$messages['badtimeformat'] = 'Error: Please enter the time in the format HH:MM:SS';
 
 ?>

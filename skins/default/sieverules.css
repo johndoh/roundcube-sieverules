@@ -353,3 +353,7 @@ img.nohtc
   margin-top: 1.5em;
   text-align: center;
 }
+
+input.inputmask {
+  color: #999999;
+}
