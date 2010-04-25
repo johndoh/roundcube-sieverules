@@ -1,8 +1,8 @@
 <?php
-/* Author: Tłumaczenie Jacekalex  */
+/* Author:	Tłumaczenie Jacekalex, DZIOBAK */
 
 $labels = array();
-$labels['filters'] = 'Filtry Max';
+$labels['filters'] = 'Filtry';
 $labels['managefilters'] = 'Zarządzaj filtrami';
 $labels['filtername'] = 'Nazwa reguły:';
 $labels['disablerule'] = 'Wyłącz regułę';
@@ -26,7 +26,7 @@ $labels['filterover'] = 'jest większa niż';
 $labels['filteradvoptions'] = 'więcej opcji...';
 $labels['spamtest'] = 'Przypuszczalnie Spam';
 $labels['operator'] = 'Operator';
-$labels['comparator'] = 'Comparator';
+$labels['comparator'] = 'Komparator';
 $labels['isgreaterthan'] = 'jest większe od';
 $labels['isgreaterthanequal'] = 'jest większa lub równa';
 $labels['islessthan'] = 'jest mniejsza niż';
@@ -51,30 +51,30 @@ $labels['detailpart'] = 'część szczegółów jest równa';
 $labels['notdetailpart'] = 'część szczegółów jest inna niż';
 $labels['domainpart'] = 'część domeny zawiera';
 $labels['notdomainpart'] = 'część domeny nie zawiera';
-$labels['teststring'] = 'Test string';
+$labels['teststring'] = 'Łańcuch testowy';
 $labels['messagemoveto'] = 'Przenieś wiadomość do';
 $labels['messageredirect'] = 'Przekierowanie wiadomości';
 $labels['messageimapflags'] = 'Oznacz wiadomość jako';
 $labels['messagereject'] = 'Odrzuć wiadomość';
-$labels['messagevacation'] = 'Automatyczna odpowiedź - np. urlop';
+$labels['messagevacation'] = 'Automatyczna odpowiedź';
 $labels['messagekeep'] = 'Zachowaj wiadomosć';
 $labels['messagediscard'] = 'Odrzuć wiadomość';
 $labels['messagenotify'] = 'Wyślij zgłoszenie';
-$labels['messagestop'] = 'Stop processing filters';
+$labels['messagestop'] = 'Nie sprawdzaj kolejnych filtrów';
 $labels['messagehelp'] = 'Co to jest?';
 $labels['sieveorigsubj'] = 'Dołącz oryginalny przedmiot odpowiedzi';
-$labels['sievevachandle'] = 'Handle';
+$labels['sievevachandle'] = 'Obsłuż';
 $labels['method'] = 'Metoda';
 $labels['options'] = 'Opcje';
 $labels['messagesrules'] = 'Reguły filtra';
 $labels['messagesactions'] = 'Filtr działania';
 $labels['sieveto'] = 'alians';
 $labels['sievefrom'] = 'Z';
-$labels['flag'] = 'Importance';
-$labels['importancen'] = 'Wysoki';
-$labels['importance1'] = 'High';
-$labels['importance2'] = 'Normalny';
-$labels['importance3'] = 'Niski';
+$labels['flag'] = 'Ważność';
+$labels['importancen'] = 'Najwyższa';
+$labels['importance1'] = 'Wysoka';
+$labels['importance2'] = 'Normalna';
+$labels['importance3'] = 'Niska';
 $labels['flagread'] = 'Odebrane';
 $labels['flagdeleted'] = 'Usunięto';
 $labels['flaganswered'] = 'Odpowiedział';
@@ -110,6 +110,16 @@ $labels['spamlevelequals'] = 'jest równa';
 $labels['i;ascii-casemap'] = 'przypadek-ignorowania łańcucha dopasowania';
 $labels['i;octet'] = 'dopasowanie łańcucha';
 $labels['i;ascii-numeric'] = 'numeryczne dopasowanie';
+$labels['selectruleset'] = 'Zaznacz zestaw regół';
+$labels['activeruleset'] = '%s (aktywna)';
+$labels['activateruleset'] = 'Aktywuj zestaw regół';
+$labels['newruleset'] = 'Utwórz nowy zestaw regół';
+$labels['delruleset'] = 'Usuń ten zestaw regół';
+$labels['renameruleset'] = 'Zmień nazwę tego zestawu regół';
+$labels['copy'] = 'Kopiuj';
+$labels['copyexistingfilter'] = 'Kopiuj istniejące filtry';
+$labels['copytoruleset'] = 'Kopiuj filtr do innego zestawu regół';
+$labels['copyfromruleset'] = 'Kopiuj filtry z istniejącego zestawu regół';
 
 $messages = array();
 $messages['nosieverules'] = 'Nie znaleziono filtrów.';
@@ -155,5 +165,10 @@ $messages['badoperator'] = 'Przepraszamy, wybrany operator nie może być stosow
 $messages['filteractionerror'] = 'Żądane działanie nie jest obsługiwane przez serwer!';
 $messages['filtermissingerror'] = 'Nie można znaleźć treści reguły';
 $messages['contentpartexp'] = 'Typ MIME lub określonej części wiadomości, które powinny być badane. Na przykład: "message/rfc822`, `text / html`, `audio/mp3` lub `image`.';
+$messages['delrulesetconf'] = 'Czy na pewno chcesz usunąć ten zestaw regół?';
+$messages['rulesetexists'] = 'Regóła o takiej nazwie już istnieje. Proszę podać inną nazwę';
+$messages['copyexisting'] = '<b>Kopiowanie istniejącego zestawu regół:</b> Czy chcesz przekowpiwać filtry z istniejącego zestawu regół do bierzącego zestawu?';
+$messages['filtercopied'] = 'Filtr przekopiowany';
+$messages['nosieverulesets'] = 'Nie znaleziono zestawu filtrów.';
 
 ?>
