@@ -353,13 +353,13 @@ if (window.rcmail) {
 						return false;
 					}
 
-					if (targets[i] && ops[i].value.indexOf("exists") == -1 && ops[i].value.indexOf("advoptions") == -1 && targets[i].value == '') {
+					if (targets[i] && dateparts[i].value != 'weekday' && ops[i].value.indexOf("exists") == -1 && ops[i].value.indexOf("advoptions") == -1 && targets[i].value == '') {
 						alert(rcmail.gettext('noheadervalue','sieverules'));
 						targets[i].focus();
 						return false;
 					}
 
-					if (advtargets[i] && ops[i].value.indexOf("advoptions") != -1 && advtargets[i].value == '') {
+					if (advtargets[i] && dateparts[i].value != 'weekday' && ops[i].value.indexOf("advoptions") != -1 && advtargets[i].value == '') {
 						alert(rcmail.gettext('noheadervalue','sieverules'));
 						advtargets[i].focus();
 						return false;
