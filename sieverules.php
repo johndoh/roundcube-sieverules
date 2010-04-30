@@ -598,6 +598,7 @@ class sieverules extends rcube_plugin
 			$bodyparts = $_POST['_bodypart'];
 			$ops = $_POST['_operator'];
 			$sizeops = $_POST['_size_operator'];
+			$dateops = $_POST['_date_operator'];
 			$spamtestops = $_POST['_spamtest_operator'];
 			$targets = $_POST['_target'];
 			$sizeunits = $_POST['_units'];
@@ -673,10 +674,10 @@ class sieverules extends rcube_plugin
 						$script['tests'][$i]['target'] = $target;
 						break;
 					case 'date':
-						if ($datepart == 'weekday') {
+						$op = $this->_strip_val($dateops[$idx]);
+
+						if ($datepart == 'weekday')
 							$target = $weekday;
-							$advtarget = $advweekday;
-						}
 
 						$script['tests'][$i]['datepart'] = $datepart;
 					case 'body':
@@ -1111,6 +1112,7 @@ class sieverules extends rcube_plugin
 		$header_style = 'visibility: hidden;';
 		$op_style = '';
 		$sizeop_style = 'display: none;';
+		$dateop_style = 'display: none;';
 		$spamtestop_style = 'display: none;';
 		$target_style = '';
 		$units_style = 'display: none;';
@@ -1236,6 +1238,8 @@ class sieverules extends rcube_plugin
 			$spam_probability = $rule['target'];
 		}
 		elseif (isset($rule['type']) && $rule['type'] == 'date') {
+			$op_style = 'display: none;';
+			$dateop_style = '';
 			$header_style = 'display: none;';
 			$datepart_style = '';
 
@@ -1250,7 +1254,7 @@ class sieverules extends rcube_plugin
 			$selheader = 'date::' . $rule['header'];
 			$header = $rule['header'];
 			$datepart = $rule['datepart'];
-			$op = ($rule['not'] ? 'not' : '') . $rule['operator'];
+			$dateop = ($rule['not'] ? 'not' : '') . $rule['operator'];
 			$target = $rule['target'];
 		}
 		elseif (isset($rule['type']) && $rule['type'] != 'true') {
@@ -1317,15 +1321,24 @@ class sieverules extends rcube_plugin
 		$select_size_op->add(Q($this->gettext('filterunder')), 'under');
 		$select_size_op->add(Q($this->gettext('filterover')), 'over');
 
+		$select_date_op = new html_select(array('name' => "_date_operator[]", 'style' => $dateop_style));
+		$select_date_op->add(Q($this->gettext('filteris')), 'is');
+		$select_date_op->add(Q($this->gettext('filterisnot')), 'notis');
+
+		if (in_array('relational', $ext)) {
+			$select_date_op->add(Q($this->gettext('filterbefore')), 'value "lt"');
+			$select_date_op->add(Q($this->gettext('filterafter')), 'value "gt"');
+		}
+
 		$select_spamtest_op = new html_select(array('name' => "_spamtest_operator[]", 'style' => $spamtestop_style));
 		$select_spamtest_op->add(Q($this->gettext('spamlevelequals')), 'eq');
 		$select_spamtest_op->add(Q($this->gettext('spamlevelislessthanequal')), 'le');
 		$select_spamtest_op->add(Q($this->gettext('spamlevelisgreaterthanequal')), 'ge');
 
 		if ($showadvanced)
-			$rules_table->add('op', $select_op->show('advoptions') . $select_size_op->show($sizeop) . $select_spamtest_op->show($spamtestop));
+			$rules_table->add('op', $select_op->show('advoptions') . $select_size_op->show($sizeop) . $select_date_op->show($dateop) . $select_spamtest_op->show($spamtestop));
 		else
-			$rules_table->add('op', $select_op->show($op) . $select_size_op->show($sizeop) . $select_spamtest_op->show($spamtestop));
+			$rules_table->add('op', $select_op->show($op) . $select_size_op->show($sizeop) . $select_date_op->show($dateop) . $select_spamtest_op->show($spamtestop));
 
 		$input_target = new html_inputfield(array('name' => '_target[]', 'style' => $target_style, 'class' => $target_size));
 

@@ -382,25 +382,14 @@ if (window.rcmail) {
 					}
 
 					if ((headers[i].value == 'date' || headers[i].value == 'currentdate')) {
-						if (ops[i].value.indexOf("advoptions") != -1)
-							field = advtargets[i];
-						else
-							field = targets[i];
-
-						if (advops[i].value.indexOf('user') > -1 || advops[i].value.indexOf('detail') > -1 || advops[i].value.indexOf('domain') > -1) {
-							alert(rcmail.gettext('badoperator','sieverules'));
-							advops[i].focus();
-							return false;
-						}
-
-						if (dateparts[i].value == 'date' && !date_test.test(field.value)) {
+						if (dateparts[i].value == 'date' && !date_test.test(targets[i].value)) {
 							alert(rcmail.gettext('baddateformat','sieverules'));
-							field.focus();
+							targets[i].focus();
 							return false
 						}
-						else if (dateparts[i].value == 'time' && !time_test.test(field.value)) {
+						else if (dateparts[i].value == 'time' && !time_test.test(targets[i].value)) {
 							alert(rcmail.gettext('badtimeformat','sieverules'));
-							field.focus();
+							targets[i].focus();
 							return false
 						}
 					}
@@ -512,16 +501,11 @@ if (window.rcmail) {
 					if (headers[i].value.indexOf('date::') == 0) {
 						var obj = document.getElementsByName('_datepart[]')[i];
 						var target_obj = $("input[name='_target[]']")[i];
-						var advtarget_obj = $("input[name='_advtarget[]']")[i];
 
-						if (obj.value == 'date') {
+						if (obj.value == 'date')
 							$(target_obj).mask('9999-99-99', {example: 'YYYY-MM-DD'});
-							$(advtarget_obj).mask('9999-99-99', {example: 'YYYY-MM-DD'});
-						}
-						else if (obj.value == 'time') {
+						else if (obj.value == 'time')
 							$(target_obj).mask('99:99:99', {example: 'HH:MM:SS', placeholder: '0'});
-							$(advtarget_obj).mask('99:99:99', {example: 'HH:MM:SS', placeholder: '0'});
-						}
 					}
 
 				}
@@ -842,7 +826,6 @@ rcmail.sieverules_header_select = function(sel) {
 	var header = obj.value.split('::')[1];
 	var selIdx = 0;
 	var target_obj = $("input[name='_target[]']")[idx];
-	var advtarget_obj = $("input[name='_advtarget[]']")[idx];
 
 	document.getElementsByName('_test[]')[idx].value = testType;
 	document.getElementsByName('_header[]')[idx].value = header;
@@ -852,12 +835,12 @@ rcmail.sieverules_header_select = function(sel) {
 	document.getElementsByName('_datepart[]')[idx].style.display = 'none';
 	document.getElementsByName('_weekday[]')[idx].style.display = 'none';
 	$(target_obj).unmask();
-	$(advtarget_obj).unmask();
 
 	if (header == 'size') {
 		document.getElementsByName('_header[]')[idx].style.visibility = 'hidden';
 		document.getElementsByName('_headerhlp')[idx].style.visibility = 'hidden';
 		document.getElementsByName('_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_date_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_spamtest_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_spam_probability[]')[idx].style.display = 'none';
 		document.getElementsByName('_size_operator[]')[idx].style.display = '';
@@ -870,6 +853,7 @@ rcmail.sieverules_header_select = function(sel) {
 		document.getElementsByName('_headerhlp')[idx].style.visibility = 'hidden';
 		document.getElementsByName('_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_size_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_date_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_spamtest_operator[]')[idx].style.display = '';
 		document.getElementsByName('_spam_probability[]')[idx].style.display = '';
 		document.getElementsByName('_target[]')[idx].style.display = 'none';
@@ -881,6 +865,7 @@ rcmail.sieverules_header_select = function(sel) {
 		document.getElementsByName('_headerhlp')[idx].style.visibility = 'hidden';
 		document.getElementsByName('_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_size_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_date_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_spamtest_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_spam_probability[]')[idx].style.display = 'none';
 		document.getElementsByName('_target[]')[idx].style.display = 'none';
@@ -920,6 +905,14 @@ rcmail.sieverules_header_select = function(sel) {
 		}
 	}
 	else {
+		document.getElementsByName('_operator[]')[idx].style.display = '';
+		document.getElementsByName('_size_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_spamtest_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_spam_probability[]')[idx].style.display = 'none';
+		document.getElementsByName('_date_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_target[]')[idx].style.display = '';
+		document.getElementsByName('_units[]')[idx].style.display = 'none';
+
 		if (header == 'other') {
 			document.getElementsByName('_header[]')[idx].style.visibility = 'visible';
 			document.getElementsByName('_headerhlp')[idx].style.visibility = 'visible';
@@ -941,11 +934,12 @@ rcmail.sieverules_header_select = function(sel) {
 			document.getElementsByName('_header[]')[idx].style.display = 'none';
 			document.getElementsByName('_headerhlp')[idx].style.display = 'none';
 			document.getElementsByName('_datepart[]')[idx].style.display = '';
+			document.getElementsByName('_operator[]')[idx].style.display = 'none';
+			document.getElementsByName('_date_operator[]')[idx].style.display = '';
 
 			document.getElementsByName('_datepart[]')[idx].selectedIndex = 0;
 			document.getElementsByName('_body_contentpart[]')[idx].parentNode.parentNode.style.display = 'none';
 			$(target_obj).mask('9999-99-99', {example: 'YYYY-MM-DD'});
-			$(advtarget_obj).mask('9999-99-99', {example: 'YYYY-MM-DD'});
 		}
 		else {
 			document.getElementsByName('_header[]')[idx].style.display = '';
@@ -953,13 +947,6 @@ rcmail.sieverules_header_select = function(sel) {
 
 			document.getElementsByName('_body_contentpart[]')[idx].parentNode.parentNode.style.display = 'none';
 		}
-
-		document.getElementsByName('_operator[]')[idx].style.display = '';
-		document.getElementsByName('_size_operator[]')[idx].style.display = 'none';
-		document.getElementsByName('_spamtest_operator[]')[idx].style.display = 'none';
-		document.getElementsByName('_spam_probability[]')[idx].style.display = 'none';
-		document.getElementsByName('_target[]')[idx].style.display = '';
-		document.getElementsByName('_units[]')[idx].style.display = 'none';
 	}
 
 	var idx = sel.parentNode.parentNode.rowIndex;
@@ -994,18 +981,12 @@ rcmail.sieverules_datepart_select = function(sel) {
 	var obj = document.getElementsByName('_datepart[]')[eidx];
 	var opr = document.getElementsByName('_operator[]')[eidx];
 	var target_obj = $("input[name='_target[]']")[eidx];
-	var advtarget_obj = $("input[name='_advtarget[]']")[eidx];
 	$(target_obj).unmask();
-	$(advtarget_obj).unmask();
 
-	if (obj.value == 'date') {
+	if (obj.value == 'date')
 		$(target_obj).mask('9999-99-99', {example: 'YYYY-MM-DD'});
-		$(advtarget_obj).mask('9999-99-99', {example: 'YYYY-MM-DD'});
-	}
-	else if (obj.value == 'time') {
+	else if (obj.value == 'time')
 		$(target_obj).mask('99:99:99', {example: 'HH:MM:SS', placeholder: '0'});
-		$(advtarget_obj).mask('99:99:99', {example: 'HH:MM:SS', placeholder: '0'});
-	}
 
 	document.getElementsByName('_advtarget[]')[eidx].style.display = (obj.value == 'weekday') ? 'none' : '';
 	document.getElementsByName('_advweekday[]')[eidx].style.display = (obj.value == 'weekday') ? '' : 'none';
