@@ -361,6 +361,15 @@ class sieverules extends rcube_plugin
 			$text .= "<br /><br />" . $this->gettext('importdefault');
 			$buttons .= $this->api->output->button(array('command' => 'plugin.sieverules.import', 'prop' => '_import=_default_', 'type' => 'input', 'class' => 'button', 'label' => 'sieverules.usedefaultfilter'));
 		}
+		elseif ($rcmail->config->get('sieverules_default_file', false) && !is_readable($rcmail->config->get('sieverules_default_file'))) {
+			raise_error(array(
+			  'code' => 600,
+			  'type' => 'php',
+			  'file' => __FILE__,
+			  'line' => __LINE__,
+			  'message' => "SieveRules plugin: Unable to open default rule file"
+			  ), true, false);
+		}
 
 		$type = '';
 		$ruleset = '';
@@ -410,6 +419,15 @@ class sieverules extends rcube_plugin
 			return $out;
 		}
 		else {
+			if ($rcmail->config->get('sieverules_auto_load_default') && !is_readable($rcmail->config->get('sieverules_default_file')))
+				raise_error(array(
+				  'code' => 600,
+				  'type' => 'php',
+				  'file' => __FILE__,
+				  'line' => __LINE__,
+				  'message' => "SieveRules plugin: Unable to open default rule file"
+				  ), true, false);
+
 			$this->sieve->save();
 			if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
 
@@ -918,6 +936,15 @@ class sieverules extends rcube_plugin
 				else
 					$this->script = $this->sieve->script->as_array();
 			}
+			elseif ($rcmail->config->get('sieverules_default_file', false) && !is_readable($rcmail->config->get('sieverules_default_file'))) {
+				raise_error(array(
+				  'code' => 600,
+				  'type' => 'php',
+				  'file' => __FILE__,
+				  'line' => __LINE__,
+				  'message' => "SieveRules plugin: Unable to open default rule file"
+				  ), true, false);
+			}
 		} elseif ($ruleset == '_example_') {
 			if (get_input_value('_eids', RCUBE_INPUT_GET)) {
 				$pos = get_input_value('_pos', RCUBE_INPUT_GET);
@@ -1062,6 +1089,15 @@ class sieverules extends rcube_plugin
 					rcmail_overwrite_action('plugin.sieverules.setup');
 					$this->action = 'plugin.sieverules.setup';
 				}
+				elseif ($rcmail->config->get('sieverules_default_file', false) && !is_readable($rcmail->config->get('sieverules_default_file'))) {
+					raise_error(array(
+					  'code' => 600,
+					  'type' => 'php',
+					  'file' => __FILE__,
+					  'line' => __LINE__,
+					  'message' => "SieveRules plugin: Unable to open default rule file"
+					  ), true, false);
+				}
 
 				// that's not exactly an error
 				$this->sieve_error = false;
@@ -1089,6 +1125,14 @@ class sieverules extends rcube_plugin
 			// load example filters
 			if ($rcmail->config->get('sieverules_example_file', false) && is_readable($rcmail->config->get('sieverules_example_file')))
 				$this->examples = $this->sieve->script->parse_text(file_get_contents($rcmail->config->get('sieverules_example_file')));
+			elseif ($rcmail->config->get('sieverules_example_file', false) && !is_readable($rcmail->config->get('sieverules_example_file')))
+				raise_error(array(
+				  'code' => 600,
+				  'type' => 'php',
+				  'file' => __FILE__,
+				  'line' => __LINE__,
+				  'message' => "SieveRules plugin: Unable to open example rule file"
+				  ), true, false);
 		}
 		else {
 			$this->sieve->set_ruleset($this->current_ruleset);
