@@ -1,0 +1,67 @@
+/**
+ * SieveRules plugin styles (IE hacks)
+ */
+
+#mainscreen
+{
+  width: expression((parseInt(document.documentElement.clientWidth)-40)+'px');
+  height: expression((parseInt(document.documentElement.clientHeight)-155)+'px');
+}
+
+#sieverules-list
+{
+  height: expression(parseInt(this.parentNode.offsetHeight)+'px');
+}
+
+#sieverules-list-filters
+{
+  height: expression(parseInt(this.parentNode.offsetHeight)+'px');
+  width: expression(parseInt(this.parentNode.offsetWidth)+'px');
+}
+
+#sieverules-list-examples
+{
+  width: expression(parseInt(this.parentNode.offsetWidth)+'px');
+}
+
+#sieverules-details
+{
+  height: expression(parseInt(this.parentNode.offsetHeight)+'px');
+  width: expression((parseInt(this.parentNode.offsetWidth)-250)+'px');
+}
+
+#sieverules-advanced
+{
+  height: expression((parseInt(document.documentElement.clientHeight)-155)+'px');
+  width: expression((parseInt(document.documentElement.clientWidth)-40)+'px');
+}
+
+table.records-table td.vacdaysexp
+{
+  word-wrap: break-word;
+}
+
+img.nohtc
+{
+  behavior: none;
+}
+
+#sieverules-advancedbox
+{
+  height: expression((parseInt(document.documentElement.clientHeight)-179)+'px');
+  width: expression((parseInt(document.documentElement.clientWidth)-48)+'px');
+}
+
+#sieverules-advanced textarea
+{
+  height: expression((parseInt(document.documentElement.clientHeight)-179)+'px');
+  width: expression((parseInt(document.documentElement.clientWidth)-48)+'px');
+}
+
+#sieverulesrsdialog
+{
+  filter: alpha(opacity=90);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
+  width: expression(document.documentElement.clientWidth+'px');
+  height: expression(document.documentElement.clientHeight+'px');
+}

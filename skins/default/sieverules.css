@@ -1,4 +1,6 @@
-/***** RoundCube|Mail sieverules plugin styles *****/
+/**
+ * SieveRules plugin styles
+ */
 
 #rulesets
 {
@@ -16,9 +18,6 @@
   right: 20px;
   bottom: 60px;
   left: 20px;
-  /* css hack for IE */
-  width: expression((parseInt(document.documentElement.clientWidth)-40)+'px');
-  height: expression((parseInt(document.documentElement.clientHeight)-155)+'px');
 }
 
 #sieverules-list
@@ -26,8 +25,6 @@
   position: absolute;
   top: 0px;
   bottom: 0px;
-  /* css hack for IE */
-  height: expression(parseInt(this.parentNode.offsetHeight)+'px');
   width: 240px;
 }
 
@@ -41,9 +38,6 @@
   width: 100%;
   border: 1px solid #999999;
   overflow: auto;
-  /* css hack for IE */
-  height: expression(parseInt(this.parentNode.offsetHeight)+'px');
-  width: expression(parseInt(this.parentNode.offsetWidth)+'px');
 }
 
 #sieverules-list-examples
@@ -55,8 +49,6 @@
   width: 100%;
   border: 1px solid #999999;
   overflow: auto;
-  /* css hack for IE */
-  width: expression(parseInt(this.parentNode.offsetWidth)+'px');
 }
 
 #sieverules-details
@@ -67,9 +59,6 @@
   right: 0px;
   bottom: 0px;
   border: 1px solid #999999;
-  /* css hack for IE */
-  height: expression(parseInt(this.parentNode.offsetHeight)+'px');
-  width: expression((parseInt(this.parentNode.offsetWidth)-250)+'px');
 }
 
 #sieverules-advanced
@@ -81,23 +70,19 @@
   right: 0px;
   overflow: hidden;
   border: 1px solid #999999;
-  /* css hack for IE */
-  height: expression((parseInt(document.documentElement.clientHeight)-155)+'px');
-  width: expression((parseInt(document.documentElement.clientWidth)-40)+'px');
 }
 
-span.disableLink {
+span.disableLink
+{
   float: right;
   width: 200px;
   text-align: right;
 }
 
-#sieverules-table, #sieverules-examples
+#sieverules-table,
+#sieverules-examples
 {
   width: 100%;
-  /* table-layout: fixed; */
-  /* css hack for IE */
-  /* width: expression('auto'); */
 }
 
 #sieverules-table tbody td
@@ -105,22 +90,28 @@ span.disableLink {
   cursor: pointer;
 }
 
-#sieverules-table tbody td.control, #rules-table tbody td.control, #actions-table tbody td.control
+#sieverules-table tbody td.control,
+#rules-table tbody td.control,
+#actions-table tbody td.control
 {
   text-align: right;
 }
 
-#rules-table tbody td.control, #actions-table tbody td.control
+#rules-table tbody td.control,
+#actions-table tbody td.control
 {
   vertical-align: top;
 }
 
-#rules-table, #actions-table, #rules-table td table.records-table
+#rules-table,
+#actions-table,
+#rules-table td table.records-table
 {
   width: 100%;
 }
 
-#rules-table td.selheader, #rules-table td.op
+#rules-table td.selheader,
+#rules-table td.op
 {
   width: 130px;
 }
@@ -197,7 +188,8 @@ span.disableLink {
   width: 160px;
 }
 
-#actions-table td.folder input, #actions-table td.folder textarea
+#actions-table td.folder input,
+#actions-table td.folder textarea
 {
   width: 400px;
 }
@@ -212,7 +204,8 @@ span.disableLink {
   width: 337px;
 }
 
-#actions-table td.folder table.records-table input, #actions-table td.folder table.records-table textarea
+#actions-table td.folder table.records-table input,
+#actions-table td.folder table.records-table textarea
 {
   width: 330px;
 }
@@ -238,14 +231,6 @@ table.records-table td.vacdaysexp
   white-space: -moz-pre-wrap !important;
   white-space: pre-wrap !important;
   white-space: pre;
-  word-wrap: break-word; /* IE (and Safari) */
-}
-
-/* IE6 PNG fix */
-img.nohtc
-{
-  behavior: none;
-  border: 0;
 }
 
 #listbuttons
@@ -272,9 +257,6 @@ img.nohtc
   left: 0px;
   bottom: 3px;
   right: 4px;
-  /* css hack for IE */
-  height: expression((parseInt(document.documentElement.clientHeight)-179)+'px');
-  width: expression((parseInt(document.documentElement.clientWidth)-48)+'px');
 }
 
 #sieverules-advanced textarea
@@ -285,23 +267,20 @@ img.nohtc
   border: 0;
   width: 100%;
   height: 100%;
-  /* css hack for IE */
-  height: expression((parseInt(document.documentElement.clientHeight)-179)+'px');
-  width: expression((parseInt(document.documentElement.clientWidth)-48)+'px');
 }
 
-.droptarget {
+.droptarget
+{
   border-top: 2px solid #000000;
 }
 
-.droptargetend {
+.droptargetend
+{
   border-bottom: 2px solid #000000;
 }
 
-
-/* Ruleset name popup */
-
-#sieverulesrsdialog {
+#sieverulesrsdialog
+{
   position: absolute;
   top: 0;
   left: 0;
@@ -310,22 +289,18 @@ img.nohtc
   z-index: 10000;
   background: rgba(0,0,0,0.5) !important;
   background: #333;
-
-  /** IE hacks */
-  filter: alpha(opacity=90);
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
-  width: expression(document.documentElement.clientWidth+'px');
-  height: expression(document.documentElement.clientHeight+'px');
 }
 
-#sieverulesrsdialog h3 {
+#sieverulesrsdialog h3
+{
   color: #333;
   font-size: normal;
   margin-top: 0.5em;
   margin-bottom: 1em;
 }
 
-#sieverulesrsdialog form {
+#sieverulesrsdialog form
+{
   width: 32em;
   margin: 8em auto;
   padding: 1em 2em;
@@ -349,11 +324,13 @@ img.nohtc
   width: 20em;
 }
 
-#sieverulesrsdialog .formbuttons {
+#sieverulesrsdialog .formbuttons
+{
   margin-top: 1.5em;
   text-align: center;
 }
 
-input.inputmask {
+input.inputmask
+{
   color: #999999;
 }
