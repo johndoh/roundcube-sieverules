@@ -1,4 +1,6 @@
-/* Show sieverules plugin script */
+/**
+ * SieveRules plugin script
+ */
 
 if (window.rcmail) {
 	rcmail.addEventListener('init', function(evt) {

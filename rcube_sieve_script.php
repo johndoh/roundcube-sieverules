@@ -2,20 +2,11 @@
 
 /*
  +-----------------------------------------------------------------------+
- | plugins/sieverules/rcube_sieve_script.inc                             |
+ | rcube_sieve_script class for sieverules script parsing                |
  |                                                                       |
- | This file is part of the RoundCube Webmail client                     |
- | Copyright (C) 2008-2009, RoundCube Dev. - Switzerland                 |
- | Licensed under the GNU GPL                                            |
- |                                                                       |
- | PURPOSE:                                                              |
- |	 rcube_sieve_script class for sieverules operations                  |
- |   (using PEAR::Net_Sieve)                                             |
- |                                                                       |
- +-----------------------------------------------------------------------+
  | Author: Aleksander Machniak <alec@alec.pl>                            |
  | Modifications by: Philip Weir                                         |
- |   * Changed name of keys in script array	                             |
+ |   * Changed name of keys in script array                              |
  |   * Added support for address and envelope                            |
  |   * Added support for vacation                                        |
  |   * Added support for disabled rules (written to file as comment)     |
@@ -29,8 +20,6 @@
  |   * Added support for spamtest (Vladislav Bogdanov)                   |
  |   * Added support for date                                            |
  +-----------------------------------------------------------------------+
-
- $Id: $
 
 */
 

@@ -1,16 +1,8 @@
 <?php
 
-/*
- +-----------------------------------------------------------------------+
- | SieveRules configuration file                                         |
- |                                                                       |
- | This file is part of the RoundCube Webmail client                     |
- | Copyright (C) 2005-2009, RoundCube Dev. - Switzerland                 |
- | Licensed under the GNU GPL                                            |
- |                                                                       |
- +-----------------------------------------------------------------------+
-
-*/
+/**
+ * SieveRules configuration file
+ */
 
 // managesieve server address, use %h for user's IMAP hostname
 $rcmail_config['sieverules_host'] = 'localhost';

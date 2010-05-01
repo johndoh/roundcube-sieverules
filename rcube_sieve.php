@@ -2,32 +2,22 @@
 
 /*
  +-----------------------------------------------------------------------+
- | plugins/sieverules/rcube_sieve.inc                                    |
+ | rcube_sieve class for managesieve operations (using PEAR::Net_Sieve)  |
  |                                                                       |
- | This file is part of the RoundCube Webmail client                     |
- | Copyright (C) 2008-2009, RoundCube Dev. - Switzerland                 |
- | Licensed under the GNU GPL                                            |
- |                                                                       |
- | PURPOSE:                                                              |
- |	 rcube_sieve class for sieverules operations (using PEAR::Net_Sieve) |
- |                                                                       |
- +-----------------------------------------------------------------------+
  | Author: Aleksander Machniak <alec@alec.pl>                            |
  | Modifications by: Philip Weir                                         |
- |   * Make ruleset name configurable    	                             |
+ |   * Make ruleset name configurable                                    |
  |   * Added import functions                                            |
  +-----------------------------------------------------------------------+
-
- $Id: $
 
 */
 
 define('SIEVE_ERROR_CONNECTION', 1);
 define('SIEVE_ERROR_LOGIN', 2);
 define('SIEVE_ERROR_NOT_EXISTS', 3);	// script not exists
-define('SIEVE_ERROR_INSTALL', 4);	// script installation
-define('SIEVE_ERROR_ACTIVATE', 5);	// script activation
-define('SIEVE_ERROR_OTHER', 255);	// other/unknown error
+define('SIEVE_ERROR_INSTALL', 4);		// script installation
+define('SIEVE_ERROR_ACTIVATE', 5);		// script activation
+define('SIEVE_ERROR_OTHER', 255);		// other/unknown error
 
 class rcube_sieve {
 	private $sieve;
