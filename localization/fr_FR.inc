@@ -1,5 +1,5 @@
 <?php
-/* Author: Cédric Nirousset */
+/* Author: Aymeric Peuch */
 
 $labels = array();
 $labels['filters'] = 'Filtres';
@@ -23,6 +23,8 @@ $labels['filterregex'] = 'valide l\'expression régulière';
 $labels['filternotregex'] = 'ne valide pas l\'expression régulière';
 $labels['filterunder'] = 'est inférieur à';
 $labels['filterover'] = 'est supérieur à';
+$labels['filterbefore'] = 'antérieur(e) à';
+$labels['filterafter'] = 'postérieur(e) à';
 $labels['filteradvoptions'] = 'plus d\'options...';
 $labels['spamtest'] = 'Probabilité de spam';
 $labels['operator'] = 'Opérateur';
@@ -120,6 +122,8 @@ $labels['copy'] = 'Copier';
 $labels['copyexistingfilter'] = 'Copier les filtres éxistants';
 $labels['copytoruleset'] = 'Copier le filtre dans un autre groupe de règles';
 $labels['copyfromruleset'] = 'Copier des filtres depuis un autre groupe de règles';
+$labels['time'] = 'Heure';
+$labels['weekday'] = 'Jour de la semaine';
 
 $messages = array();
 $messages['nosieverules'] = 'Aucun filtre trouvé.';
@@ -171,5 +175,7 @@ $messages['rulesetexists'] = 'Un groupe de règles porte déjà ce nom. Veuillez
 $messages['copyexisting'] = '<b>Copie d\'un groupe de règles éxistant :</b> Voulez vous copier les filtres d\'un groupe de règles éxistant dans le groupe courant ?';
 $messages['filtercopied'] = 'Filtre copié avec succès';
 $messages['nosieverulesets'] = 'Aucun groupe de règles trouvé.';
+$messages['baddateformat'] = 'Erreur: Veuillez entrer une date sous la forme AAAA-MM-JJ';
+$messages['badtimeformat'] = 'Erreur: Veuillez entrer une heure sous la forme HH:MM:SS';
 
 ?>
