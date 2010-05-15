@@ -122,13 +122,9 @@ $messages['filterdeleteerror'] = 'Pravidlo nie je možné vymazať. Vyskytla sa 
 $messages['filterdeleted'] = 'Pravidlo bolo úspešne vymazané';
 $messages['filtersaved'] = 'Pravidlo bolo úspešne uložené';
 $messages['filtersaveerror'] = 'Pravidlo nie je možné uložiť. Vyskytla sa chyba serveru';
-$messages['vacdaysexp'] = "Obdobie je počet dní, počas ktorého nebude správa posielaná rovnakému užívateľovi bez ohľadu na to, koľko krát Vás bude kontaktovať.
-
-Napr.: Ak si nastavíte obdobie na 7 (dní) a Jozef Vám pošle e-mail v pondelok, v stredu, v nedeľu a na ďalší pondelok, dostane správu o Vašej neprítomnosti vždy len v pondelok.";
+$messages['vacdaysexp'] = "Obdobie je počet dní, počas ktorého nebude správa posielaná rovnakému užívateľovi bez ohľadu na to, koľko krát Vás bude kontaktovať. Napr.: Ak si nastavíte obdobie na 7 (dní) a Jozef Vám pošle e-mail v pondelok, v stredu, v nedeľu a na ďalší pondelok, dostane správu o Vašej neprítomnosti vždy len v pondelok.";
 $messages['vachandleexp'] = 'Odkaz sa dá použiť na pripojenie iných dovolenkových správ. Každá z nich sa v nastavenom období použije len raz.';
-$messages['vactoexp'] = "Zoznam ďalších adresátov zahrnutých do automatického odpovedania.
-
-Ak e-mail nie je adresovaný na Vašu hlavnú e-mailovú adresu ani na adresu v tomto zozname, automatická odpoveď sa neposiela.";
+$messages['vactoexp'] = "Zoznam ďalších adresátov zahrnutých do automatického odpovedania. Ak e-mail nie je adresovaný na Vašu hlavnú e-mailovú adresu ani na adresu v tomto zozname, automatická odpoveď sa neposiela.";
 $messages['norulename'] = 'Zadajte prosím názov pravidla';
 $messages['ruleexists'] = 'Pravidlo s týmto názvom už existuje. Zadajte prosím iný názov';
 $messages['noheader'] = 'Zadajte prosím názov hlavičky pre porovnanie';
@@ -143,9 +139,7 @@ $messages['vacdayswrongformat'] = 'Chyba: Obdobie musí byť číslo väčšie, 
 $messages['vacnomsg'] = 'Zadajte prosím nejaký text správy';
 $messages['notifynomethod'] = 'Zadajte prosím spôsob, ktorým má byť upozornenie poslané';
 $messages['notifynomsg'] = 'Zadajte prosím text Vašej správy';
-$messages['sieveruleexp'] = "Zadefinujte prosím podmienky s ktorými bude správa porovnávaná. 
-
-Pravidlá sa vyhodnocujú v poradí v akom sú zobrazené v ľavej časti tejto obrazovky. Ak sa nájde zhoda, ďalšie pravidlá sa vyhodnocovať nebudú.";
+$messages['sieveruleexp'] = "Zadefinujte prosím podmienky s ktorými bude správa porovnávaná. Pravidlá sa vyhodnocujú v poradí v akom sú zobrazené v ľavej časti tejto obrazovky. Ak sa nájde zhoda, ďalšie pravidlá sa vyhodnocovať nebudú.";
 $messages['sieveactexp'] = 'Vyberte prosím zo zoznamu akciu, ktorá sa bude vykonávať pre všetky e-maily vyhovujúce podmienke/podmienkam vyššie.';
 $messages['sieveheadershlp'] = 'Nižšie je uvedených niekoľko príkladov hlavičiek, ktoré môžu byť použité v podmienkach. Vyberte si tú, ktorú chcete vložiť do podmienky hore, alebo zadajte názov hlavičky do okienka ručne.';
 $messages['movingfilter'] = 'Presúvam pravidlo...';
