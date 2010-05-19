@@ -23,6 +23,8 @@ $labels['filterregex'] = 'triifft auf den regulären Ausdruck zu';
 $labels['filternotregex'] = 'triifft nicht auf den regulären Ausdruck zu';
 $labels['filterunder'] = 'ist kleiner als';
 $labels['filterover'] = 'ist größer als';
+$labels['filterbefore'] = 'ist vor';
+$labels['filterafter'] = 'ist nach';
 $labels['filteradvoptions'] = 'weitere Optionen...';
 $labels['spamtest'] = 'Spam-Wahrscheinlichkeit';
 $labels['operator'] = 'Operator';
@@ -120,6 +122,8 @@ $labels['copy'] = 'Kopieren';
 $labels['copyexistingfilter'] = 'Kopiere bestehende Filter';
 $labels['copytoruleset'] = 'Kopiere Filter in anderen Regelsatz';
 $labels['copyfromruleset'] = 'Kopiere Filter aus anderem Regelsatz';
+$labels['time'] = 'Zeit';
+$labels['weekday'] = 'Wochentag';
 
 $messages = array();
 $messages['nosieverules'] = 'Keine Filter gefunden.';
@@ -171,5 +175,7 @@ $messages['rulesetexists'] = 'Ein Regelsatz mit diesem Namen existiert bereits. 
 $messages['copyexisting'] = 'Kopiere bestehenden Regelsatz: Sollen die Filter von einem bestehenden Regelsatz in den akutellen Regelsatz kopiert werden?';
 $messages['filtercopied'] = 'Filter erfolgreich kopiert.';
 $messages['nosieverulesets'] = 'Keine Regelsätze gefunden.';
+$messages['baddateformat'] = 'Fehler: Bitte das Datum im Format YYY-MM-TT eingeben.';
+$messages['badtimeformat'] = 'Fehler: Bitte die Uhrzeit im Format HH:MM:SS eingeben.';
 
 ?>
