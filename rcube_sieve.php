@@ -53,17 +53,16 @@ class rcube_sieve {
 		$dir = slashify(realpath(slashify($dir) . 'importFilters/'));
 		$handle = opendir($dir);
 		while ($importer = readdir($handle)) {
-			if ($importer == '.' || $importer == '..')
-				continue;
+			if (is_file($dir . $importer) && is_readable($dir . $importer)) {
+				include($dir . $importer);
 
-			include($dir . $importer);
+				$importer = substr($importer, 0, -4);
+				$importer = 'srimport_' . $importer;
 
-			$importer = substr($importer, 0, -4);
-			$importer = 'srimport_' . $importer;
-
-			if (class_exists($importer, false)) {
-				$importerClass = new $importer();
-				$this->importers[$importer] = $importerClass;
+				if (class_exists($importer, false)) {
+					$importerClass = new $importer();
+					$this->importers[$importer] = $importerClass;
+				}
 			}
 		}
 		closedir($handle);
