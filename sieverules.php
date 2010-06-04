@@ -945,7 +945,8 @@ class sieverules extends rcube_plugin
 				  'message' => "SieveRules plugin: Unable to open default rule file"
 				  ), true, false);
 			}
-		} elseif ($ruleset == '_example_') {
+		}
+		elseif ($ruleset == '_example_') {
 			if (get_input_value('_eids', RCUBE_INPUT_GET)) {
 				$pos = get_input_value('_pos', RCUBE_INPUT_GET);
 				$eids = explode(",", get_input_value('_eids', RCUBE_INPUT_GET));
@@ -969,13 +970,16 @@ class sieverules extends rcube_plugin
 				else
 					$this->script = $this->sieve->script->as_array();
 			}
-		} elseif ($ruleset == '_none_') {
+		}
+		elseif ($ruleset == '_none_') {
 			$this->sieve->save();
 			if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
-		} elseif ($ruleset == '_copy_') {
+		}
+		elseif ($ruleset == '_copy_') {
 			$this->rename_ruleset(true);
 			return;
-		} elseif ($type != '' && $ruleset != '') {
+		}
+		elseif ($type != '' && $ruleset != '') {
 			$import = $this->sieve->do_import($type, $ruleset);
 
 			if ($import) {

@@ -19,7 +19,8 @@ define('SIEVE_ERROR_INSTALL', 4);		// script installation
 define('SIEVE_ERROR_ACTIVATE', 5);		// script activation
 define('SIEVE_ERROR_OTHER', 255);		// other/unknown error
 
-class rcube_sieve {
+class rcube_sieve
+{
 	private $sieve;
 	private $ruleset;
 	private $importers;
@@ -29,7 +30,8 @@ class rcube_sieve {
 	public $list = array();
 	public $script;
 
-	public function __construct($username, $password, $host, $port, $usetls, $ruleset, $dir, $elsif = true) {
+	public function __construct($username, $password, $host, $port, $usetls, $ruleset, $dir, $elsif = true)
+	{
 		$this->sieve = new Net_Sieve();
 
 		if (PEAR::isError($this->sieve->connect($host, $port, NULL, $usetls)))
@@ -68,15 +70,18 @@ class rcube_sieve {
 		closedir($handle);
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 		$this->sieve->disconnect();
 	}
 
-	public function error() {
+	public function error()
+	{
 		return $this->error ? $this->error : false;
 	}
 
-	public function save($script = '') {
+	public function save($script = '')
+	{
 		if (!$script)
 			$script = $this->script->as_text();
 
@@ -90,7 +95,8 @@ class rcube_sieve {
 		return true;
 	}
 
-	public function get_extensions() {
+	public function get_extensions()
+	{
 		if ($this->sieve) {
 			$ext = $this->sieve->getExtensions();
 			$ext = array_map('strtolower', (array) $ext);
@@ -98,7 +104,8 @@ class rcube_sieve {
 		}
 	}
 
-	public function check_import() {
+	public function check_import()
+	{
 		$result = false;
 
 		foreach ($this->list as $ruleset) {
@@ -118,7 +125,8 @@ class rcube_sieve {
 		return $result;
 	}
 
-	public function do_import($type, $ruleset) {
+	public function do_import($type, $ruleset)
+	{
 		$script = $this->sieve->getScript($ruleset);
 		$content = $this->importers[$type]->importer($script);
 		$this->script->import_filters($content);
@@ -129,7 +137,8 @@ class rcube_sieve {
 			return $this->save($content);
 	}
 
-	public function get_script() {
+	public function get_script()
+	{
 		if (!$this->sieve)
 			return false;
 
@@ -162,27 +171,32 @@ class rcube_sieve {
 		}
 	}
 
-	public function get_active() {
+	public function get_active()
+	{
 		return $this->sieve->getActive();
 	}
 
-	public function set_active($ruleset) {
+	public function set_active($ruleset)
+	{
 		if (PEAR::isError($this->sieve->setActive($ruleset)))
 			return $this->_set_error(SIEVE_ERROR_ACTIVATE);
 
 		return true;
 	}
 
-	public function del_script($script) {
+	public function del_script($script)
+	{
 		return $this->sieve->removeScript($script);
 	}
 
-	public function set_ruleset($ruleset) {
+	public function set_ruleset($ruleset)
+	{
 		$this->ruleset = $ruleset;
 		$this->get_script();
 	}
 
-	private function _set_error($error) {
+	private function _set_error($error)
+	{
 		$this->error = $error;
 		return false;
 	}
