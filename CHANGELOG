@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2010 06 04
+==========
+ * Add support for %n and %d in host (r3701)
+
 2010 04 24
 ==========
  * Add support for date extension

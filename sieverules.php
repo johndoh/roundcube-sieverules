@@ -1077,7 +1077,7 @@ class sieverules extends rcube_plugin
 			// try to connect to managesieve server and to fetch the script
 			$this->sieve = new rcube_sieve($_SESSION['username'],
 						$rcmail->decrypt($_SESSION['password']),
-						str_replace('%h', $_SESSION['imap_host'], $rcmail->config->get('sieverules_host')),
+						rcube_parse_host($rcmail->config->get('sieverules_host')),
 						$rcmail->config->get('sieverules_port'), $rcmail->config->get('sieverules_usetls'),
 						$this->current_ruleset, $this->home, $rcmail->config->get('sieverules_use_elsif', true));
 

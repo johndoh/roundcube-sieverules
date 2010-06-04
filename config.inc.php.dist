@@ -4,7 +4,12 @@
  * SieveRules configuration file
  */
 
-// managesieve server address, use %h for user's IMAP hostname
+// managesieve server address
+// The host can contain the following macros that will be expanded as follows:
+// %h - user's IMAP hostname
+// %n - http hostname ($_SERVER['SERVER_NAME'])
+// %d - domain (http hostname without the first part)
+// For example %n = mail.domain.tld, %d = domain.tld
 $rcmail_config['sieverules_host'] = 'localhost';
 
 // managesieve server port
