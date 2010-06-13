@@ -9,7 +9,6 @@
  |   * Make ruleset name configurable                                    |
  |   * Added import functions                                            |
  +-----------------------------------------------------------------------+
-
 */
 
 define('SIEVE_ERROR_CONNECTION', 1);

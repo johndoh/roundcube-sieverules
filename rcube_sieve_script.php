@@ -20,7 +20,6 @@
  |   * Added support for spamtest (Vladislav Bogdanov)                   |
  |   * Added support for date                                            |
  +-----------------------------------------------------------------------+
-
 */
 
 define('SIEVE_ERROR_BAD_ACTION', 1);
