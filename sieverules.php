@@ -204,7 +204,7 @@ class sieverules extends rcube_plugin
 		$_SESSION['sieverules_upicon'] = $attrib['upicon'];
 		$_SESSION['sieverules_downicon'] = $attrib['downicon'];
 
-		$this->api->output->add_label('sieverules.movingfilter', 'loading');
+		$this->api->output->add_label('sieverules.movingfilter', 'loading', 'sieverules.switchtoadveditor');
 		$this->api->output->add_gui_object('sieverules_list', 'sieverules-table');
 
 		$table = new html_table(array('id' => 'sieverules-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 2));
@@ -281,9 +281,8 @@ class sieverules extends rcube_plugin
 
 	}
 
-	function gen_advswitch()
+	function gen_advswitch($attrib)
 	{
-		$this->api->output->add_label('sieverules.switchtoadveditor');
 		$input_adv = new html_checkbox(array('id' => 'adveditor', 'onclick' => JS_OBJECT_NAME . '.sieverules_adveditor(this);', 'value' => '1'));
 		$out = html::label('adveditor', Q($this->gettext('adveditor'))) . $input_adv->show($this->action == 'plugin.sieverules.advanced' ? '1' : '');
 		return html::tag('div', array('id' => 'advancedmode'), $out);
@@ -299,6 +298,23 @@ class sieverules extends rcube_plugin
 		}
 		sort($rulesets);
 		$activeruleset = $this->sieve->get_active();
+
+		$next_ruleset = '';
+		for ($i = 0; $i < sizeof($rulesets); $i++) {
+			if ($rulesets[$i] == $this->current_ruleset) {
+				$i++;
+
+				if ($i == sizeof($rulesets))
+					$i = sizeof($rulesets) - 2;
+
+				$next_ruleset = $rulesets[$i];
+				break;
+			}
+		}
+
+		$this->api->output->set_env('ruleset_total', sizeof($rulesets));
+		$this->api->output->set_env('ruleset_active', $this->current_ruleset == $activeruleset ? True : False);
+		$this->api->output->set_env('ruleset_next', $next_ruleset);
 
 		// new/rename ruleset dialog
 		$out = '';
@@ -335,20 +351,45 @@ class sieverules extends rcube_plugin
 
 		// add overlay input box to html page
 		$this->api->output->add_footer($out);
+
 		$action = ($this->action == 'plugin.sieverules.advanced') ? 'plugin.sieverules.advanced' : 'plugin.sieverules';
-		$select_ruleset = new html_select(array('id' => 'rulelist', 'onchange' => JS_OBJECT_NAME . '.sieverules_select_ruleset(this, \''. $action .'\');'));
+		if ($attrib['type'] == 'link') {
+			$lis = '';
 
-		if (sizeof($this->sieve->list) == 0) {
-			$select_ruleset->add(Q($this->gettext('nosieverulesets')), '');
+			if (sizeof($this->sieve->list) == 0) {
+				$href  = html::a(array('href' => "#", 'class' => 'active', 'onclick' => 'return false;'), Q($this->gettext('nosieverulesets')));
+				$lis .= html::tag('li', $href);
+			}
+			else foreach ($rulesets as $ruleset) {
+				$class = 'active';
+				if ($ruleset === $this->current_ruleset)
+					$class .= ' selected';
+
+				$ruleset_text = $ruleset;
+				if ($ruleset === $activeruleset)
+					$ruleset_text = str_replace('%s', $ruleset, $this->gettext('activeruleset'));
+
+				$href = html::a(array('href' => "#", 'class' => $class, 'onclick' => JS_OBJECT_NAME . '.sieverules_select_ruleset(\''. $ruleset .'\', \''. $action .'\');'), Q($ruleset_text));
+				$lis .= html::tag('li', null, $href);
+			}
+
+			return $lis;
 		}
-		else foreach ($rulesets as $ruleset) {
-			if ($ruleset === $activeruleset)
-				$select_ruleset->add(Q(str_replace('%s', $ruleset, $this->gettext('activeruleset'))), Q($ruleset));
-			else
+		elseif ($attrib['type'] == 'select') {
+			$select_ruleset = new html_select(array('id' => 'rulelist', 'onchange' => JS_OBJECT_NAME . '.sieverules_select_ruleset(this, \''. $action .'\');'));
+
+			if (sizeof($this->sieve->list) == 0) {
+				$select_ruleset->add(Q($this->gettext('nosieverulesets')), '');
+			}
+			else foreach ($rulesets as $ruleset) {
+				if ($ruleset === $activeruleset)
+					$ruleset = str_replace('%s', $ruleset, $this->gettext('activeruleset'));
+
 				$select_ruleset->add(Q($ruleset), Q($ruleset));
-		}
+			}
 
-		return html::label('rulelist', Q($this->gettext('selectruleset'))) . $select_ruleset->show(Q($this->current_ruleset));
+			return html::label('rulelist', Q($this->gettext('selectruleset'))) . $select_ruleset->show(Q($this->current_ruleset));
+		}
 	}
 
 	function gen_setup()
@@ -1039,20 +1080,27 @@ class sieverules extends rcube_plugin
 		$activeruleset = get_input_value('_ruleset', RCUBE_INPUT_GET, true);
 		$this->sieve->set_active($activeruleset);
 
-		$rulesets = array();
-		foreach ($this->sieve->list as $ruleset) {
-			array_push($rulesets, $ruleset);
+		if (get_input_value('_reload', RCUBE_INPUT_GET, true) == "1") {
+			rcmail_overwrite_action('plugin.sieverules');
+			$this->action = 'plugin.sieverules';
+			$this->init_html();
 		}
-		sort($rulesets);
+		else {
+			$rulesets = array();
+			foreach ($this->sieve->list as $ruleset)
+				array_push($rulesets, $ruleset);
 
-		foreach ($rulesets as $ruleset) {
-			if ($ruleset === $activeruleset)
-				$this->api->output->command('sieverules_add_ruleset', Q($ruleset), Q(str_replace('%s', $ruleset, $this->gettext('activeruleset'))));
-			else
-				$this->api->output->command('sieverules_add_ruleset', Q($ruleset), Q($ruleset));
+			sort($rulesets);
+
+			foreach ($rulesets as $ruleset) {
+				if ($ruleset === $activeruleset)
+					$this->api->output->command('sieverules_add_ruleset', Q($ruleset), Q(str_replace('%s', $ruleset, $this->gettext('activeruleset'))));
+				else
+					$this->api->output->command('sieverules_add_ruleset', Q($ruleset), Q($ruleset));
+			}
+
+			$this->api->output->send();
 		}
-
-		$this->api->output->send();
 	}
 
 	function copy_filter()

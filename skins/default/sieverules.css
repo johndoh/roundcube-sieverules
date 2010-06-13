@@ -16,24 +16,32 @@
   position: absolute;
   top: 95px;
   right: 20px;
-  bottom: 60px;
+  bottom: 30px;
   left: 20px;
 }
 
 #sieverules-list
 {
   position: absolute;
-  top: 0px;
-  bottom: 0px;
+  top: 0;
+  bottom: 0;
   width: 240px;
+}
+
+.sieverules-boxcontent
+{
+  position: absolute;
+  top: 0;
+  bottom: 23px;
+  width: 100%;
 }
 
 #sieverules-list-filters
 {
   position: absolute;
-  top: 0px;
-  left: 0px;
-  right: 0px;
+  top: 0;
+  left: 0;
+  right: 0;
   bottom: 0;
   width: 100%;
   border: 1px solid #999999;
@@ -43,31 +51,38 @@
 #sieverules-list-examples
 {
   position: absolute;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
+  bottom: 0;
+  left: 0;
+  right: 0;
   width: 100%;
   border: 1px solid #999999;
   overflow: auto;
 }
 
+#sieverules-list div.boxfooter
+{
+  border: 1px solid #999999;
+  border-top: 0;
+  width: 100%;
+}
+
 #sieverules-details
 {
   position: absolute;
-  top: 0px;
+  top: 0;
   left: 250px;
-  right: 0px;
-  bottom: 0px;
+  right: 0;
+  bottom: 0;
   border: 1px solid #999999;
 }
 
 #sieverules-advanced
 {
   position: absolute;
-  top: 0px;
-  left: 0px;
-  bottom: 0px;
-  right: 0px;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
   overflow: hidden;
   border: 1px solid #999999;
 }
@@ -254,16 +269,16 @@ table.records-table td.vacdaysexp
 {
   position: absolute;
   top: 20px;
-  left: 0px;
-  bottom: 3px;
+  left: 0;
+  bottom: 26px;
   right: 4px;
 }
 
 #sieverules-advanced textarea
 {
   position: absolute;
-  top: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
   border: 0;
   width: 100%;
   height: 100%;
@@ -333,4 +348,9 @@ table.records-table td.vacdaysexp
 input.inputmask
 {
   color: #999999;
+}
+
+#sieverulesactionsmenu a.selected
+{
+  font-weight: bold;
 }

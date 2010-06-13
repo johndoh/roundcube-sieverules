@@ -11,6 +11,7 @@
 <link rel="stylesheet" type="text/css" href="/this/safari.css" />
 <roundcube:endif />
 <script type="text/javascript" src="/functions.js"></script>
+<script type="text/javascript" src="/this/functions.js"></script>
 <script type="text/javascript" src="/splitter.js"></script>
 
 <style type="text/css">
@@ -23,7 +24,7 @@
 }
 <roundcube:else />
 #sieverules-list-filters {
-	bottom: 0px;
+	bottom: 0;
 	<roundcube:exp expression="browser:ie ? 'height:expression(parseInt(this.parentNode.offsetHeight)+\\'px\\');' : ''" />
 }
 <roundcube:endif />
@@ -31,34 +32,28 @@
     left: <roundcube:exp expression="!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter+5 : 250" />px;
     <roundcube:exp expression="browser:ie ? ('width:expression((parseInt(mainscreen.offsetWidth)-'.(!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter+5 : 250).')+\\'px\\');') : ''" />
 }
-<roundcube:if condition="config:sieverules_multiplerules == true" />
-#mainscreen {
-	top: 120px;
-}
-<roundcube:endif />
 </style>
 
 </head>
-<body>
+<body onload="sieverules_init_ui()">
 
 <roundcube:include file="/includes/taskbar.html" />
 <roundcube:include file="/includes/header.html" />
 <roundcube:include file="/includes/settingstabs.html" />
 
-<roundcube:if condition="config:sieverules_multiplerules == true" />
-<div id="rulesets">
-<roundcube:object name="rulelist" />
-<roundcube:button command="plugin.sieverules.ruleset_dialog" type="image" alt="sieverules.newruleset" title="sieverules.newruleset" image="/this/add.png" />
-<roundcube:button command="plugin.sieverules.ruleset_dialog" prop="rename_ruleset" type="image" alt="sieverules.renameruleset" title="sieverules.renameruleset" image="/this/rename.png" />
-<roundcube:button command="plugin.sieverules.del_ruleset" type="image" alt="sieverules.delruleset" title="sieverules.delruleset" imageAct="/this/delete.png" imagePas="/this/deletePas.png" />
-<roundcube:button command="plugin.sieverules.activate_ruleset" type="image" alt="sieverules.activateruleset" title="sieverules.activateruleset" imageAct="/this/enable.png" imagePas="/this/enablePas.png" />
-</div>
-<roundcube:endif />
 <div id="mainscreen">
 
 <div id="sieverules-list">
+<div class="sieverules-boxcontent">
 <roundcube:object name="sieveruleslist" upicon="/this/up_arrow.png" downicon="/this/down_arrow.png" />
 <roundcube:object name="sieverulesexamplelist" />
+</div>
+<div class="boxfooter">
+<roundcube:button command="plugin.sieverules.add" type="link" title="sieverules.newfilter" class="buttonPas addgroup" classAct="button addgroup" content=" " />
+<roundcube:if condition="config:sieverules_multiplerules == true || config:sieverules_adveditor == 1 || config:sieverules_adveditor == 2" />
+<roundcube:button name="sieverulesactions" id="sieverulesactionslink" type="link" title="sieverules.moreactions" class="button groupactions" onclick="rcmail_ui.show_popupmenu($('#sieverulesactionsmenu'), 'sieverulesactionslink', true, true); return false" content=" " />
+<roundcube:endif />
+</div>
 </div>
 
 <script type="text/javascript">
@@ -78,12 +73,24 @@
 
 </div>
 
-<p id="listbuttons">
-<roundcube:button command="plugin.sieverules.add" type="input" label="sieverules.newfilter" class="button" />
-<roundcube:if condition="config:sieverules_adveditor == 1 || config:sieverules_adveditor == 2" />
-<roundcube:object name="advswitch" />
+<roundcube:if condition="config:sieverules_multiplerules == true || config:sieverules_adveditor == 1 || config:sieverules_adveditor == 2" />
+<div id="sieverulesactionsmenu" class="popupmenu">
+	<ul>
+	<roundcube:if condition="config:sieverules_multiplerules == true" />
+	<li class="separator_below"><roundcube:button command="plugin.sieverules.ruleset_dialog" type="link" label="sieverules.newruleset" classAct="active" /></li>
+	<roundcube:object name="rulelist" type="link" />
+	<li class="separator_above"><roundcube:button command="plugin.sieverules.ruleset_dialog" prop="rename_ruleset" type="link" label="sieverules.renameruleset" classAct="active" /></li>
+	<li><roundcube:button command="plugin.sieverules.del_ruleset" type="link" label="sieverules.delruleset" classAct="active" /></li>
+	<li><roundcube:button command="plugin.sieverules.activate_ruleset" type="link" label="sieverules.activateruleset" classAct="active" /></li>
+	<roundcube:endif />
+	<roundcube:if condition="config:sieverules_multiplerules == true && (config:sieverules_adveditor == 1 || config:sieverules_adveditor == 2)" />
+	<li class="separator_above"><roundcube:button command="plugin.sieverules.sieverules_adveditor" prop="1" type="link" label="sieverules.adveditor" classAct="active" /></li>
+	<roundcube:elseif condition="config:sieverules_adveditor == 1 || config:sieverules_adveditor == 2" />
+	<li><roundcube:button command="plugin.sieverules.sieverules_adveditor" prop="1" type="link" label="sieverules.adveditor" classAct="active" /></li>
+	<roundcube:endif />
+	</ul>
+</div>
 <roundcube:endif />
-</p>
 
 </body>
 </html>

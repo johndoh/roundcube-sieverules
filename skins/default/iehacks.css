@@ -5,12 +5,17 @@
 #mainscreen
 {
   width: expression((parseInt(document.documentElement.clientWidth)-40)+'px');
-  height: expression((parseInt(document.documentElement.clientHeight)-155)+'px');
+  height: expression((parseInt(document.documentElement.clientHeight)-125)+'px');
 }
 
 #sieverules-list
 {
   height: expression(parseInt(this.parentNode.offsetHeight)+'px');
+}
+
+.sieverules-boxcontent
+{
+  height: expression(parseInt(this.parentNode.offsetHeight)-25+'px');
 }
 
 #sieverules-list-filters
@@ -48,13 +53,13 @@ img.nohtc
 
 #sieverules-advancedbox
 {
-  height: expression((parseInt(document.documentElement.clientHeight)-179)+'px');
+  height: expression((parseInt(document.documentElement.clientHeight)-202)+'px');
   width: expression((parseInt(document.documentElement.clientWidth)-48)+'px');
 }
 
 #sieverules-advanced textarea
 {
-  height: expression((parseInt(document.documentElement.clientHeight)-179)+'px');
+  height: expression((parseInt(document.documentElement.clientHeight)-202)+'px');
   width: expression((parseInt(document.documentElement.clientWidth)-48)+'px');
 }
 
