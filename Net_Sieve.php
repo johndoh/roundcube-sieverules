@@ -39,7 +39,7 @@
  * @copyright 2002-2003 Richard Heyes
  * @copyright 2006-2008 Anish Mistry
  * @license   http://www.opensource.org/licenses/bsd-license.php BSD
- * @version   SVN: $Id: Sieve.php 298158 2010-04-19 09:43:30Z yunosh $
+ * @version   SVN: $Id: Sieve.php 300419 2010-06-13 12:10:10Z yunosh $
  * @link      http://pear.php.net/package/Net_Sieve
  */
 
@@ -83,7 +83,7 @@ define('NET_SIEVE_STATE_TRANSACTION', 3, true);
  * @copyright 2002-2003 Richard Heyes
  * @copyright 2006-2008 Anish Mistry
  * @license   http://www.opensource.org/licenses/bsd-license.php BSD
- * @version   Release: 1.2.1
+ * @version   Release: 1.2.2
  * @link      http://pear.php.net/package/Net_Sieve
  * @link      http://www.ietf.org/rfc/rfc3028.txt RFC 3028 (Sieve: A Mail
  *            Filtering Language)
@@ -107,7 +107,7 @@ class Net_Sieve
      *
      * @var array
      */
-    var $_supportedSASLAuthMethods = array('DIGEST-MD5', 'CRAM-MD5');
+    var $supportedSASLAuthMethods = array('DIGEST-MD5', 'CRAM-MD5');
 
     /**
      * The socket handle.
