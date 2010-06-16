@@ -7,6 +7,7 @@
  *
  * @version 1.8
  * @author Philip Weir
+ * Based on the Managesieve plugin by Aleksander Machniak
  */
 class sieverules extends rcube_plugin
 {
