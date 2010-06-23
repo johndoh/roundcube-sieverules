@@ -54,9 +54,7 @@
 	<li><roundcube:button command="plugin.sieverules.del_ruleset" type="link" label="sieverules.delruleset" classAct="active" /></li>
 	<li><roundcube:button command="plugin.sieverules.activate_ruleset" type="link" label="sieverules.activateruleset" classAct="active" /></li>
 	<roundcube:endif />
-	<roundcube:if condition="config:sieverules_adveditor == 1 || config:sieverules_adveditor == 2" />
 	<li<roundcube:exp expression="config:sieverules_multiplerules == true ? ' class=separator_above' : ''" />><roundcube:button command="plugin.sieverules.sieverules_adveditor" prop="1" type="link" label="sieverules.adveditor" classAct="active" /></li>
-	<roundcube:endif />
 	</ul>
 </div>
 
