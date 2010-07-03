@@ -39,7 +39,7 @@
  * @copyright 2002-2003 Richard Heyes
  * @copyright 2006-2008 Anish Mistry
  * @license   http://www.opensource.org/licenses/bsd-license.php BSD
- * @version   SVN: $Id: Sieve.php 300419 2010-06-13 12:10:10Z yunosh $
+ * @version   SVN: $Id: Sieve.php 300898 2010-07-01 09:49:02Z yunosh $
  * @link      http://pear.php.net/package/Net_Sieve
  */
 
@@ -83,7 +83,7 @@ define('NET_SIEVE_STATE_TRANSACTION', 3, true);
  * @copyright 2002-2003 Richard Heyes
  * @copyright 2006-2008 Anish Mistry
  * @license   http://www.opensource.org/licenses/bsd-license.php BSD
- * @version   Release: 1.2.2
+ * @version   Release: 1.3.0
  * @link      http://pear.php.net/package/Net_Sieve
  * @link      http://www.ietf.org/rfc/rfc3028.txt RFC 3028 (Sieve: A Mail
  *            Filtering Language)
@@ -204,11 +204,13 @@ class Net_Sieve
      * @param boolean $useTLS     Use TLS if available.
      * @param array   $options    Additional options for
      *                            stream_context_create().
+     * @param mixed   $handler    A callback handler for the debug output.
      */
     function Net_Sieve($user = null, $pass  = null, $host = 'localhost',
-        $port = 2000, $logintype = '', $euser = '', $debug = false,
-        $bypassAuth = false, $useTLS = true, $options = null
-    ) {
+                       $port = 2000, $logintype = '', $euser = '',
+                       $debug = false, $bypassAuth = false, $useTLS = true,
+                       $options = null, $handler = null)
+    {
         $this->_state             = NET_SIEVE_STATE_DISCONNECTED;
         $this->_data['user']      = $user;
         $this->_data['pass']      = $pass;
@@ -217,10 +219,10 @@ class Net_Sieve
         $this->_data['logintype'] = $logintype;
         $this->_data['euser']     = $euser;
         $this->_sock              = new Net_Socket();
-        $this->_debug             = $debug;
         $this->_bypassAuth        = $bypassAuth;
         $this->_useTLS            = $useTLS;
         $this->_options           = $options;
+        $this->setDebug($debug, $handler);
 
         /* Try to include the Auth_SASL package.  If the package is not
          * available, we disable the authentication methods that depend upon
@@ -635,10 +637,10 @@ class Net_Sieve
         if (PEAR::isError($result = $this->_sendCmd('AUTHENTICATE "LOGIN"'))) {
             return $result;
         }
-        if (PEAR::isError($result = $this->_doCmd('"' . base64_encode($user) . '"'))) {
+        if (PEAR::isError($result = $this->_doCmd('"' . base64_encode($user) . '"', true))) {
             return $result;
         }
-        return $this->_doCmd('"' . base64_encode($pass) . '"');
+        return $this->_doCmd('"' . base64_encode($pass) . '"', true);
     }
 
     /**
@@ -1099,33 +1101,30 @@ class Net_Sieve
         if (!isset($this->_capability['sasl'])) {
             return PEAR::raiseError('This server doesn\'t support any authentication methods. SASL problem?');
         }
-
-        $serverMethods = $this->_capability['sasl'];
+        if (!$this->_capability['sasl']) {
+            return PEAR::raiseError('This server doesn\'t support any authentication methods.');
+        }
 
         if ($userMethod) {
-            $methods = array($userMethod);
-        } else {
-            $methods = $this->supportedAuthMethods;
-        }
-
-        if (!$methods || !$serverMethods) {
+            if (in_array($userMethod, $this->_capability['sasl'])) {
+                return $userMethod;
+            }
             return PEAR::raiseError(
-                'This server doesn\'t support any authentication methods.'
-            );
+                sprintf('No supported authentication method found. The server supports these methods: %s, but we want to use: %s',
+                        implode(', ', $this->_capability['sasl']),
+                        $userMethod));
         }
 
-        foreach ($methods as $method) {
-            if (in_array($method, $serverMethods)) {
+        foreach ($this->supportedAuthMethods as $method) {
+            if (in_array($method, $this->_capability['sasl'])) {
                 return $method;
             }
         }
 
         return PEAR::raiseError(
-            'No supported authentication method found. The server supports these methods: '
-            . implode(',', $serverMethods)
-            . ', but we only support: '
-            . implode(',', $this->supportedAuthMethods)
-        );
+            sprintf('No supported authentication method found. The server supports these methods: %s, but we only support: %s',
+                    implode(', ', $this->_capability['sasl']),
+                    implode(', ', $this->supportedAuthMethods)));
     }
 
     /**
