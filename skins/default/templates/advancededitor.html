@@ -12,12 +12,6 @@
 <roundcube:endif />
 <script type="text/javascript" src="/functions.js"></script>
 <script type="text/javascript" src="/this/functions.js"></script>
-<style type="text/css">
-#mainscreen {
-	bottom: 60px;
-	height: expression((parseInt(document.documentElement.clientHeight)-155)+'px');
-}
-</style>
 </head>
 <body onload="sieverules_init_ui()">
 
@@ -36,14 +30,13 @@
 
 <div class="boxfooter">
 <roundcube:button name="sieverulesactions" id="sieverulesactionslink" type="link" title="sieverules.moreactions" class="button groupactions" onclick="rcmail_ui.show_popupmenu($('#sieverulesactionsmenu'), 'sieverulesactionslink', true, true); return false" content=" " />
-</div>
-</div>
-
-</div>
-
-<p id="listbuttons">
+<span id="sieverules-advbuttons">
 <roundcube:button command="plugin.sieverules.save" type="input" label="save" class="button mainaction" />
-</p>
+</span>
+</div>
+</div>
+
+</div>
 
 <div id="sieverulesactionsmenu" class="popupmenu">
 	<ul>
@@ -54,11 +47,9 @@
 	<li><roundcube:button command="plugin.sieverules.del_ruleset" type="link" label="sieverules.delruleset" classAct="active" /></li>
 	<li><roundcube:button command="plugin.sieverules.activate_ruleset" type="link" label="sieverules.activateruleset" classAct="active" /></li>
 	<roundcube:endif />
-	<li<roundcube:exp expression="config:sieverules_multiplerules == true ? ' class=separator_above' : ''" />><roundcube:button command="plugin.sieverules.sieverules_adveditor" prop="1" type="link" label="sieverules.adveditor" classAct="active" /></li>
+	<li<roundcube:exp expression="config:sieverules_multiplerules == true ? ' class=separator_above' : ''" />><roundcube:button command="plugin.sieverules.sieverules_adveditor" prop="0" type="link" label="sieverules.stdeditor" classAct="active" /></li>
 	</ul>
 </div>
-
-<div id="rcmversion"><roundcube:object name="productname" /> <roundcube:object name="version" /></div>
 
 </body>
 </html>

@@ -14,9 +14,9 @@
 #mainscreen
 {
   position: absolute;
-  top: 95px;
+  top: 85px;
   right: 20px;
-  bottom: 30px;
+  bottom: 20px;
   left: 20px;
 }
 
@@ -353,4 +353,11 @@ input.inputmask
 #sieverulesactionsmenu a.selected
 {
   font-weight: bold;
+}
+
+#sieverules-advbuttons
+{
+  position: absolute;
+  left: 40px;
+  top: 1px;
 }
