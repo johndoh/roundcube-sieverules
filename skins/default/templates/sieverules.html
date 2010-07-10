@@ -11,7 +11,6 @@
 <link rel="stylesheet" type="text/css" href="/this/safari.css" />
 <roundcube:endif />
 <script type="text/javascript" src="/functions.js"></script>
-<script type="text/javascript" src="/this/functions.js"></script>
 <script type="text/javascript" src="/splitter.js"></script>
 
 <style type="text/css">
@@ -35,7 +34,7 @@
 </style>
 
 </head>
-<body onload="sieverules_init_ui()">
+<body onload="rcube_init_mail_ui(); rcmail_ui.popups.sieverulesmenu = {obj:$('#sieverulesactionsmenu'), above:1};">
 
 <roundcube:include file="/includes/taskbar.html" />
 <roundcube:include file="/includes/header.html" />
@@ -51,7 +50,7 @@
 <div class="boxfooter">
 <roundcube:button command="plugin.sieverules.add" type="link" title="sieverules.newfilter" class="buttonPas addgroup" classAct="button addgroup" content=" " />
 <roundcube:if condition="config:sieverules_multiplerules == true || config:sieverules_adveditor == 1 || config:sieverules_adveditor == 2" />
-<roundcube:button name="sieverulesactions" id="sieverulesactionslink" type="link" title="sieverules.moreactions" class="button groupactions" onclick="rcmail_ui.show_popupmenu($('#sieverulesactionsmenu'), 'sieverulesactionslink', true, true); return false" content=" " />
+<roundcube:button name="sieverulesactions" id="sieverulesmenulink" type="link" title="sieverules.moreactions" class="button groupactions" onclick="rcmail_ui.show_popupmenu('sieverulesmenu'); return false" content=" " />
 <roundcube:endif />
 </div>
 </div>
