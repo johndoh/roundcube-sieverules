@@ -81,7 +81,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  bottom: 0;
+  bottom: 25px;
   right: 0;
   overflow: hidden;
   border: 1px solid #999999;
@@ -358,6 +358,6 @@ input.inputmask
 #sieverules-advbuttons
 {
   position: absolute;
-  left: 40px;
-  top: 1px;
+  left: 0;
+  bottom: 0;
 }

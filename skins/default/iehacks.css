@@ -37,7 +37,7 @@
 
 #sieverules-advanced
 {
-  height: expression((parseInt(document.documentElement.clientHeight)-105)+'px');
+  height: expression((parseInt(document.documentElement.clientHeight)-130)+'px');
   width: expression((parseInt(document.documentElement.clientWidth)-40)+'px');
 }
 
@@ -53,13 +53,13 @@ img.nohtc
 
 #sieverules-advancedbox
 {
-  height: expression((parseInt(document.documentElement.clientHeight)-152)+'px');
+  height: expression((parseInt(document.documentElement.clientHeight)-177)+'px');
   width: expression((parseInt(document.documentElement.clientWidth)-48)+'px');
 }
 
 #sieverules-advanced textarea
 {
-  height: expression((parseInt(document.documentElement.clientHeight)-152)+'px');
+  height: expression((parseInt(document.documentElement.clientHeight)-177)+'px');
   width: expression((parseInt(document.documentElement.clientWidth)-48)+'px');
 }
 
