@@ -15,6 +15,10 @@ $rcmail_config['sieverules_host'] = 'localhost';
 // managesieve server port
 $rcmail_config['sieverules_port'] = 2000;
 
+// authentication method. Can be CRAM-MD5, DIGEST-MD5, PLAIN, LOGIN, EXTERNAL
+// or none. Optional, defaults to best method supported by server.
+$rcmail_config['sieverules_auth_type'] = null;
+
 // enable TLS for managesieve server connection
 $rcmail_config['sieverules_usetls'] = FALSE;
 

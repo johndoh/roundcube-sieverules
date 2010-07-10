@@ -5,7 +5,7 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.8
+ * @version 1.9
  * @author Philip Weir
  * Based on the Managesieve plugin by Aleksander Machniak
  */
@@ -1131,8 +1131,9 @@ class sieverules extends rcube_plugin
 			$this->sieve = new rcube_sieve($_SESSION['username'],
 						$rcmail->decrypt($_SESSION['password']),
 						rcube_parse_host($rcmail->config->get('sieverules_host')),
-						$rcmail->config->get('sieverules_port'), $rcmail->config->get('sieverules_usetls'),
-						$this->current_ruleset, $this->home, $rcmail->config->get('sieverules_use_elsif', true));
+						$rcmail->config->get('sieverules_port'), $rcmail->config->get('sieverules_auth_type', NULL),
+						$rcmail->config->get('sieverules_usetls'), $this->current_ruleset,
+						$this->home, $rcmail->config->get('sieverules_use_elsif', true));
 
 			$this->sieve_error = $this->sieve->error();
 
