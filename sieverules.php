@@ -415,7 +415,7 @@ class sieverules extends rcube_plugin
 
 		$type = '';
 		$ruleset = '';
-		if (sizeof($this->sieve->list) > 1) {
+		if (sizeof($this->sieve->list) > 0) {
 			if ($result = $this->sieve->check_import()) {
 				list($type, $name, $ruleset) = $result;
 				$text .= "<br /><br />" . str_replace('%s', $name, $this->gettext('importother'));
