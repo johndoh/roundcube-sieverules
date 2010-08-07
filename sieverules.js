@@ -600,7 +600,7 @@ rcmail.sieverules_drag_start = function(list) {
 	rcmail.sieverules_drag_active = true;
 
 	if (this.sieverules_timer)
-	 	clearTimeout(this.sieverules_timer);
+		clearTimeout(this.sieverules_timer);
 
 	if (rcmail.gui_objects.sieverules_list) {
 		rcmail.initialBodyScrollTop = bw.ie ? 0 : window.pageYOffset;

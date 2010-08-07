@@ -386,13 +386,13 @@ class rcube_sieve_script
 							array_push($exts, 'vacation');
 							$action['subject'] = $this->_escape_string($action['subject']);
 
-// 							// encoding subject header with mb_encode provides better results with asian characters
-// 							if (function_exists("mb_encode_mimeheader"))
-// 							{
-// 								mb_internal_encoding($action['charset']);
-// 								$action['subject'] = mb_encode_mimeheader($action['subject'], $action['charset'], 'Q');
-// 								mb_internal_encoding(RCMAIL_CHARSET);
-// 							}
+//							// encoding subject header with mb_encode provides better results with asian characters
+//							if (function_exists("mb_encode_mimeheader"))
+//							{
+//								mb_internal_encoding($action['charset']);
+//								$action['subject'] = mb_encode_mimeheader($action['subject'], $action['charset'], 'Q');
+//								mb_internal_encoding(RCMAIL_CHARSET);
+//							}
 
 							// append original subject
 							if ($action['origsubject'] == '1') {
@@ -675,42 +675,42 @@ class rcube_sieve_script
 
 				if (preg_match('/^(not\s+)?size/', $match[0])) {
 					$result[] = array(
-									'type' 		=> 'size',
-									'not' 		=> $match[$size-4] ? true : false,
-									'operator' 	=> $match[$size-2], // under/over
+									'type'		=> 'size',
+									'not'		=> $match[$size-4] ? true : false,
+									'operator'	=> $match[$size-2], // under/over
 									'target'	=> $match[$size-1], // value
 								);
 				}
 				elseif (preg_match('/^(not\s+)?spamtest/', $match[0])) {
 					$result[] = array(
-									'type' 		=> 'spamtest',
-									'not' 		=> $match[$size-4] ? true : false,
-									'operator' 	=> $match[$size-2], // ge/le/eq
+									'type'		=> 'spamtest',
+									'not'		=> $match[$size-4] ? true : false,
+									'operator'	=> $match[$size-2], // ge/le/eq
 									'target'	=> $match[$size-1], // value
 								);
 				}
 				elseif (preg_match('/^(not\s+)?(header|address|envelope)/', $match[0])) {
 					$result[] = array(
-									'type'		=> $match[$size-6],
-									'not' 		=> $match[$size-7] ? true : false,
-									'operator'	=> $match[$size-5], // is/contains/matches
-									'header' 	=> $this->_parse_list($match[$size-2]), // header(s)
-									'target'	=> $this->_parse_list($match[$size-1], ($match[$size-5] == 'regex' ? true : false)), // string(s)
-									'comparator' => trim($match[$size-3])
+									'type'			=> $match[$size-6],
+									'not'			=> $match[$size-7] ? true : false,
+									'operator'		=> $match[$size-5], // is/contains/matches
+									'header'		=> $this->_parse_list($match[$size-2]), // header(s)
+									'target'		=> $this->_parse_list($match[$size-1], ($match[$size-5] == 'regex' ? true : false)), // string(s)
+									'comparator'	=> trim($match[$size-3])
 								);
 				}
 				elseif (preg_match('/^(not\s+)?exists/', $match[0])) {
 					$result[] = array(
-									'type'	 	=> 'exists',
-									'not' 		=> $match[$size-3] ? true : false,
+									'type'		=> 'exists',
+									'not'		=> $match[$size-3] ? true : false,
 									'operator'	=> 'exists',
-									'header' 	=> $this->_parse_list($match[$size-1]), // header(s)
+									'header'	=> $this->_parse_list($match[$size-1]), // header(s)
 								);
 				}
 				elseif (preg_match('/^(not\s+)?true/', $match[0])) {
 					$result[] = array(
-									'type' 	=> 'true',
-									'not' 	=> $match[$size-2] ? true : false,
+									'type'	=> 'true',
+									'not'	=> $match[$size-2] ? true : false,
 								);
 				}
 				elseif (preg_match('/^(not\s+)?body/', $match[0])) {
@@ -725,25 +725,25 @@ class rcube_sieve_script
 
 					$result[] = array(
 									'type'		=> 'body',
-									'not' 		=> $match[$size-8] ? true : false,
+									'not'		=> $match[$size-8] ? true : false,
 									'bodypart'	=> $bodypart,
 									'contentpart' => $contentpart,
 									'operator'	=> $match[$size-4], // is/contains/matches
-									'header' 	=> 'body', // header(s)
+									'header'	=> 'body', // header(s)
 									'target'	=> $this->_parse_list($match[$size-1], ($match[$size-4] == 'regex' ? true : false)), // string(s)
 									'comparator' => trim($match[$size-2])
 								);
 				}
 				elseif (preg_match('/^(not\s+)?(date|currentdate)/', $match[0])) {
 					$result[] = array(
-									'type' 		=> 'date',
-									'not' 		=> $match[$size-10] ? true : false,
-									'header' 	=> $match[$size-9], // header
-									'operator' 	=> $match[$size-6], // is/contains/matches
-									'datepart' 	=> $this->_parse_list($match[$size-2]),
-									'target'	=> $this->_parse_list($match[$size-1], ($match[$size-5] == 'regex' ? true : false)), // string(s)
-									'field'		=> $match[$size-3], // received
-									'comparator' => trim($match[$size-4])
+									'type'			=> 'date',
+									'not'			=> $match[$size-10] ? true : false,
+									'header'		=> $match[$size-9], // header
+									'operator'		=> $match[$size-6], // is/contains/matches
+									'datepart'		=> $this->_parse_list($match[$size-2]),
+									'target'		=> $this->_parse_list($match[$size-1], ($match[$size-5] == 'regex' ? true : false)), // string(s)
+									'field'			=> $match[$size-3], // received
+									'comparator'	=> trim($match[$size-4])
 								);
 				}
 			}

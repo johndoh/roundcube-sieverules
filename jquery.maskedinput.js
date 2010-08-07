@@ -85,7 +85,7 @@
 			return this.each(function() {
 				var input = $(this);
 				var buffer = $.map(mask.split(""), function(c, i) { if (c != '?') return defs[c] ? settings.placeholder : c });
-				var ignore = false;  			//Variable for ignoring control keys
+				var ignore = false; //Variable for ignoring control keys
 				var focusText = input.val();
 
 				input.data("buffer", buffer).data("tests", tests);

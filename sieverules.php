@@ -405,12 +405,12 @@ class sieverules extends rcube_plugin
 		}
 		elseif ($rcmail->config->get('sieverules_default_file', false) && !is_readable($rcmail->config->get('sieverules_default_file'))) {
 			raise_error(array(
-			  'code' => 600,
-			  'type' => 'php',
-			  'file' => __FILE__,
-			  'line' => __LINE__,
-			  'message' => "SieveRules plugin: Unable to open default rule file"
-			  ), true, false);
+				'code' => 600,
+				'type' => 'php',
+				'file' => __FILE__,
+				'line' => __LINE__,
+				'message' => "SieveRules plugin: Unable to open default rule file"
+				), true, false);
 		}
 
 		$type = '';
@@ -463,12 +463,12 @@ class sieverules extends rcube_plugin
 		else {
 			if ($rcmail->config->get('sieverules_auto_load_default') && !is_readable($rcmail->config->get('sieverules_default_file')))
 				raise_error(array(
-				  'code' => 600,
-				  'type' => 'php',
-				  'file' => __FILE__,
-				  'line' => __LINE__,
-				  'message' => "SieveRules plugin: Unable to open default rule file"
-				  ), true, false);
+					'code' => 600,
+					'type' => 'php',
+					'file' => __FILE__,
+					'line' => __LINE__,
+					'message' => "SieveRules plugin: Unable to open default rule file"
+					), true, false);
 
 			$this->sieve->save();
 			if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
@@ -544,7 +544,7 @@ class sieverules extends rcube_plugin
 		$input_disable = new html_checkbox(array('name' => '_disable', 'id' => $field_id, 'value' => 1));
 
 		$out .= html::span('disableLink', html::label($field_id, Q($this->gettext('disablerule')))
-				 . "&nbsp;" . $input_disable->show($cur_script['disabled']));
+				. "&nbsp;" . $input_disable->show($cur_script['disabled']));
 
 		// filter name input
 		$field_id = 'rcmfd_name';
@@ -584,9 +584,9 @@ class sieverules extends rcube_plugin
 		}
 
 		$out .= html::tag('fieldset', null, html::tag('legend', null, Q($this->gettext('messagesrules')))
-				 . Q((!$rcmail->config->get('sieverules_use_elsif', true)) ? $this->gettext('sieveruleexp_stop'): $this->gettext('sieveruleexp')) . "<br /><br />"
-				 . $join_type . "<br /><br />"
-				 . $rules_table->show());
+				. Q((!$rcmail->config->get('sieverules_use_elsif', true)) ? $this->gettext('sieveruleexp_stop'): $this->gettext('sieveruleexp')) . "<br /><br />"
+				. $join_type . "<br /><br />"
+				. $rules_table->show());
 
 		rcmail::get_instance()->imap_connect();
 		$actions_table = new html_table(array('id' => 'actions-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 3));
@@ -902,10 +902,10 @@ class sieverules extends rcube_plugin
 			}
 
 			// update rule list
- 			if ($this->sieve_error)
- 				$this->script = array();
- 			else
- 				$this->script = $this->sieve->script->as_array();
+			if ($this->sieve_error)
+				$this->script = array();
+			else
+				$this->script = $this->sieve->script->as_array();
 
 			// go to next step
 			rcmail_overwrite_action('plugin.sieverules.edit');
@@ -980,12 +980,12 @@ class sieverules extends rcube_plugin
 			}
 			elseif ($rcmail->config->get('sieverules_default_file', false) && !is_readable($rcmail->config->get('sieverules_default_file'))) {
 				raise_error(array(
-				  'code' => 600,
-				  'type' => 'php',
-				  'file' => __FILE__,
-				  'line' => __LINE__,
-				  'message' => "SieveRules plugin: Unable to open default rule file"
-				  ), true, false);
+					'code' => 600,
+					'type' => 'php',
+					'file' => __FILE__,
+					'line' => __LINE__,
+					'message' => "SieveRules plugin: Unable to open default rule file"
+					), true, false);
 			}
 		}
 		elseif ($ruleset == '_example_') {
@@ -1145,12 +1145,12 @@ class sieverules extends rcube_plugin
 				}
 				elseif ($rcmail->config->get('sieverules_default_file', false) && !is_readable($rcmail->config->get('sieverules_default_file'))) {
 					raise_error(array(
-					  'code' => 600,
-					  'type' => 'php',
-					  'file' => __FILE__,
-					  'line' => __LINE__,
-					  'message' => "SieveRules plugin: Unable to open default rule file"
-					  ), true, false);
+						'code' => 600,
+						'type' => 'php',
+						'file' => __FILE__,
+						'line' => __LINE__,
+						'message' => "SieveRules plugin: Unable to open default rule file"
+						), true, false);
 				}
 
 				// that's not exactly an error
@@ -1181,12 +1181,12 @@ class sieverules extends rcube_plugin
 				$this->examples = $this->sieve->script->parse_text(file_get_contents($rcmail->config->get('sieverules_example_file')));
 			elseif ($rcmail->config->get('sieverules_example_file', false) && !is_readable($rcmail->config->get('sieverules_example_file')))
 				raise_error(array(
-				  'code' => 600,
-				  'type' => 'php',
-				  'file' => __FILE__,
-				  'line' => __LINE__,
-				  'message' => "SieveRules plugin: Unable to open example rule file"
-				  ), true, false);
+					'code' => 600,
+					'type' => 'php',
+					'file' => __FILE__,
+					'line' => __LINE__,
+					'message' => "SieveRules plugin: Unable to open example rule file"
+					), true, false);
 		}
 		else {
 			$this->sieve->set_ruleset($this->current_ruleset);
@@ -1569,15 +1569,15 @@ class sieverules extends rcube_plugin
 		if (substr($op, 0, 5) == 'count' || substr($op, 0, 5) == 'value')
 			$select_comparator = new html_select(array('id' => $field_id, 'name' => "_comparator[]"));
 		else
- 			$select_comparator = new html_select(array('id' => $field_id, 'name' => "_comparator[]", 'disabled' => 'disabled'));
+			$select_comparator = new html_select(array('id' => $field_id, 'name' => "_comparator[]", 'disabled' => 'disabled'));
 
- 		$select_comparator->add(Q($this->gettext('i;ascii-casemap')), '');
- 		$select_comparator->add(Q($this->gettext('i;octet')), 'i;octet');
+		$select_comparator->add(Q($this->gettext('i;ascii-casemap')), '');
+		$select_comparator->add(Q($this->gettext('i;octet')), 'i;octet');
 
- 		foreach ($ext as $extension) {
- 			if (substr($extension, 0, 11) == 'comparator-')
- 				$select_comparator->add(Q($this->gettext(substr($extension, 11))), substr($extension, 11));
- 		}
+		foreach ($ext as $extension) {
+			if (substr($extension, 0, 11) == 'comparator-')
+				$select_comparator->add(Q($this->gettext(substr($extension, 11))), substr($extension, 11));
+		}
 
 		$advanced_table->add(array('style' => 'white-space: normal;', 'class' => 'selheader'), html::label($field_id, Q($this->gettext('comparator'))));
 		$advanced_table->add(array('style' => 'white-space: normal;'), $select_comparator->show($rule['comparator']));
@@ -1845,10 +1845,10 @@ class sieverules extends rcube_plugin
 			foreach ($user_identities as $sql_arr)
 				$select_id->add($sql_arr['email'], $sql_arr['email']);
 
-	 		$notify_table->set_row_attribs(array('class' => 'advanced', 'style' => $noteadvstyle));
- 			$notify_table->add(null, html::label($field_id, Q($this->gettext('sievefrom'))));
- 			$notify_table->add(array('colspan' => 2), $select_id->show($nfrom));
- 			$notify_table->add_row();
+			$notify_table->set_row_attribs(array('class' => 'advanced', 'style' => $noteadvstyle));
+			$notify_table->add(null, html::label($field_id, Q($this->gettext('sievefrom'))));
+			$notify_table->add(array('colspan' => 2), $select_id->show($nfrom));
+			$notify_table->add_row();
 		}
 
 		$field_id = 'rcmfd_nmethod_'. $rowid;
@@ -1890,8 +1890,8 @@ class sieverules extends rcube_plugin
 		$notify_table->add_row();
 
 		if (in_array('enotify', $ext)) {
- 			$input_advopts = new html_checkbox(array('id' => 'nadvopts' . $rowid, 'name' => '_nadv_opts[]', 'onclick' => JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1'));
- 			$notify_table->add(array('colspan' => '3', 'style' => 'text-align: right'), html::label('nadvopts' . $rowid, Q($this->gettext('advancedoptions'))) . $input_advopts->show($noteshowadv));
+			$input_advopts = new html_checkbox(array('id' => 'nadvopts' . $rowid, 'name' => '_nadv_opts[]', 'onclick' => JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1'));
+			$notify_table->add(array('colspan' => '3', 'style' => 'text-align: right'), html::label('nadvopts' . $rowid, Q($this->gettext('advancedoptions'))) . $input_advopts->show($noteshowadv));
 		}
 
 		// get mailbox list
