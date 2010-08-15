@@ -19,8 +19,8 @@ $labels['filteris'] = 'ist identisch mit';
 $labels['filterisnot'] = 'ist nicht identisch mit';
 $labels['filterexists'] = 'existiert';
 $labels['filternotexists'] = 'existiert nicht';
-$labels['filterregex'] = 'triifft auf den regulären Ausdruck zu';
-$labels['filternotregex'] = 'triifft nicht auf den regulären Ausdruck zu';
+$labels['filterregex'] = 'trifft auf den regulären Ausdruck zu';
+$labels['filternotregex'] = 'trifft nicht auf den regulären Ausdruck zu';
 $labels['filterunder'] = 'ist kleiner als';
 $labels['filterover'] = 'ist größer als';
 $labels['filterbefore'] = 'ist vor';
@@ -177,7 +177,7 @@ $messages['rulesetexists'] = 'Ein Regelsatz mit diesem Namen existiert bereits. 
 $messages['copyexisting'] = 'Kopiere bestehenden Regelsatz: Sollen die Filter von einem bestehenden Regelsatz in den akutellen Regelsatz kopiert werden?';
 $messages['filtercopied'] = 'Filter erfolgreich kopiert.';
 $messages['nosieverulesets'] = 'Keine Regelsätze gefunden.';
-$messages['baddateformat'] = 'Fehler: Bitte das Datum im Format YYY-MM-TT eingeben.';
+$messages['baddateformat'] = 'Fehler: Bitte das Datum im Format JJJJ-MM-TT eingeben.';
 $messages['badtimeformat'] = 'Fehler: Bitte die Uhrzeit im Format HH:MM:SS eingeben.';
 
 ?>
