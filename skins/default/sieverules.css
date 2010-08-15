@@ -2,24 +2,6 @@
  * SieveRules plugin styles
  */
 
-#rulesets
-{
-  position: absolute;
-  top: 95px;
-  right: 20px;
-  height: 20px;
-  text-align: right;
-}
-
-#mainscreen
-{
-  position: absolute;
-  top: 85px;
-  right: 20px;
-  bottom: 20px;
-  left: 20px;
-}
-
 #sieverules-list
 {
   position: absolute;

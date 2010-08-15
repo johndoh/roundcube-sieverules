@@ -2,12 +2,6 @@
  * SieveRules plugin styles (IE hacks)
  */
 
-#mainscreen
-{
-  width: expression((parseInt(document.documentElement.clientWidth)-40)+'px');
-  height: expression((parseInt(document.documentElement.clientHeight)-105)+'px');
-}
-
 #sieverules-list
 {
   height: expression(parseInt(this.parentNode.offsetHeight)+'px');
