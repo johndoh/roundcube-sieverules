@@ -72,7 +72,8 @@ Roundcube Webmail SieveRules
 
 2009 11 14
 ==========
- * Allow appending of original subject to vacation messages (requires variables extension in sieve)
+ * Allow appending of original subject to vacation messages (requires variables
+   extension in sieve)
  * Parse multiple email addresses when setting redirect
 
 2009 11 09
@@ -125,7 +126,8 @@ Roundcube Webmail SieveRules
 
 2009 06 07
 ==========
- * Add possibility to easily switch between \r\n and \n in sieve file and also change indent
+ * Add possibility to easily switch between \r\n and \n in sieve file and also
+   change indent
  * Swap split() for explode(), PHP 5.3 compatibility
 
 2009 05 31
@@ -134,7 +136,8 @@ Roundcube Webmail SieveRules
 
 2009 05 30
 ==========
- * Added config var to auto load default rules when no user ones exist and skip setup screen
+ * Added config var to auto load default rules when no user ones exist and skip
+   setup screen
  * Added support ESC key to stop dragging
  * Added support for enotify and imap4flags
  * Added delete icon

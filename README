@@ -19,15 +19,28 @@ subaddress
 vacation
 body
 copy
-spamtest (Vladislav Bogdanov - cyrus-imapd patch http://bubble.nsys.by/projects/patches/cyrus-imapd/)
+spamtest (Vladislav Bogdanov - cyrus-imapd patch
+          http://bubble.nsys.by/projects/patches/cyrus-imapd/)
 variables
 date
+
+License
+=======
+This plugin is released under the GNU General Public License Version 2
+(http://www.gnu.org/licenses/gpl-2.0.html).
+
+Even if skins might contain some programming work, they are not considered
+as a linked part of the application and therefore skins DO NOT fall under
+the provisions of the GPL license. See the README file located in the core
+skins folder for details on the skin license.
 
 Install
 =======
 * Place this plugin folder into plugins directory of RoundCube
 * Add sieverules to $rcmail_config['plugins'] in your RoundCube config
-NB: When downloading the plugin from GitHub you will need to create a directory called sieverules and place the files in there, ignoring the root directory in the downloaded archive
+NB: When downloading the plugin from GitHub you will need to create a directory
+called sieverules and place the files in there, ignoring the root directory in
+the downloaded archive.
 
 Config
 ======
@@ -35,7 +48,8 @@ The default config file is plugins/sieverules/config.inc.php.dist
 Rename this to plugins/sieverules/config.inc.php
 * Set the host where managesieve is listening
 * Set the port managesieve is listening on
-* (Optional) Set the folder delimiter (if your managesieve implementation uses a different one to your IMAP server
+* (Optional) Set the folder delimiter (if your managesieve implementation uses
+             a different one to your IMAP server
 * Set the name of the ruleset in which your sieve rules are stored
 * Enable/disable the actions you want
 * (Optional) Define any predefined rules you wish to use
@@ -44,7 +58,8 @@ Rename this to plugins/sieverules/config.inc.php
 
 Predefined rules
 ================
-The predefined rules option allows you specify a set of simple rules which are available in the UI identified by their name.
+The predefined rules option allows you specify a set of simple rules which are
+available in the UI identified by their name.
 All other rule options are hidden when a predefined rule is selected.
 
 The following options are available in each field:
@@ -86,7 +101,9 @@ operator:
     'over' : is more than
     'under' : is less than
 extra:
-  with count or value operators a comparator can be specified, this can be any comparator supported by your server (i;ascii-casemap is default, to use this comparator the field should be left blank)
+  with count or value operators a comparator can be specified, this can be any
+  comparator supported by your server (i;ascii-casemap is default, to use this
+  comparator the field should be left blank)
 
 The name, header, and target fields do not have set values
 
@@ -121,34 +138,65 @@ Examples:
 
 Advanced editor
 ===============
-The advanced editor allows users to edit the sieve file directly, without the restrictions of the UI. Please note any changes made to the file directly which cannot be parsed by the script will be lost if rules are saved in the normal mode.
-There is no validation of the script, please be careful when editing it directly or you could break all your filtering!
+The advanced editor allows users to edit the sieve file directly, without the
+restrictions of the UI. Please note any changes made to the file directly which
+cannot be parsed by the script will be lost if rules are saved in the normal
+mode.
+
+IMPORTANT: There is no validation of the script, please be careful when editing
+it directly or you could break all your filtering!
 
 Default sieve rule file
 =======================
-If a default sieve rule file is specified then when a user has no sieve rules defined this file is loaded instead and the rules are displayed just as if they belong to the user.
-The file can be stored any where on your server and the user under which your web server runs must have permission to read it.
+If a default sieve rule file is specified then when a user has no sieve rules
+defined this file is loaded instead and the rules are displayed just as if they
+belong to the user. The file can be stored any where on your server and the
+user under which your web server runs must have permission to read it.
 
 Example sieve rule file
 =======================
-If an example sieve rule file is specified then the filters from this script are loaded and displayed in a drop down in the bottom right of the screen. Users can select one of these example rules, it will load in the just as one of their rules, edit it and then save it to their rule set.
-The file can be stored any where on your server and the user under which your web server runs must have permission to read it.
+If an example sieve rule file is specified then the filters from this script
+are loaded and displayed in a drop down in the bottom right of the screen.
+Users can select one of these example rules, it will load in the just as one of
+their rules, edit it and then save it to their rule set. The file can be stored
+any where on your server and the user under which your web server runs must
+have permission to read it.
 
 Import existing rulesets
 ========================
-The plugin contains a basic import system and 2 basic import filters. These example import filters are not perfect, use them with care you may loose some rule data! You can create your own filter (or modify existing ones), if you do please consider sharing it.
-To create an import filter you must add a file in the importFilters directory. The file must contain a class named 'srimport_[filename]'.
-Each import filter must have:
-  An attribute called name - this should be the user friendly name of the import e.g. `Squirrelmail (Avelsieve)`
-  A pubic function called detector - used to detect of if current rule file was genereted with the software
-  A pubic function called importer - converts the rule file to SieveRules format
-The importer function can return either a string to be parsed by the SieveRules parser or an array, similar to the one created by the SieveRules parser.
+The plugin contains a basic import system and 2 basic import filters. These
+example import filters are not perfect, use them with care you may loose some
+rule data! You can create your own filter (or modify existing ones), if you do
+please consider sharing it. To create an import filter you must add a file in
+the importFilters directory. The file must contain a class named
+'srimport_[filename]'. Each import filter must have:
+
+ * An attribute called name - this should be the user friendly name of the
+   import e.g. `Squirrelmail (Avelsieve)`
+
+ * A pubic function called detector - used to detect of if current rule file
+   was genereted with the software
+
+ * A pubic function called importer - converts the rule file to SieveRules
+   format
+
+The importer function can return either a string to be parsed by the SieveRules
+parser or an array, similar to the one created by the SieveRules parser.
 
 The structure of the rule file
 ==============================
-By default this plugin uses \r\n to seperate lines (RFC 5228) if you want to use \n instead then set define('RCUBE_SIEVE_NEWLINE', "\n"); in your config. Add define('RCUBE_SIEVE_INDENT', "\t"); to change the tab character.
-By default this plugin places a simple comment at the top of the rule file to show it was generated by the plugin. This header can be overridden by setting define('RCUBE_SIEVE_HEADER', "## Generated by RoundCube Webmail SieveRules Plugin ##"); in your config.
+By default this plugin uses \r\n to seperate lines (RFC 5228) if you want to
+use \n instead then set define('RCUBE_SIEVE_NEWLINE', "\n"); in your config.
+Add define('RCUBE_SIEVE_INDENT', "\t"); to change the tab character.
+By default this plugin places a simple comment at the top of the rule file to
+show it was generated by the plugin. This header can be overridden by setting
+define('RCUBE_SIEVE_HEADER', "## Generated by RoundCube Webmail SieveRules
+Plugin ##"); in your config.
 
 Default values for header, operator and flag drop downs
 =======================================================
-The default values for these drop downs are set in sieverules.php but they can be overridden by setting the array in the config for $rcmail_config['sieverules_default_headers'], $rcmail_config['sieverules_default_operators'] or $rcmail_config['sieverules_default_flags'].
+The default values for these drop downs are set in sieverules.php but they can
+be overridden by setting the array in the config for
+$rcmail_config['sieverules_default_headers'],
+$rcmail_config['sieverules_default_operators'] or
+$rcmail_config['sieverules_default_flags'].
