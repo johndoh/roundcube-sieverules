@@ -1,9 +1,9 @@
-/// <reference path="../../../lib/jquery-1.2.6.js" />
 /*
 	Masked Input plugin for jQuery
 	Copyright (c) 2007-2009 Josh Bush (digitalbush.com)
-	Licensed under the MIT license (http://digitalbush.com/projects/masked-input-plugin/#license)
-	Version: 1.2.2 (03/09/2009 22:39:06)
+	This plugin is dual-licensed under the GNU General Public License
+	and the MIT License and is copyright A Beautiful Site, LLC.
+	Version: 1.2.2a (24/04/2010)
 	Modified by: Philip Weir
 */
 (function($) {
