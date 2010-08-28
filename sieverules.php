@@ -1122,9 +1122,9 @@ class sieverules extends rcube_plugin
 		$rcmail = rcmail::get_instance();
 
 		if (!$this->sieve) {
-			include('Net_Sieve.php');
-			include('rcube_sieve.php');
-			include('rcube_sieve_script.php');
+			include('lib/Net/Sieve.php');
+			include('include/rcube_sieve.php');
+			include('include/rcube_sieve_script.php');
 			$rcmail = rcmail::get_instance();
 
 			// try to connect to managesieve server and to fetch the script

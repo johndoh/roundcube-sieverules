@@ -22,7 +22,7 @@ class rcube_sieve
 {
 	private $sieve;
 	private $ruleset;
-	private $importers;
+	private $importers = array();
 	private $elsif;
 	private $cache = false;
 	public $error = false;
