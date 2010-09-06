@@ -1575,7 +1575,7 @@ class sieverules extends rcube_plugin
 		$select_comparator->add(Q($this->gettext('i;octet')), 'i;octet');
 
 		foreach ($ext as $extension) {
-			if (substr($extension, 0, 11) == 'comparator-')
+			if (substr($extension, 0, 11) == 'comparator-' && $extension != 'comparator-i;ascii-casemap' && $extension != 'comparator-i;octet')
 				$select_comparator->add(Q($this->gettext(substr($extension, 11))), substr($extension, 11));
 		}
 

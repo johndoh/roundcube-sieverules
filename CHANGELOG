@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2010 09 06
+==========
+ * Fix duplicate comparator listing
+
 2010 07 03
 ==========
  * Update to Net_Sieve 1.3.0
