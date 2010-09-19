@@ -495,7 +495,7 @@ class sieverules extends rcube_plugin
 			'sieverules.vacdayswrongformat', 'sieverules.vacnomsg', 'sieverules.notifynomethod',
 			'sieverules.notifynomsg', 'sieverules.filterdeleteconfirm', 'sieverules.ruledeleteconfirm',
 			'sieverules.actiondeleteconfirm', 'sieverules.notifyinvalidmethod', 'sieverules.nobodycontentpart',
-			'sieverules.badoperator','sieverules.baddateformat','sieverules.badtimeformat');
+			'sieverules.badoperator','sieverules.baddateformat','sieverules.badtimeformat','sieverules.vactoexp_err');
 
 		$ext = $this->sieve->get_extensions();
 		$iid = get_input_value('_iid', RCUBE_INPUT_GPC);
@@ -1762,7 +1762,9 @@ class sieverules extends rcube_plugin
 				$input_address = new html_checkbox(array('id' => $ffield_id, 'name' => '_vacto_check_' . $rowid . '[]', 'value' => $sql_arr['email'], 'onclick' => JS_OBJECT_NAME . '.sieverules_toggle_vac_to(this, '. $rowid .')', 'class' => 'checkbox'));
 				$to_addresses .= $input_address->show($curaddress) . "&nbsp;" . html::label($ffield_id, Q($sql_arr['email'])) . "<br />";
 			}
+		}
 
+		if ($rcmail->config->get('sieverules_limit_vacto', true) && strlen($to_addresses) > 0) {
 			$vacs_table->set_row_attribs(array('class' => 'disabled', 'style' => 'display: none')); // 'style' => $vacadvstyle
 			$vacs_table->add(null, html::label($field_id, Q($this->gettext('from'))));
 			$vacs_table->add(array('colspan' => 2), $select_id->show($vacfrom));
@@ -1778,6 +1780,26 @@ class sieverules extends rcube_plugin
 
 			$vacs_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
 			$vacs_table->add(array('colspan' => 3, 'class' => 'vacdaysexp'), $this->gettext('vactoexp'));
+			$vacs_table->add_row();
+		}
+		else {
+			$field_id = 'rcmfd_sievevacfrom_'. $rowid;
+			$input_vacfrom = new html_inputfield(array('id' => $field_id, 'name' => '_vacfrom[]'));
+			$vacs_table->set_row_attribs(array('class' => 'disabled', 'style' => 'display: none')); // 'style' => $vacadvstyle
+			$vacs_table->add(null, html::label($field_id, Q($this->gettext('from'))));
+			$vacs_table->add(array('colspan' => 2), $input_vacfrom->show($vacfrom));
+			$vacs_table->add_row();
+
+			$field_id = 'rcmfd_sievevacto_'. $rowid;
+			$input_vacto = new html_inputfield(array('id' => $field_id, 'name' => '_vacto[]', 'class' => 'short'));
+			$vacs_table->set_row_attribs(array('class' => 'advanced', 'style' => $vacadvstyle));
+			$vacs_table->add(null, html::label($field_id, Q($this->gettext('sieveto'))));
+			$vacs_table->add(null, $input_vacto->show($vacto));
+
+			$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
+			$vacs_table->add(null, $help_button);
+			$vacs_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
+			$vacs_table->add(array('colspan' => 3, 'class' => 'vacdaysexp'), $this->gettext('vactoexp') . '<br /><br />' . $this->gettext('vactoexp_adv'));
 			$vacs_table->add_row();
 		}
 

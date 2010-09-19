@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2010 09 19
+==========
+ * Allow free entry of vacation alias addresses
+
 2010 09 06
 ==========
  * Fix duplicate comparator listing

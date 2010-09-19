@@ -320,6 +320,8 @@ if (window.rcmail) {
 				var acts = document.getElementsByName('_act[]');
 				var addrs = document.getElementsByName('_redirect[]');
 				var rejects = document.getElementsByName('_reject[]');
+				var senders = document.getElementsByName('_vacfrom[]');
+				var aliases = document.getElementsByName('_vacto[]');
 				var days = document.getElementsByName('_day[]');
 				var subjects = document.getElementsByName('_subject[]');
 				var msgs = document.getElementsByName('_msg[]');
@@ -430,6 +432,18 @@ if (window.rcmail) {
 						}
 					}
 					else if (acts[i][idx].value == 'vacation') {
+						if (senders[i].value != '' && !rcube_check_email(senders[i].value.replace(/^\s+/, '').replace(/[\s,;]+$/, ''), true)) {
+							alert(rcmail.gettext('redirectaddresserror','sieverules'));
+							senders[i].focus();
+							return false;
+						}
+
+						if (aliases[i].value.indexOf(' ') > -1 || aliases[i].value.indexOf(';') > -1) {
+							alert(rcmail.gettext('vactoexp_err','sieverules'));
+							aliases[i].focus();
+							return false;
+						}
+
 						if (days[i].value == '') {
 							alert(rcmail.gettext('vacnodays','sieverules'));
 							days[i].focus();

@@ -26,7 +26,7 @@ $rcmail_config['sieverules_usetls'] = FALSE;
 // your IMAP server set it here, otherwise leave as null to use IMAP delimiter
 $rcmail_config['sieverules_folder_delimiter'] = null;
 
-// Sieve RFC says that we should use UTF-8 endcoding for mailbox names,
+// Sieve RFC says that we should use UTF-8 encoding for mailbox names,
 // but some implementations does not covert UTF-8 to modified UTF-7.
 // set to null for default behaviour
 $rcmail_config['sieverules_folder_encoding'] = null;
@@ -94,10 +94,14 @@ $rcmail_config['sieverules_auto_load_default'] = FALSE;
 // Example sieve rule file
 $rcmail_config['sieverules_example_file'] = '/etc/dovecot/sieve/example';
 
-// Force the :addresses line to always be added to new vataction rules
-// Some sieve setups require that the :address part of a vactaion rule is always present for the message to be sent
+// Force the :addresses line to always be added to new vacation rules
+// Some sieve setups require that the :address part of a vacation rule is always present for the message to be sent
 // Cyrus setups need this to option set to true
 $rcmail_config['sieverules_force_vacto'] = FALSE;
+
+// Limit the selection of :addresses available to only those setup in as an identity
+// Setting this to false will give the user a textbox to enter in any address(es) they like, rather than a list of checkboxes
+$rcmail_config['sieverules_limit_vacto'] = TRUE;
 
 // The rule file can be written as one IF/ELSIF statement or as a series of unrelated IF statements
 // TRUE  - one IF/ELSIF statement (default)
