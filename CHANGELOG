@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2010 10 02
+==========
+ * Add debug logging
+
 2010 09 29
 ==========
  * Add Internationalized Domain Name (IDNA) support (r4009)

@@ -1135,6 +1135,9 @@ class sieverules extends rcube_plugin
 						$rcmail->config->get('sieverules_usetls'), $this->current_ruleset,
 						$this->home, $rcmail->config->get('sieverules_use_elsif', true));
 
+			if ($rcmail->config->get('sieverules_debug', false))
+				$this->sieve->set_debug(true);
+
 			$this->sieve_error = $this->sieve->error();
 
 			if ($this->sieve_error == SIEVE_ERROR_NOT_EXISTS) {
