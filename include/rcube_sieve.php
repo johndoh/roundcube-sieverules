@@ -194,6 +194,16 @@ class rcube_sieve
 		$this->get_script();
 	}
 
+	public function set_debug($debug)
+	{
+		$this->sieve->setDebug($debug, array($this, 'debug_handler'));
+	}
+
+	public function debug_handler(&$sieve, $message)
+	{
+		write_log('sieverules', preg_replace('/\r\n$/', '', $message));
+	}
+
 	private function _set_error($error)
 	{
 		$this->error = $error;
