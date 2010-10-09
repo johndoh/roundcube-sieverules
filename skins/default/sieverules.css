@@ -94,10 +94,50 @@ span.disableLink
   text-align: right;
 }
 
+#sieverules-table tbody td.control a,
+#rules-table tbody td.control a,
+#actions-table tbody td.control a
+{
+  display: block;
+  float: right;
+  width: 16px;
+  height: 16px;
+  background-image: url(icons.png);
+}
+
+#sieverules-table tbody td.control a.up_arrow
+{
+  background-position: 0 0;
+}
+
+#sieverules-table tbody td.control a.down_arrow
+{
+  background-position: 0 -18px;
+}
+
 #rules-table tbody td.control,
 #actions-table tbody td.control
 {
   vertical-align: top;
+}
+
+#rules-table tbody td.control a.add,
+#actions-table tbody td.control  a.add
+{
+  margin-left: 5px;
+  background-position: 0 -72px;
+}
+
+#rules-table tbody td.control a.delete,
+#actions-table tbody td.control  a.delete
+{
+  background-position: 0 -54px;
+}
+
+#rules-table tbody td.control a.delete_act,
+#actions-table tbody td.control  a.delete_act
+{
+  background-position: 0 -36px;
 }
 
 #rules-table,

@@ -1,0 +1,10 @@
+/**
+ * SieveRules plugin styles (IE6 hacks)
+ */
+
+#sieverules-table tbody td.control a,
+#rules-table tbody td.control a,
+#actions-table tbody td.control a
+{
+  background-image: url(icons.png);
+}

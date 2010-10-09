@@ -201,10 +201,6 @@ class sieverules extends rcube_plugin
 
 	function gen_list($attrib)
 	{
-		// set imagesin sesstion for JS refresh
-		$_SESSION['sieverules_upicon'] = $attrib['upicon'];
-		$_SESSION['sieverules_downicon'] = $attrib['downicon'];
-
 		$this->api->output->add_label('sieverules.movingfilter', 'loading', 'sieverules.switchtoadveditor');
 		$this->api->output->add_gui_object('sieverules_list', 'sieverules-table');
 
@@ -224,11 +220,11 @@ class sieverules extends rcube_plugin
 				$table->add(null, Q($filter['name']));
 
 			$dst = $idx - 1;
-			$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $attrib['upicon'], 'alt' => 'sieverules.moveup', 'title' => 'sieverules.moveup'));
+			$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
 			$dst = $idx + 2;
-			$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $attrib['downicon'], 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
+			$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'down_arrow', 'title' => 'sieverules.movedown', 'content' => ' '));
 
-			$table->add('control', $up_link . '&nbsp;' . $down_link);
+			$table->add('control', $up_link . $down_link);
 		}
 
 		return html::tag('div', array('id' => 'sieverules-list-filters'), $table->show());
@@ -249,10 +245,10 @@ class sieverules extends rcube_plugin
 
 			$tmp_output = new rcube_template('settings');
 			$dst = $idx - 1;
-			$up_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $_SESSION['sieverules_upicon'], 'alt' => 'sieverules.moveup', 'title' => 'sieverules.moveup'));
+			$up_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
 			$up_link = str_replace("'", "\'", $up_link);
 			$dst = $idx + 2;
-			$down_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $_SESSION['sieverules_downicon'], 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
+			$down_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'down_arrow', 'title' => 'sieverules.movedown', 'content' => ' '));
 			$down_link = str_replace("'", "\'", $down_link);
 
 			$this->api->output->command('sieverules_update_list', $idx == 0 ? 'add-first' : 'add', 'rcmrow' . $idx, Q($filter_name), $up_link, $down_link);
@@ -879,10 +875,10 @@ class sieverules extends rcube_plugin
 					$filter_name = $script['name'];
 
 				$dst = $iid - 1;
-				$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $_SESSION['sieverules_upicon'], 'alt' => 'sieverules.moveup', 'title' => 'sieverules.moveup'));
+				$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
 				$up_link = str_replace("'", "\'", $up_link);
 				$dst = $iid + 2;
-				$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'image', 'image' => $_SESSION['sieverules_downicon'], 'alt' => 'sieverules.movedown', 'title' => 'sieverules.movedown'));
+				$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'down_arrow', 'title' => 'sieverules.movedown', 'content' => ' '));
 				$down_link = str_replace("'", "\'", $down_link);
 
 				if (!isset($this->script[$iid]) && sizeof($this->script) == 0)
@@ -1472,9 +1468,9 @@ class sieverules extends rcube_plugin
 
 		$rules_table->add('target', $select_weekdays->show($target) . $select_spam_probability->show($spam_probability) . $input_target->show($target) . "&nbsp;" . $select_units->show($units));
 
-		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_rule', 'type' => 'image', 'image' => $attrib['addicon'], 'alt' => 'sieverules.addsieverule', 'title' => 'sieverules.addsieverule'));
-		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_rule', 'type' => 'image', 'imageact' => $attrib['deleteicon'], 'imagepas' => $attrib['deleteiconpas'], 'alt' => 'sieverules.deletesieverule', 'title' => 'sieverules.deletesieverule'));
-		$rules_table->add('control', $add_button . "&nbsp;" . $delete_button);
+		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_rule', 'type' => 'link', 'class' => 'add', 'title' => 'sieverules.addsieverule', 'content' => ' '));
+		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_rule', 'type' => 'link', 'class' => 'delete', 'classact' => 'delete_act', 'title' => 'sieverules.deletesieverule', 'content' => ' '));
+		$rules_table->add('control', $add_button . $delete_button);
 
 		if (isset($rule))
 			$rowid = $rules_table->size();
@@ -1951,11 +1947,11 @@ class sieverules extends rcube_plugin
 
 		$actions_table->add('folder', $input_folderlist->show($folder) . $input_address->show($address) . $vacs_table->show() . $notify_table->show() . $input_imapflags->show($flags) . $input_reject->show($reject));
 
-		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_action', 'type' => 'image', 'image' => $attrib['addicon'], 'alt' => 'sieverules.addsieveact', 'title' => 'sieverules.addsieveact'));
-		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_action', 'type' => 'image', 'imageact' => $attrib['deleteicon'], 'imagepas' => $attrib['deleteiconpas'], 'alt' => 'sieverules.deletesieveact', 'title' => 'sieverules.deletesieveact'));
+		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_action', 'type' => 'link', 'class' => 'add', 'title' => 'sieverules.addsieveact', 'content' => ' '));
+		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_action', 'type' => 'link', 'class' => 'delete', 'classact' => 'delete_act', 'title' => 'sieverules.deletesieveact', 'content' => ' '));
 
 		if ($rcmail->config->get('sieverules_multiple_actions'))
-			$actions_table->add('control', $add_button . "&nbsp;" . $delete_button);
+			$actions_table->add('control', $add_button . $delete_button);
 		else
 			$actions_table->add('control', "&nbsp;");
 

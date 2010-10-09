@@ -747,7 +747,7 @@ rcmail.sieverules_update_list = function(action, param1, param2, param3, param4)
 				param3 = param3.replace(/\\'/g, '\'');
 				param4 = param4.replace(/\\'/g, '\'');
 
-				cell.innerHTML = param3 + '&nbsp;' + param4;
+				cell.innerHTML = param3 + param4;
 				newrow.appendChild(cell);
 			}
 

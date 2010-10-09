@@ -10,13 +10,14 @@
 <roundcube:if condition="browser:safari" />
 <link rel="stylesheet" type="text/css" href="/this/safari.css" />
 <roundcube:endif />
+<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="/this//ie6hacks.css" /><![endif]-->
 <script type="text/javascript" src="/functions.js"></script>
 </head>
 <body class="iframe">
 <div id="prefs-title" class="boxtitle"><roundcube:object name="steptitle" /></div>
 
 <div class="boxcontent">
-<roundcube:object name="sieveruleform" addIcon="/this/add.png" deleteIcon="/this/delete.png" deleteIconPas="/this/deletePas.png" helpIcon="/this/help.gif" />
+<roundcube:object name="sieveruleform" helpIcon="/this/help.gif" />
 
 <p><br />
 <roundcube:button command="plugin.sieverules.delete" type="input" class="button" label="delete" condition="env:action=='plugin.sieverules.edit'" style="margin-right:0.5em" />
