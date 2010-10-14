@@ -426,7 +426,19 @@ class sieverules extends rcube_plugin
 			}
 		}
 
-		if ($rcmail->config->get('sieverules_auto_load_default') && is_readable($rcmail->config->get('sieverules_default_file')) && strlen($text) > 0 && strlen($buttons) > 0 && $type == '' && $ruleset == '') {
+		if (false && $rcmail->config->get('sieverules_auto_load_default') && !$rcmail->config->get('sieverules_multiplerules', false) && $type != '' && $ruleset != '' && $ruleset == $this->sieve->get_active()) {
+			$this->import($type, $ruleset, false);
+
+			if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
+				$this->api->output->add_script("parent.". JS_OBJECT_NAME .".goto_url('plugin.sieverules');");
+			}
+			else {
+				// go to sieverules page
+				rcmail_overwrite_action('plugin.sieverules');
+				$this->api->output->send('sieverules.sieverules');
+			}
+		}
+		else if ($rcmail->config->get('sieverules_auto_load_default') && is_readable($rcmail->config->get('sieverules_default_file')) && strlen($text) > 0 && strlen($buttons) > 0 && $type == '' && $ruleset == '') {
 			$this->sieve->script->add_text(file_get_contents($rcmail->config->get('sieverules_default_file')));
 			$this->sieve->save();
 			if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
@@ -948,13 +960,16 @@ class sieverules extends rcube_plugin
 		}
 	}
 
-	function import()
+	function import($type = null, $ruleset = null, $redirect = true)
 	{
 		$rcmail = rcmail::get_instance();
 		$this->_startup();
 
-		$type = get_input_value('_type', RCUBE_INPUT_GET);
-		$ruleset = get_input_value('_import', RCUBE_INPUT_GET);
+		if (!$type && !$ruleset) {
+			$type = get_input_value('_type', RCUBE_INPUT_GET);
+			$ruleset = get_input_value('_import', RCUBE_INPUT_GET);
+		}
+
 		if ($ruleset == '_default_') {
 			if ($rcmail->config->get('sieverules_default_file', false) && is_readable($rcmail->config->get('sieverules_default_file'))) {
 				$this->sieve->script->add_text(file_get_contents($rcmail->config->get('sieverules_default_file')));
@@ -1022,18 +1037,23 @@ class sieverules extends rcube_plugin
 
 			if ($import) {
 				$this->script = $this->sieve->script->as_array();
+				$this->sieve->save();
+				if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
 				$this->api->output->command('display_message', $this->gettext('filterimported'), 'confirmation');
 			}
 			else {
 				$this->script = array();
+				if (!$redirect) $this->sieve->save();
 				$this->api->output->command('display_message', $this->gettext('filterimporterror'), 'error');
 			}
 		}
 
-		// go to sieverules page
-		rcmail_overwrite_action('plugin.sieverules');
-		$this->action = 'plugin.sieverules';
-		$this->init_html();
+		if ($redirect) {
+			// go to sieverules page
+			rcmail_overwrite_action('plugin.sieverules');
+			$this->action = 'plugin.sieverules';
+			$this->init_html();
+		}
 	}
 
 	function delete_ruleset()

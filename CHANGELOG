@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2010 10 14
+==========
+ * Automatically import rulesets when auto_load_default is true, multiplerules is false and it is the active ruleset
+
 2010 10 02
 ==========
  * Add debug logging
