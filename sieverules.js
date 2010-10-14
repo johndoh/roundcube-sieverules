@@ -56,8 +56,8 @@ if (window.rcmail) {
 					var args = (props.source) ? props : { source:obj.parentNode.parentNode.rowIndex - 1, dest:props };
 
 					if (args.dest > -1 && args.dest <= rcmail.sieverules_list.rows.length) {
-						rcmail.set_busy(true, 'sieverules.movingfilter');
-						rcmail.http_request('plugin.sieverules.move', '_src=' + args.source + '&_dst=' + args.dest, true);
+						var lock = rcmail.set_busy(true, 'sieverules.movingfilter');
+						rcmail.http_request('plugin.sieverules.move', '_src=' + args.source + '&_dst=' + args.dest, lock);
 					}
 				}, true);
 
