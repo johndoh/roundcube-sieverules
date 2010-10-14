@@ -426,7 +426,7 @@ class sieverules extends rcube_plugin
 			}
 		}
 
-		if (false && $rcmail->config->get('sieverules_auto_load_default') && !$rcmail->config->get('sieverules_multiplerules', false) && $type != '' && $ruleset != '' && $ruleset == $this->sieve->get_active()) {
+		if ($rcmail->config->get('sieverules_auto_load_default') && !$rcmail->config->get('sieverules_multiplerules', false) && $type != '' && $ruleset != '' && $ruleset == $this->sieve->get_active()) {
 			$this->import($type, $ruleset, false);
 
 			if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
