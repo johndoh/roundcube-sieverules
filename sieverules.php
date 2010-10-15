@@ -439,15 +439,7 @@ class sieverules extends rcube_plugin
 			}
 		}
 		else if ($rcmail->config->get('sieverules_auto_load_default') && is_readable($rcmail->config->get('sieverules_default_file')) && strlen($text) > 0 && strlen($buttons) > 0 && $type == '' && $ruleset == '') {
-			$this->sieve->script->add_text(file_get_contents($rcmail->config->get('sieverules_default_file')));
-			$this->sieve->save();
-			if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
-
-			// update rule list
-			if ($this->sieve_error)
-				$this->script = array();
-			else
-				$this->script = $this->sieve->script->as_array();
+			$this->import($type, '_default_', false);
 
 			if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
 				$this->api->output->add_script("parent.". JS_OBJECT_NAME .".goto_url('plugin.sieverules');");
