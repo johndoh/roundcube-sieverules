@@ -29,7 +29,7 @@ class rcube_sieve
 	public $list = array();
 	public $script;
 
-	public function __construct($username, $password, $host, $port, $auth_type = NULL, $usetls, $ruleset, $dir, $elsif = true, $auth_cid = null, $auth_pw = null)
+	public function __construct($username, $password, $host, $port, $auth_type = NULL, $usetls, $ruleset, $dir, $elsif = true, $auth_cid = NULL, $auth_pw = NULL)
 	{
 		$this->sieve = new Net_Sieve();
 
