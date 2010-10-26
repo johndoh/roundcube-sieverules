@@ -1141,7 +1141,8 @@ class sieverules extends rcube_plugin
 						idn_to_ascii(rcube_parse_host($rcmail->config->get('sieverules_host'))),
 						$rcmail->config->get('sieverules_port'), $rcmail->config->get('sieverules_auth_type', NULL),
 						$rcmail->config->get('sieverules_usetls'), $this->current_ruleset,
-						$this->home, $rcmail->config->get('sieverules_use_elsif', true));
+						$this->home, $rcmail->config->get('sieverules_use_elsif', true),
+						$rcmail->config->get('sieverules_auth_cid', NULL), $rcmail->config->get('sieverules_auth_pw', NULL));
 
 			if ($rcmail->config->get('sieverules_debug', false))
 				$this->sieve->set_debug(true);

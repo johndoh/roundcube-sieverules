@@ -29,14 +29,20 @@ class rcube_sieve
 	public $list = array();
 	public $script;
 
-	public function __construct($username, $password, $host, $port, $auth_type = NULL, $usetls, $ruleset, $dir, $elsif = true)
+	public function __construct($username, $password, $host, $port, $auth_type = NULL, $usetls, $ruleset, $dir, $elsif = true, $auth_cid = null, $auth_pw = null)
 	{
 		$this->sieve = new Net_Sieve();
 
 		if (PEAR::isError($this->sieve->connect($host, $port, NULL, $usetls)))
 			return $this->_set_error(SIEVE_ERROR_CONNECTION);
 
-		if (PEAR::isError($this->sieve->login($username, $password, $auth_type ? strtoupper($auth_type) : NULL)))
+		if (!empty($auth_cid)) {
+			$authz = $username;
+			$username = $auth_cid;
+			$password = $auth_pw;
+		}
+
+		if (PEAR::isError($this->sieve->login($username, $password, $auth_type ? strtoupper($auth_type) : NULL, $authz)))
 			return $this->_set_error(SIEVE_ERROR_LOGIN);
 
 		$this->ruleset = $ruleset;

@@ -22,6 +22,14 @@ $rcmail_config['sieverules_debug'] = false;
 // or none. Optional, defaults to best method supported by server.
 $rcmail_config['sieverules_auth_type'] = null;
 
+// optional managesieve authentication identifier to be used as authorization proxy,
+// authenticate as a different user but act on behalf of the logged in user,
+// works with PLAIN and DIGEST-MD5 auth.
+$rcmail_config['sieverules_auth_cid'] = null;
+
+// optional managesieve authentication password to be used for sieverules_auth_cid
+$rcmail_config['sieverules_auth_pw'] = null;
+
 // enable TLS for managesieve server connection
 $rcmail_config['sieverules_usetls'] = FALSE;
 
