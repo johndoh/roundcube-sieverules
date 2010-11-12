@@ -450,7 +450,7 @@ if (window.rcmail) {
 							return false;
 						}
 
-						if (!size_test.test(days[i].value)) {
+						if (!size_test.test(days[i].value) || days[i].value < 1) {
 							alert(rcmail.gettext('vacdayswrongformat','sieverules'));
 							days[i].focus();
 							return false;
