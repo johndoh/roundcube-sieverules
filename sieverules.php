@@ -138,7 +138,7 @@ class sieverules extends rcube_plugin
 		if (sizeof($this->examples) > 0)
 			$this->api->output->set_env('examples', 'true');
 
-		if($this->action == 'plugin.sieverules.add') {
+		if ($this->action == 'plugin.sieverules.add') {
 			$this->api->output->set_pagetitle($this->gettext('newfilter'));
 			$this->api->output->send('sieverules.editsieverule');
 		}
@@ -751,7 +751,7 @@ class sieverules extends rcube_plugin
 					case 'header':
 					case 'address':
 					case 'envelope':
-						if(preg_match('/^not/', $op) || preg_match('/^not/', $advop))
+						if (preg_match('/^not/', $op) || preg_match('/^not/', $advop))
 							$script['tests'][$i]['not'] = true;
 						else
 							$script['tests'][$i]['not'] = '';
@@ -1183,22 +1183,24 @@ class sieverules extends rcube_plugin
 			}
 
 			// finally set script objects
-			if ($this->sieve_error)
+			if ($this->sieve_error) {
 				$this->script = array();
-			else
+			}
+			else {
 				$this->script = $this->sieve->script->as_array();
 
-			// load example filters
-			if ($rcmail->config->get('sieverules_example_file', false) && is_readable($rcmail->config->get('sieverules_example_file')))
-				$this->examples = $this->sieve->script->parse_text(file_get_contents($rcmail->config->get('sieverules_example_file')));
-			elseif ($rcmail->config->get('sieverules_example_file', false) && !is_readable($rcmail->config->get('sieverules_example_file')))
-				raise_error(array(
-					'code' => 600,
-					'type' => 'php',
-					'file' => __FILE__,
-					'line' => __LINE__,
-					'message' => "SieveRules plugin: Unable to open example rule file"
-					), true, false);
+				// load example filters
+				if ($rcmail->config->get('sieverules_example_file', false) && is_readable($rcmail->config->get('sieverules_example_file')))
+					$this->examples = $this->sieve->script->parse_text(file_get_contents($rcmail->config->get('sieverules_example_file')));
+				elseif ($rcmail->config->get('sieverules_example_file', false) && !is_readable($rcmail->config->get('sieverules_example_file')))
+					raise_error(array(
+						'code' => 600,
+						'type' => 'php',
+						'file' => __FILE__,
+						'line' => __LINE__,
+						'message' => "SieveRules plugin: Unable to open example rule file"
+						), true, false);
+			}
 		}
 		else {
 			$this->sieve->set_ruleset($this->current_ruleset);
