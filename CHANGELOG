@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2011 01 29
+==========
+ * Enable :from and :handle options for vaction
+
 2010 10 26
 ==========
  * Added support for SASL proxy authentication

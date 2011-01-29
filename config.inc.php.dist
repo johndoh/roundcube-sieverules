@@ -114,6 +114,14 @@ $rcmail_config['sieverules_force_vacto'] = FALSE;
 // Setting this to false will give the user a textbox to enter in any address(es) they like, rather than a list of checkboxes
 $rcmail_config['sieverules_limit_vacto'] = TRUE;
 
+// Allow users to set the :from option when creating new vacation rules, not all servers support this option
+// If your server supports the variables extension users also have an 'auto detect' option which will detect the address to which the message was sent
+// Else the user's default identity will be used as the default value
+$rcmail_config['sieverules_show_vacfrom'] = FALSE;
+
+// Allow users to set the :handle option when creating new vacation rules, not all servers support this option
+$rcmail_config['sieverules_show_vachandle'] = FALSE;
+
 // The rule file can be written as one IF/ELSIF statement or as a series of unrelated IF statements
 // TRUE  - one IF/ELSIF statement (default)
 // FALSE -  a series of unrelated IF statements

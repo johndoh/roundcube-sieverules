@@ -432,7 +432,7 @@ if (window.rcmail) {
 						}
 					}
 					else if (acts[i][idx].value == 'vacation') {
-						if (senders[i].value != '' && !rcube_check_email(senders[i].value.replace(/^\s+/, '').replace(/[\s,;]+$/, ''), true)) {
+						if (senders[i].value != '' && senders[i].value != 'auto' && !rcube_check_email(senders[i].value.replace(/^\s+/, '').replace(/[\s,;]+$/, ''), true)) {
 							alert(rcmail.gettext('redirectaddresserror','sieverules'));
 							senders[i].focus();
 							return false;

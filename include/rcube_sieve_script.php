@@ -394,8 +394,20 @@ class rcube_sieve_script
 //								mb_internal_encoding(RCMAIL_CHARSET);
 //							}
 
+							// detect original recipient
+							if ($action['from'] == 'auto' && strpos($variables, 'set "from"') === false) {
+								array_push($exts, 'variables');
+
+								$variables .= 'set "from" "";' . RCUBE_SIEVE_NEWLINE;
+								$variables .= 'if header :matches "to" "*" {' . RCUBE_SIEVE_NEWLINE;
+								$variables .= RCUBE_SIEVE_INDENT . 'set "from" "${1}";' . RCUBE_SIEVE_NEWLINE;
+								$variables .= '}' . RCUBE_SIEVE_NEWLINE;
+
+								$action['from'] = "\${from}";
+							}
+
 							// append original subject
-							if ($action['origsubject'] == '1') {
+							if ($action['origsubject'] == '1' && strpos($variables, 'set "subject"') === false) {
 								array_push($exts, 'variables');
 
 								$variables .= 'set "subject" "";' . RCUBE_SIEVE_NEWLINE;
@@ -596,6 +608,9 @@ class rcube_sieve_script
 						$matches[5] = trim(substr($matches[5], 0, -13)) . "\"";
 						$origsubject = "1";
 					}
+
+					if ($matches[9] == "\"\${from}\"")
+						$matches[9] = "\"auto\"";
 
 //					if (function_exists("mb_decode_mimeheader")) $matches[5] = mb_decode_mimeheader($matches[5]);
 
