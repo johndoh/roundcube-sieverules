@@ -10,11 +10,9 @@ if (window.rcmail) {
 			var tab = $('<span>').attr('id', 'settingstabpluginsieverules').addClass('tablink');
 
 		var button = $('<a>').attr('href', rcmail.env.comm_path+'&_action=plugin.sieverules').html(rcmail.gettext('filters','sieverules')).appendTo(tab);
-		button.bind('click', function(e) { return rcmail.command('plugin.sieverules', this) });
 
 		// add button and register command
 		rcmail.add_element(tab, 'tabs');
-		rcmail.register_command('plugin.sieverules', function() { rcmail.goto_url('plugin.sieverules') }, true);
 
 		if ((rcmail.env.action == 'plugin.sieverules' || rcmail.env.action == 'plugin.sieverules.advanced') && !rcmail.env.sieveruleserror) {
 			if (rcmail.gui_objects.sieverules_list) {

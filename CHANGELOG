@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2011 01 31
+==========
+ * Fix double request when clicking on tab using Firefox (from r4472)
+
 2011 01 29
 ==========
  * Enable :from and :handle options for vaction
