@@ -354,11 +354,20 @@ class rcube_sieve_script
 					switch ($action['type']) {
 						case 'fileinto':
 							array_push($exts, 'fileinto');
+
+							// variables support in fileinto by David Warden
+							if (preg_match('/\$\{\d+\}/', $action['target']))
+								array_push($exts, 'variables');
+
 							$actions .= RCUBE_SIEVE_INDENT . "fileinto \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
 							break;
 						case 'fileinto_copy':
-							array_push($exts, 'fileinto');
-							array_push($exts, 'copy');
+							array_push($exts, 'fileinto', 'copy');
+
+							// variables support in fileinto by David Warden
+							if (preg_match('/\$\{\d+\}/', $action['target']))
+								array_push($exts, 'variables');
+
 							$actions .= RCUBE_SIEVE_INDENT . "fileinto :copy \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
 							break;
 						case 'redirect':

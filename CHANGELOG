@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2011 03 12
+==========
+ * Allow users to enter folder names for fileinto
+
 2011 02 03
 ==========
  * idn_to_ascii -> rcube_idn_to_ascii (r4484)

@@ -5,7 +5,7 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.10
+ * @version 1.11
  * @author Philip Weir
  * Based on the Managesieve plugin by Aleksander Machniak
  */
@@ -502,7 +502,7 @@ class sieverules extends rcube_plugin
 			'sieverules.norulename', 'sieverules.ruleexists', 'sieverules.noheader',
 			'sieverules.headerbadchars', 'sieverules.noheadervalue', 'sieverules.sizewrongformat',
 			'sieverules.noredirect', 'sieverules.redirectaddresserror', 'sieverules.noreject', 'sieverules.vacnodays',
-			'sieverules.vacdayswrongformat', 'sieverules.vacnomsg', 'sieverules.notifynomethod',
+			'sieverules.vacdayswrongformat', 'sieverules.vacnomsg', 'sieverules.notifynomethod', 'sieverules.missingfoldername',
 			'sieverules.notifynomsg', 'sieverules.filterdeleteconfirm', 'sieverules.ruledeleteconfirm',
 			'sieverules.actiondeleteconfirm', 'sieverules.notifyinvalidmethod', 'sieverules.nobodycontentpart',
 			'sieverules.badoperator','sieverules.baddateformat','sieverules.badtimeformat','sieverules.vactoexp_err');
@@ -678,6 +678,7 @@ class sieverules extends rcube_plugin
 			$advtargets = $_POST['_advtarget'];
 			$actions = $_POST['_act'];
 			$folders = $_POST['_folder'];
+			$customfolders = $_POST['_customfolder'];
 			$addresses = $_POST['_redirect'];
 			$rejects = $_POST['_reject'];
 			$vacfroms = $_POST['_vacfrom'];
@@ -817,6 +818,9 @@ class sieverules extends rcube_plugin
 						$script['actions'][$i]['target'] = $rcmail->config->get('sieverules_include_imap_root', true) ? $rcmail->imap->mod_mailbox($folder) : $folder;
 						if ($rcmail->config->get('sieverules_folder_delimiter', false))
 							$script['actions'][$i]['target'] = str_replace($rcmail->imap->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $script['actions'][$i]['target']);
+
+						if ($folder == '@@newfolder')
+							$script['actions'][$i]['target'] = $this->_strip_val($customfolders[$idx]);
 						break;
 					case 'redirect':
 					case 'redirect_copy':
@@ -1965,7 +1969,11 @@ class sieverules extends rcube_plugin
 		// build the folders tree
 		if (empty($a_mailboxes)) {
 			// get mailbox list
-			$a_folders = $rcmail->imap->list_mailboxes();
+			if ($rcmail->config->get('sieverules_fileinto_options', 0) > 0)
+				$a_folders = $rcmail->imap->list_unsubscribed();
+			else
+				$a_folders = $rcmail->imap->list_mailboxes();
+
 			$delimiter = $rcmail->imap->get_hierarchy_delimiter();
 			$a_mailboxes = array();
 
@@ -1978,10 +1986,23 @@ class sieverules extends rcube_plugin
 				else
 					rcmail_build_folder_tree($a_mailboxes, $ifolder, $delimiter);
 			}
+
+			if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2)
+				array_push($a_mailboxes, array('id' => '@@newfolder', 'name' => $this->gettext('createfolder'), 'virtual' => '', 'folders' => array()));
 		}
 
-		$input_folderlist = new html_select(array('name' => '_folder[]', 'style' => ($method == 'fileinto' || $method == 'fileinto_copy') ? '' : 'display: none;'));
+		$input_folderlist = new html_select(array('name' => '_folder[]', 'onchange' => JS_OBJECT_NAME . '.sieverules_select_folder(this);', 'style' => ($method == 'fileinto' || $method == 'fileinto_copy') ? '' : 'display: none;'));
 		rcmail_render_folder_tree_select($a_mailboxes, $mbox_name, 100, $input_folderlist, false);
+
+		$show_customfolder = 'display: none;';
+		if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2 && !$rcmail->imap->mailbox_exists($folder)) {
+			$customfolder = $folder;
+			$folder = '@@newfolder';
+			$show_customfolder = '';
+		}
+
+		$input_customfolder = new html_inputfield(array('name' => '_customfolder[]'));
+		$otherfolders = html::span(array('id' => 'customfolder_rowid', 'style' => $show_customfolder), '<br />' . $input_customfolder->show($customfolder));
 
 		$input_address = new html_inputfield(array('name' => '_redirect[]', 'style' => ($method == 'redirect' || $method == 'redirect_copy') ? '' : 'display: none;'));
 		$input_reject = new html_textarea(array('name' => '_reject[]', 'rows' => '5', 'cols' => '40', 'style' => ($method == 'reject' || $method == 'ereject') ? '' : 'display: none;'));
@@ -1989,7 +2010,7 @@ class sieverules extends rcube_plugin
 		foreach($this->flags as $name => $val)
 			$input_imapflags->add(Q($this->gettext($name)), Q($val));
 
-		$actions_table->add('folder', $input_folderlist->show($folder) . $input_address->show($address) . $vacs_table->show() . $notify_table->show() . $input_imapflags->show($flags) . $input_reject->show($reject));
+		$actions_table->add('folder', $input_folderlist->show($folder) . $otherfolders . $input_address->show($address) . $vacs_table->show() . $notify_table->show() . $input_imapflags->show($flags) . $input_reject->show($reject));
 
 		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_action', 'type' => 'link', 'class' => 'add', 'title' => 'sieverules.addsieveact', 'content' => ' '));
 		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_action', 'type' => 'link', 'class' => 'delete', 'classact' => 'delete_act', 'title' => 'sieverules.deletesieveact', 'content' => ' '));

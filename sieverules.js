@@ -206,23 +206,15 @@ if (window.rcmail) {
 					rulesTable.appendChild(newNode3);
 				}
 
-				var xheadsTable = newNode2.cells[0].childNodes[0];
-				var advTable = newNode3.cells[0].childNodes[0];
 				var randId = Math.random();
-
-				if (!xheadsTable.cells)
-					xheadsTable.innerHTML = xheadsTable.innerHTML.replace(/rowid/g, randId);
-				else for (var i = 0; i < xheadsTable.cells.length; i++)
-					xheadsTable.cells[i].innerHTML = xheadsTable.cells[i].innerHTML.replace(/rowid/g, randId);
-
-				if (!advTable.cells)
-					advTable.innerHTML = advTable.innerHTML.replace(/rowid/g, randId);
-				else for (var i = 0; i < advTable.cells.length; i++)
-					advTable.cells[i].innerHTML = advTable.cells[i].innerHTML.replace(/rowid/g, randId);
-
+				var tmp = $(newNode2).html().replace(/rowid/g, randId);
 				// remove nohtc class (IE6 fix)
-				newNode1.cells[1].innerHTML = newNode1.cells[1].innerHTML.replace(/class=["']?nohtc["']? /ig, "");
-				newNode1.cells[4].innerHTML = newNode1.cells[4].innerHTML.replace(/class=["']?nohtc["']? /ig, "");
+				tmp.replace(/class=["']?nohtc["']? /ig, "");
+				$(newNode2).html(tmp);
+				var tmp = $(newNode3).html().replace(/rowid/g, randId);
+				// remove nohtc class (IE6 fix)
+				tmp.replace(/class=["']?nohtc["']? /ig, "");
+				$(newNode3).html(tmp);
 
 				newNode1.style.display = "";
 				newNode2.style.display = "none";
@@ -260,22 +252,11 @@ if (window.rcmail) {
 				else
 					actsTable.appendChild(newNode);
 
-				var vacsTable = newNode.cells[1].childNodes[3];
-				var notifyTable = newNode.cells[1].childNodes[5];
 				var randId = Math.random();
-
-				if (!vacsTable.cells)
-					vacsTable.innerHTML = vacsTable.innerHTML.replace(/rowid/g, randId);
-				else for (var i = 0; i < vacsTable.cells.length; i++)
-					vacsTable.cells[i].innerHTML = vacsTable.cells[i].innerHTML.replace(/rowid/g, randId);
-
-				if (!notifyTable.cells)
-					notifyTable.innerHTML = notifyTable.innerHTML.replace(/rowid/g, randId);
-				else for (var i = 0; i < notifyTable.cells.length; i++)
-					notifyTable.cells[i].innerHTML = notifyTable.cells[i].innerHTML.replace(/rowid/g, randId);
-
+				var tmp = $(newNode).html().replace(/rowid/g, randId);
 				// remove nohtc class (IE6 fix)
-				newNode.cells[2].innerHTML = newNode.cells[2].innerHTML.replace(/class=["']?nohtc["']? /ig, "");
+				tmp.replace(/class=["']?nohtc["']? /ig, "");
+				$(newNode).html(tmp);
 
 				newNode.style.display = "";
 
@@ -316,6 +297,8 @@ if (window.rcmail) {
 				var targets = document.getElementsByName('_target[]');
 				var advtargets = document.getElementsByName('_advtarget[]');
 				var acts = document.getElementsByName('_act[]');
+				var folders = document.getElementsByName('_folder[]');
+				var customfolders = document.getElementsByName('_customfolder[]');
 				var addrs = document.getElementsByName('_redirect[]');
 				var rejects = document.getElementsByName('_reject[]');
 				var senders = document.getElementsByName('_vacfrom[]');
@@ -409,7 +392,14 @@ if (window.rcmail) {
 				for (var i = 1; i < acts.length; i++) {
 					var idx = acts[i].selectedIndex;
 
-					if (acts[i][idx].value == 'redirect' || acts[i][idx].value == 'redirect_copy') {
+					if (acts[i][idx].value == 'fileinto' || acts[i][idx].value == 'fileinto_copy') {
+						if (folders[i].value == '@@newfolder' && customfolders[i].value == '') {
+							alert(rcmail.gettext('missingfoldername','sieverules'));
+							customfolders[i].focus();
+							return false;
+						}
+					}
+					else if (acts[i][idx].value == 'redirect' || acts[i][idx].value == 'redirect_copy') {
 						if (addrs[i].value == '') {
 							alert(rcmail.gettext('noredirect','sieverules'));
 							addrs[i].focus();
@@ -1079,6 +1069,7 @@ rcmail.sieverules_action_select = function(sel) {
 
 	// hide everything
 	document.getElementsByName('_folder[]')[idx].style.display = 'none';
+	$(document.getElementsByName('_customfolder[]')[idx]).parent().hide();
 	document.getElementsByName('_redirect[]')[idx].style.display = 'none';
 	document.getElementsByName('_reject[]')[idx].style.display = 'none';
 	document.getElementsByName('_imapflags[]')[idx].style.display = 'none';
@@ -1097,6 +1088,19 @@ rcmail.sieverules_action_select = function(sel) {
 		document.getElementsByName('_redirect[]')[idx].style.display = '';
 	else if (obj.value == 'imapflags' || obj.value == 'imap4flags')
 		document.getElementsByName('_imapflags[]')[idx].style.display = '';
+
+	if ($(document.getElementsByName('_folder[]')[idx]).is(':visible') && document.getElementsByName('_folder[]')[idx].value == '@@newfolder')
+		$(document.getElementsByName('_customfolder[]')[idx]).parent().show();
+}
+
+rcmail.sieverules_select_folder = function(sel) {
+	var idx = sel.parentNode.parentNode.rowIndex;
+	var actoion_row = rcube_find_object('actions-table').tBodies[0].rows[idx];
+	var obj = document.getElementsByName('_folder[]')[idx];
+
+	$(document.getElementsByName('_customfolder[]')[idx]).parent().hide();
+	if (obj.value == '@@newfolder')
+		$(document.getElementsByName('_customfolder[]')[idx]).parent().show();
 }
 
 rcmail.sieverules_xheaders = function(sel) {
