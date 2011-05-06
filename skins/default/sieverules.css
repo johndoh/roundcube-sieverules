@@ -316,36 +316,12 @@ table.records-table td.vacdaysexp
   border-bottom: 2px solid #000000;
 }
 
-#sieverulesrsdialog
-{
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 10000;
-  background: rgba(0,0,0,0.5) !important;
-  background: #333;
-}
-
 #sieverulesrsdialog h3
 {
   color: #333;
   font-size: normal;
   margin-top: 0.5em;
   margin-bottom: 1em;
-}
-
-#sieverulesrsdialog form
-{
-  width: 32em;
-  margin: 8em auto;
-  padding: 1em 2em;
-  background: #F6F6F6;
-  border: 2px solid #555;
-  border-radius: 6px;
-  -moz-border-radius: 6px;
-  -webkit-border-radius: 6px;
 }
 
 #sieverulesrsdialog table td.title

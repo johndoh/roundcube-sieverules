@@ -5,7 +5,8 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.11
+ * @version 1.12
+ * @requires jQueryUI plugin
  * @author Philip Weir
  * Based on the Managesieve plugin by Aleksander Machniak
  */
@@ -51,6 +52,10 @@ class sieverules extends rcube_plugin
 	{
 		$rcmail = rcmail::get_instance();
 		$this->load_config();
+
+		// load required plugin
+		if ($rcmail->config->get('sieverules_multiplerules'))
+			$this->require_plugin('jqueryui');
 
 		if ($rcmail->config->get('sieverules_multiplerules') && get_input_value('_ruleset', RCUBE_INPUT_GET, true))
 			$this->current_ruleset = get_input_value('_ruleset', RCUBE_INPUT_GET, true);
@@ -345,7 +350,6 @@ class sieverules extends rcube_plugin
 
 		$buttons = html::tag('input', array('type' => 'hidden', 'id' => 'sieverulesrsdialog_action', 'value' => ''));
 		$buttons .= html::tag('input', array('type' => 'button', 'class' => 'button mainaction', 'value' => $this->gettext('save'), 'onclick' => JS_OBJECT_NAME . '.sieverulesdialog_submit();')) . '&nbsp;';
-		$buttons .= html::tag('input', array('type' => 'button', 'class' => 'button', 'value' => $this->gettext('cancel'), 'onclick' => 'rcube_find_object(\'sieverulesrsdialog\').style.display = \'none\';'));
 
 		$out .= html::tag('h3', array('id' => 'sieverulesrsdialog_add'), Q($this->gettext('newruleset')));
 		$out .= html::tag('h3', array('id' => 'sieverulesrsdialog_edit', 'style' => 'display: none;'), Q($this->gettext('renameruleset')));

@@ -5,6 +5,10 @@ Inspiration and most of the code for this plugin was taken from:
 Aleksander Machniak <alec@alec.pl> - original Roundcube managesieve patch
 Tested with Dovecot-managesieve
 
+Requirements
+============
+* Roundcube jQueryUI plugin
+
 Supported Extensions
 ====================
 comparators

@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2011 05 06
+==========
+ * Use JQueryUI plugin for dialog box (r4715)
+
 2011 03 12
 ==========
  * Allow users to enter folder names for fileinto

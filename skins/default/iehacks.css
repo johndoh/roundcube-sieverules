@@ -56,11 +56,3 @@ img.nohtc
   height: expression((parseInt(document.documentElement.clientHeight)-177)+'px');
   width: expression((parseInt(document.documentElement.clientWidth)-48)+'px');
 }
-
-#sieverulesrsdialog
-{
-  filter: alpha(opacity=90);
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
-  width: expression(document.documentElement.clientWidth+'px');
-  height: expression(document.documentElement.clientHeight+'px');
-}
