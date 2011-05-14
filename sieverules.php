@@ -819,7 +819,7 @@ class sieverules extends rcube_plugin
 						$folder = $this->_strip_val($folders[$idx]);
 						$rcmail = rcmail::get_instance();
 						$rcmail->imap_connect();
-						$script['actions'][$i]['target'] = $rcmail->config->get('sieverules_include_imap_root', true) ? $rcmail->imap->mod_mailbox($folder) : $folder;
+						$script['actions'][$i]['target'] = $rcmail->config->get('sieverules_include_imap_root', true) ? $folder : $rcmail->imap->mod_mailbox($folder);
 						if ($rcmail->config->get('sieverules_folder_delimiter', false))
 							$script['actions'][$i]['target'] = str_replace($rcmail->imap->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $script['actions'][$i]['target']);
 
@@ -1720,7 +1720,7 @@ class sieverules extends rcube_plugin
 
 		if ($action['type'] == 'fileinto' || $action['type'] == 'fileinto_copy') {
 			$method = $action['type'];
-			$folder = $rcmail->config->get('sieverules_include_imap_root', true) ? $rcmail->imap->mod_mailbox($action['target'], 'out') : $action['target'];
+			$folder = $rcmail->config->get('sieverules_include_imap_root', true) ? $action['target'] : $rcmail->imap->mod_mailbox($action['target']);
 
 			if ($rcmail->config->get('sieverules_folder_delimiter', false))
 				$folder = str_replace($rcmail->imap->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $folder);
