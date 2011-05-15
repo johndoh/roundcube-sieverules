@@ -3,7 +3,7 @@
 
 $labels = array();
 $labels['filters'] = 'Filters';
-$labels['managefilters'] = 'Manage filters';
+$labels['managefilters'] = 'Manage message filters';
 $labels['filtername'] = 'Filter name';
 $labels['disablerule'] = 'Disable rule';
 $labels['disabled'] = 'Disabled';

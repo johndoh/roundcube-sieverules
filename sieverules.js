@@ -9,7 +9,7 @@ if (window.rcmail) {
 		else
 			var tab = $('<span>').attr('id', 'settingstabpluginsieverules').addClass('tablink');
 
-		var button = $('<a>').attr('href', rcmail.env.comm_path+'&_action=plugin.sieverules').html(rcmail.gettext('filters','sieverules')).appendTo(tab);
+		var button = $('<a>').attr('href', rcmail.env.comm_path+'&_action=plugin.sieverules').attr('title', rcmail.gettext('managefilters', 'sieverules')).html(rcmail.gettext('filters','sieverules')).appendTo(tab);
 
 		// add button and register command
 		rcmail.add_element(tab, 'tabs');
