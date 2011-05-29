@@ -1986,9 +1986,10 @@ class sieverules extends rcube_plugin
 					$ifolder = $this->_mbox_encode($ifolder, $rcmail->config->get('sieverules_folder_encoding'));
 
 				if ($rcmail->config->get('sieverules_folder_delimiter', false))
-					rcmail_build_folder_tree($a_mailboxes, str_replace($delimiter, $rcmail->config->get('sieverules_folder_delimiter'), $ifolder), $rcmail->config->get('sieverules_folder_delimiter'));
-				else
-					rcmail_build_folder_tree($a_mailboxes, $ifolder, $delimiter);
+					$ifolder = str_replace($delimiter, $rcmail->config->get('sieverules_folder_delimiter'), $ifolder);
+				if ($rcmail->config->get('sieverules_folder_default_namespace', null))
+					$ifolder = $rcmail->config->get('sieverules_folder_default_namespace') . $ifolder;
+				rcmail_build_folder_tree($a_mailboxes, $ifolder, $delimiter);
 			}
 
 			if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2)
