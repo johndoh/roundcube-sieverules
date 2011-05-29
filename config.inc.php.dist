@@ -47,6 +47,11 @@ $rcmail_config['sieverules_folder_encoding'] = null;
 // set to null for default behaviour
 $rcmail_config['sieverules_include_imap_root'] = null;
 
+// include the IMAP default namespace to folder path
+// when creating the rules
+// set to null for not attaching anything
+$rcmail_config['sieverules_folder_default_namespace'] = null;
+
 // ruleset name
 $rcmail_config['sieverules_ruleset_name'] = 'roundcube';
 
