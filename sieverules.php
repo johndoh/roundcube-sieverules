@@ -221,7 +221,6 @@ class sieverules extends rcube_plugin
 
 		$table = new html_table(array('id' => 'sieverules-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 2));
 		$table->add_header(array('colspan' => 2), $this->gettext('filters'));
-		$table->add_row();
 
 		if (sizeof($this->script) == 0) {
 			$table->add(array('colspan' => '2'), rep_specialchars_output($this->gettext('nosieverules')));
