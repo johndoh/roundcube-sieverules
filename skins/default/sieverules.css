@@ -82,6 +82,11 @@ span.disableLink
   width: 100%;
 }
 
+#sieverules-table tbody td
+{
+  cursor: default;
+}
+
 #sieverules-table tbody td.control,
 #rules-table tbody td.control,
 #actions-table tbody td.control
