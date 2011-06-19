@@ -135,6 +135,24 @@ span.disableLink
   background-position: 0 -36px;
 }
 
+#actions-table tbody a.vacsig
+{
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-image: url(icons.png);
+  background-position: 0 -108px;
+}
+
+#actions-table tbody a.vacsig_act
+{
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-image: url(icons.png);
+  background-position: 0 -90px;
+}
+
 #rules-table,
 #actions-table,
 #rules-table td table.records-table
@@ -242,7 +260,8 @@ span.disableLink
   width: 330px;
 }
 
-#actions-table td.folder table.records-table input.short
+#actions-table td.folder table.records-table input.short,
+#actions-table td.folder table.records-table select.short
 {
   width: 310px;
 }

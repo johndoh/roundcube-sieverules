@@ -208,12 +208,12 @@ if (window.rcmail) {
 					rulesTable.appendChild(newNode3);
 				}
 
-				var randId = Math.random();
-				var tmp = $(newNode2).html().replace(/rowid/g, randId);
+				rcmail.env.sieverules_rules++;
+				var tmp = $(newNode2).html().replace(/rowid/g, rcmail.env.sieverules_rules);
 				// remove nohtc class (IE6 fix)
 				tmp.replace(/class=["']?nohtc["']? /ig, "");
 				$(newNode2).html(tmp);
-				var tmp = $(newNode3).html().replace(/rowid/g, randId);
+				var tmp = $(newNode3).html().replace(/rowid/g, rcmail.env.sieverules_rules);
 				// remove nohtc class (IE6 fix)
 				tmp.replace(/class=["']?nohtc["']? /ig, "");
 				$(newNode3).html(tmp);
@@ -254,8 +254,8 @@ if (window.rcmail) {
 				else
 					actsTable.appendChild(newNode);
 
-				var randId = Math.random();
-				var tmp = $(newNode).html().replace(/rowid/g, randId);
+				rcmail.env.sieverules_actions++;
+				var tmp = $(newNode).html().replace(/rowid/g, rcmail.env.sieverules_actions);
 				// remove nohtc class (IE6 fix)
 				tmp.replace(/class=["']?nohtc["']? /ig, "");
 				$(newNode).html(tmp);
@@ -501,12 +501,54 @@ if (window.rcmail) {
 				}
 			}, true);
 
+			rcmail.register_command('plugin.sieverules.vacation_sig', function(id) {
+				var obj = document.getElementById("rcmfd_sievevacfrom_" + id);
+				var input_message = $("#rcmfd_sievevacmag_" + id);
+
+				if (!obj || !obj.options)
+					return false;
+
+				var cursor_pos, sig, id;
+				var sig_separator = '-- ';
+				var message = input_message.val();
+
+				if (obj.options[0].value == 'auto' || obj.options[0].value == '')
+					id = obj.selectedIndex;
+				else
+					id = obj.selectedIndex + 1;
+
+				// add the signature string
+				if (rcmail.env.signatures && rcmail.env.signatures[id]) {
+					sig = rcmail.env.signatures[id]['text'];
+					sig = sig.replace(/\r\n/g, '\n');
+
+					if (!sig.match(/^--[ -]\n/))
+						sig = sig_separator + '\n' + sig;
+
+					message = message.replace(/[\r\n]+$/, '');
+					message += '\n\n' + sig;
+				}
+
+				input_message.val(message);
+
+				return false;
+			}, false);
+
 			// enable commands
 			if (rcube_find_object('rules-table').tBodies[0].rows.length > 6)
 				rcmail.enable_command('plugin.sieverules.del_rule', true);
 
 			if (rcube_find_object('actions-table').tBodies[0].rows.length > 2)
 				rcmail.enable_command('plugin.sieverules.del_action', true);
+
+			// enable sig button
+			var acts = document.getElementsByName('_act[]');
+			for (var i = 1; i < acts.length; i++) {
+				var idx = acts[i].selectedIndex;
+
+				if (acts[i][idx].value == 'vacation')
+					rcmail.enable_sig(document.getElementsByName('_vacfrom[]')[i]);
+			}
 
 			// add input masks
 			rcmail.add_onload(function setup_inputmasks() {
@@ -1082,8 +1124,10 @@ rcmail.sieverules_action_select = function(sel) {
 		document.getElementsByName('_folder[]')[idx].style.display = '';
 	else if (obj.value == 'reject' || obj.value == 'ereject')
 		document.getElementsByName('_reject[]')[idx].style.display = '';
-	else if (obj.value == 'vacation')
+	else if (obj.value == 'vacation') {
 		document.getElementsByName('_day[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
+		rcmail.enable_sig(document.getElementsByName('_vacfrom[]')[idx]);
+	}
 	else if (obj.value == 'notify' || obj.value == 'enotify')
 		document.getElementsByName('_nmethod[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
 	else if (obj.value == 'redirect' || obj.value == 'redirect_copy')
@@ -1271,4 +1315,19 @@ rcmail.sieverulesdialog_submit = function() {
 		window.location.href = rcmail.env.comm_path+'&_action=plugin.sieverules.import&_import=_copy_&_ruleset=' + val + '&_new=' + rcmail.env.ruleset;
 	else
 		window.location.href = rcmail.env.comm_path+'&_action=plugin.sieverules&_ruleset=' + val;
+}
+
+rcmail.enable_sig = function(obj) {
+	var id;
+
+	if (obj.options[0].value == 'auto' || obj.options[0].value == '')
+		id = obj.selectedIndex;
+	else
+		id = obj.selectedIndex + 1;
+
+	// enable manual signature insert
+	if (rcmail.env.signatures && rcmail.env.signatures[id])
+		rcmail.enable_command('plugin.sieverules.vacation_sig', true);
+	else
+		rcmail.enable_command('plugin.sieverules.vacation_sig', false);
 }

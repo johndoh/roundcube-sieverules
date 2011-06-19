@@ -5,7 +5,7 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.12
+ * @version 1.13
  * @requires jQueryUI plugin
  * @author Philip Weir
  * Based on the Managesieve plugin by Aleksander Machniak
@@ -597,12 +597,14 @@ class sieverules extends rcube_plugin
 				$rules_table = $this->_rule_row($ext, $rules_table, $rules, $rcmail->config->get('sieverules_predefined_rules'), $attrib);
 		}
 
+		$this->api->output->set_env('sieverules_rules', $rules_table->size());
+
 		$out .= html::tag('fieldset', null, html::tag('legend', null, Q($this->gettext('messagesrules')))
 				. Q((!$rcmail->config->get('sieverules_use_elsif', true)) ? $this->gettext('sieveruleexp_stop'): $this->gettext('sieveruleexp')) . "<br /><br />"
 				. $join_type . "<br /><br />"
 				. $rules_table->show());
 
-		rcmail::get_instance()->imap_connect();
+		$rcmail->imap_connect();
 		$actions_table = new html_table(array('id' => 'actions-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 3));
 		$actions_table = $this->_action_row($ext, $actions_table, 'rowid', null, $attrib, $example);
 
@@ -611,11 +613,32 @@ class sieverules extends rcube_plugin
 		else foreach ($cur_script['actions'] as $idx => $actions)
 			$actions_table = $this->_action_row($ext, $actions_table, $idx, $actions, $attrib, $example);
 
+		$this->api->output->set_env('sieverules_actions', $actions_table->size());
+
 		$out .= html::tag('fieldset', null, html::tag('legend', null, Q($this->gettext('messagesactions')))
 				. Q($this->gettext('sieveactexp')). "<br /><br />"
 				. $actions_table->show());
 
 		$out .= $form_end;
+
+		// output sigs for vacation messages
+		$user_identities = $rcmail->user->list_identities();
+		if (count($user_identities)) {
+			foreach ($user_identities as $sql_arr) {
+				// add signature to array
+				if (!empty($sql_arr['signature'])) {
+					$identity_id = $sql_arr['identity_id'];
+					$a_signatures[$identity_id]['text'] = $sql_arr['signature'];
+
+					if ($sql_arr['html_signature'] == 1) {
+						$h2t = new html2text($a_signatures[$identity_id]['text'], false, false);
+						$a_signatures[$identity_id]['text'] = trim($h2t->get_text());
+					}
+				}
+			}
+
+			$this->api->output->set_env('signatures', $a_signatures);
+		}
 
 		return $out;
 	}
@@ -1790,7 +1813,7 @@ class sieverules extends rcube_plugin
 		$user_identities = $rcmail->user->list_identities();
 		if (count($user_identities)) {
 			$field_id = 'rcmfd_sievevacfrom_'. $rowid;
-			$select_id = new html_select(array('id' => $field_id, 'name' => "_vacfrom[]"));
+			$select_id = new html_select(array('id' => $field_id, 'name' => "_vacfrom[]", 'class' => 'short', 'onchange' => JS_OBJECT_NAME . '.enable_sig(this);'));
 
 			if ($this->show_vacfrom && in_array('variables', $ext))
 				$select_id->add(Q($this->gettext('autodetect')), "auto");
@@ -1818,8 +1841,10 @@ class sieverules extends rcube_plugin
 		if ($rcmail->config->get('sieverules_limit_vacto', true) && strlen($to_addresses) > 0) {
 			$vacs_table->set_row_attribs(array('class' => $vacadvclass_from, 'style' => $vacadvstyle_from));
 			$vacs_table->add(null, html::label($field_id, Q($this->gettext('from'))));
-			$vacs_table->add(array('colspan' => 2), $select_id->show($vacfrom));
-			$vacs_table->add_row();
+			$vacs_table->add(null, $select_id->show($vacfrom));
+
+			$sig_button = $this->api->output->button(array('command' => 'plugin.sieverules.vacation_sig', 'prop' => $rowid, 'type' => 'link', 'class' => 'vacsig', 'classact' => 'vacsig_act', 'title' => 'insertsignature', 'content' => ' '));
+			$vacs_table->add(null, $sig_button);
 
 			$field_id = 'rcmfd_sievevacto_'. $rowid;
 			$input_vacto = new html_hiddenfield(array('id' => $field_id, 'name' => '_vacto[]', 'value' => $vacto));
@@ -1838,8 +1863,10 @@ class sieverules extends rcube_plugin
 			$input_vacfrom = new html_inputfield(array('id' => $field_id, 'name' => '_vacfrom[]'));
 			$vacs_table->set_row_attribs(array('class' => $vacadvclass_from, 'style' => $vacadvstyle_from));
 			$vacs_table->add(null, html::label($field_id, Q($this->gettext('from'))));
-			$vacs_table->add(array('colspan' => 2), $input_vacfrom->show($vacfrom));
-			$vacs_table->add_row();
+			$vacs_table->add(null, $input_vacfrom->show($vacfrom));
+
+			$sig_button = $this->api->output->button(array('command' => 'plugin.sieverules.vacation_sig', 'prop' => $rowid, 'type' => 'link', 'class' => 'vacsig', 'classact' => 'vacsig_act', 'title' => 'insertsignature', 'content' => ' '));
+			$vacs_table->add(null, $sig_button);
 
 			$field_id = 'rcmfd_sievevacto_'. $rowid;
 			$input_vacto = new html_inputfield(array('id' => $field_id, 'name' => '_vacto[]', 'class' => 'short'));

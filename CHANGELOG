@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2011 06 19
+==========
+ * Add button to insert sig into vacation message
+
 2011 05 06
 ==========
  * Use JQueryUI plugin for dialog box (r4715)
