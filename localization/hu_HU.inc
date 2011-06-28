@@ -1,5 +1,5 @@
 <?php
-/* Author: Zoltan Nagy */
+/* Author: Tamas P */
 
 $labels = array();
 $labels['filters'] = 'Szűrők';
@@ -132,6 +132,8 @@ $messages['filtersaveerror'] = 'Nem sikerült elmenteni a szűrőt. Szerver hiba
 $messages['vacdaysexp'] = 'Az dőszak, azon napok száma míg egy üzenet nem lesz újraküldve ugyanannak a címzettnek, függetlenül attól hányszolt lépett önnel kapcsolatba.<br /><br />Pédául: Ha János üzenetet küld Hétfőn és az időszak 7, válaszul kap egy Irodán kívül üzenetet ami nem lesz neki újraküldve a következő Hétfőig, bármennyi üzenetet is küld János ebben az időszakban.';
 $messages['vachandleexp'] = 'A mutató arra használható, hogy összekapcsoljon külömböző Irodán kívül üzeneteket. Ha egy ilyen üzenet el lett küldve, másik ilyen mutatóju üzenet nem lesz elküldve megadott időszakban';
 $messages['vactoexp'] = 'A többi címzett listája akiknek az automatikus válasz el lesz küldve. Ha egy címzett nem a fő cím én nincs ebben a listában, nem lesz neki üzenet küldve.';
+$messages['vactoexp_adv'] = 'Több álnevet vesszővel (,) lehet elválasztani. Pl. teszt1@pelda.hu, teszt2@pelda.hu, teszt3@pelda.hu';
+$messages['vactoexp_err'] = 'Hiba! Több álnév esetén vesszőt (,) kell használni';
 $messages['norulename'] = 'Irjon be egy nevet a szűrőnek';
 $messages['ruleexists'] = 'Ez a szűrőnév már létezik. Kérem irjon be másikat';
 $messages['noheader'] = 'Kérem irja be a fejléc nevét a teszthez';
@@ -157,8 +159,13 @@ $messages['switchtoadveditor'] = 'ÿtváltás halado szerkesztőre, mellyel Ön 
 $messages['filterimported'] = 'A szűrő sikeresen importálva';
 $messages['filterimporterror'] = 'Nem sikerült a szűrő importálása. Szerver hiba';
 $messages['filteractionerror'] = 'A kért műveletet nem támogatja a szerver';
+$messages['filtermissingerror'] = 'Nem találom a keresett szabályt';
+$messages['delrulesetconf'] = 'Biztosan törölni szeretné ezt a szabálycsoportot?';
+$messages['rulesetexists'] = 'Már létezik ilyen nevű szabálycsoport. Írjon be másikat!';
 $messages['filtercopied'] = 'Szűrő sikeresen átmásolva';
+$messages['nosieverulesets'] = 'Nincs ilyen szabálycsoport.';
 $messages['baddateformat'] = 'Hiba: a dátumot ÉÉÉÉ-HH-NN formátumban kell megadni.';
 $messages['badtimeformat'] = 'Hiba: az időt ÓÓ:PP:MP fromátumban kell megadni';
+$messages['missingfoldername'] = 'Hiba! Írjon be egy mappanevet.';
 
 ?>
