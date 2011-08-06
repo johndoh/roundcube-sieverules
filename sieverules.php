@@ -5,7 +5,7 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.13
+ * @version 1.14
  * @requires jQueryUI plugin
  * @author Philip Weir
  * Based on the Managesieve plugin by Aleksander Machniak
@@ -842,12 +842,15 @@ class sieverules extends rcube_plugin
 						$folder = $this->_strip_val($folders[$idx]);
 						$rcmail = rcmail::get_instance();
 						$rcmail->imap_connect();
+						$script['actions'][$i]['create'] = false;
+						if ($folder == '@@newfolder') {
+							$script['actions'][$i]['create'] = true;
+							$folder = $this->_strip_val($customfolders[$idx]);
+							$folder = $rcmail->config->get('sieverules_include_imap_root', true) ? $rcmail->imap->mod_mailbox($folder, 'IN') : $folder;
+						}
 						$script['actions'][$i]['target'] = $rcmail->config->get('sieverules_include_imap_root', true) ? $folder : $rcmail->imap->mod_mailbox($folder);
 						if ($rcmail->config->get('sieverules_folder_delimiter', false))
 							$script['actions'][$i]['target'] = str_replace($rcmail->imap->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $script['actions'][$i]['target']);
-
-						if ($folder == '@@newfolder')
-							$script['actions'][$i]['target'] = $this->_strip_val($customfolders[$idx]);
 						break;
 					case 'redirect':
 					case 'redirect_copy':
@@ -2018,7 +2021,7 @@ class sieverules extends rcube_plugin
 					rcmail_build_folder_tree($a_mailboxes, $ifolder, $delimiter);
 			}
 
-			if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2)
+			if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2 && in_array('mailbox', $ext))
 				array_push($a_mailboxes, array('id' => '@@newfolder', 'name' => $this->gettext('createfolder'), 'virtual' => '', 'folders' => array()));
 		}
 
@@ -2027,7 +2030,7 @@ class sieverules extends rcube_plugin
 
 		$show_customfolder = 'display: none;';
 		if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2 && !$rcmail->imap->mailbox_exists($folder)) {
-			$customfolder = $folder;
+			$customfolder = $rcmail->imap->mod_mailbox($folder);
 			$folder = '@@newfolder';
 			$show_customfolder = '';
 		}

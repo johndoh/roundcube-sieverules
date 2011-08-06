@@ -353,33 +353,37 @@ class rcube_sieve_script
 				foreach ($rule['actions'] as $action) {
 					switch ($action['type']) {
 						case 'fileinto':
+						case 'fileinto_copy':
 							array_push($exts, 'fileinto');
 
+							$args = '';
+							if ($action['type'] == 'fileinto_copy') {
+								array_push($exts, 'copy');
+								$args .= ' :copy';
+							}
+
+							if ($action['create']) {
+								array_push($exts, 'mailbox');
+								$args .= ' :create';
+							}
+
 							// variables support in fileinto by David Warden
 							if (preg_match('/\$\{\d+\}/', $action['target']))
 								array_push($exts, 'variables');
 
-							$actions .= RCUBE_SIEVE_INDENT . "fileinto \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
-							break;
-						case 'fileinto_copy':
-							array_push($exts, 'fileinto', 'copy');
-
-							// variables support in fileinto by David Warden
-							if (preg_match('/\$\{\d+\}/', $action['target']))
-								array_push($exts, 'variables');
-
-							$actions .= RCUBE_SIEVE_INDENT . "fileinto :copy \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
+							$actions .= RCUBE_SIEVE_INDENT . "fileinto" . $args . " \"" . $this->_escape_string($action['target']) . "\";" . RCUBE_SIEVE_NEWLINE;
 							break;
 						case 'redirect':
-							$tokens = preg_split('/[,;\s]/', $action['target']);
-							foreach ($tokens as $email)
-								$actions .= RCUBE_SIEVE_INDENT . "redirect \"" . $this->_escape_string($email) . "\";" . RCUBE_SIEVE_NEWLINE;
-							break;
 						case 'redirect_copy':
-							array_push($exts, 'copy');
+							$args = '';
+							if ($action['type'] == 'redirect_copy') {
+								array_push($exts, 'copy');
+								$args .= ' :copy';
+							}
+
 							$tokens = preg_split('/[,;\s]/', $action['target']);
 							foreach ($tokens as $email)
-								$actions .= RCUBE_SIEVE_INDENT . "redirect :copy \"" . $this->_escape_string($email) . "\";" . RCUBE_SIEVE_NEWLINE;
+								$actions .= RCUBE_SIEVE_INDENT . "redirect" . $args . " \"" . $this->_escape_string($email) . "\";" . RCUBE_SIEVE_NEWLINE;
 							break;
 						case 'reject':
 						case 'ereject':
@@ -567,7 +571,7 @@ class rcube_sieve_script
 		$patterns[] = '^\s*discard;';
 		$patterns[] = '^\s*keep;';
 		$patterns[] = '^\s*stop;';
-		$patterns[] = '^\s*fileinto\s+(:copy\s+)?(.*?[^\\\]);';
+		$patterns[] = '^\s*fileinto\s+(:copy\s+)?(:create\s+)?(.*?[^\\\]);';
 		$patterns[] = '^\s*redirect\s+(:copy\s+)?(.*?[^\\\]);';
 		$patterns[] = '^\s*setflag\s+(.*?[^\\\]);';
 		$patterns[] = '^\s*addflag\s+(.*?[^\\\]);';
