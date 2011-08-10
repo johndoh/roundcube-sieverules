@@ -26,6 +26,9 @@ class srimport_ingo
 		$name = array();
 		// tokenize rules
 		if ($tokens = preg_split('/(# .+)\r?\n/i', $script, -1, PREG_SPLIT_DELIM_CAPTURE)) {
+			// unset first token, its the ingo header
+			$tokens[1] = "";
+
 			foreach($tokens as $token) {
 				if (preg_match('/^# (.+)/i', $token, $matches)) {
 					$name[$i] = $matches[1];
@@ -36,7 +39,7 @@ class srimport_ingo
 					$content .= $token . "\n";
 					$i++;
 				}
-				elseif (preg_match('/^require/i', $token)) {
+				elseif (preg_match('/^\r?\n?require/i', $token)) {
 					$content .= $token . "\n";
 				}
 			}
