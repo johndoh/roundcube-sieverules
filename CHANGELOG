@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2011 08 20
+==========
+ * Add plugin hook sieverules_saved
+
 2011 08 06
 ==========
  * Improve fileinto :create, now requires mailbox extension

@@ -204,3 +204,11 @@ be overridden by setting the array in the config for
 $rcmail_config['sieverules_default_headers'],
 $rcmail_config['sieverules_default_operators'] or
 $rcmail_config['sieverules_default_flags'].
+
+sieverules_saved hook
+=====================
+When a rule is saved the plugin hook sieverules_saved is executed, this allows
+you to perform any custom actions like updating another system. Arguments:
+  * ruleset - (string) the name of the ruleset file being saved
+  * rule - (array) name, test and action information for the specific rule
+    being saved

@@ -917,10 +917,14 @@ class sieverules extends rcube_plugin
 			if ($save && $result === true) {
 				$this->api->output->command('display_message', $this->gettext('filtersaved'), 'confirmation');
 
-				if ($script['disabled'] == 1)
-					$filter_name = $script['name'] . ' (' . $this->gettext('disabled') . ')';
+				// allow additional actions after rule is saved
+				$plugin = $rcmail->plugins->exec_hook('sieverules_saved', array(
+					'ruleset' => $this->current_ruleset, 'rule' => $script));
+
+				if ($plugin['rule']['disabled'] == 1)
+					$filter_name = $plugin['rule']['name'] . ' (' . $this->gettext('disabled') . ')';
 				else
-					$filter_name = $script['name'];
+					$filter_name = $plugin['rule']['name'];
 
 				$dst = $iid - 1;
 				$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
