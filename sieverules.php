@@ -653,10 +653,10 @@ class sieverules extends rcube_plugin
 		$result = $this->sieve->script->move_rule($src, $dst);
 		$result = $this->sieve->save();
 
-		if ($result)
+		if ($result === true)
 			$this->api->output->command('sieverules_update_list', 'move', $src , $dst);
 		else
-			$this->api->output->command('display_message', $this->gettext('filtersaveerror'), 'error');
+			$this->api->output->command('display_message', $result !== false ? $result : $this->gettext('filtersaveerror'), 'error');
 
 		$this->api->output->send();
 	}
@@ -671,12 +671,12 @@ class sieverules extends rcube_plugin
 			$script = $this->_strip_val($script);
 			$save = $this->sieve->save($script);
 
-			if ($save) {
+			if ($save === true) {
 				$this->api->output->command('display_message', $this->gettext('filtersaved'), 'confirmation');
 				$this->sieve->get_script();
 			}
 			else {
-				$this->api->output->command('display_message', $this->gettext('filtersaveerror'), 'error');
+				$this->api->output->command('display_message', $save !== false ? $save : $this->gettext('filtersaveerror'), 'error');
 			}
 
 			// go to next step
@@ -911,20 +911,16 @@ class sieverules extends rcube_plugin
 			if ($result === true)
 				$save = $this->sieve->save();
 
-			if ($save && $result === true && !$rcmail->config->get('sieverules_multiplerules', false))
+			if ($save === true && $result === true && !$rcmail->config->get('sieverules_multiplerules', false))
 				$save = $this->sieve->set_active($this->current_ruleset);
 
-			if ($save && $result === true) {
+			if ($save === true && $result === true) {
 				$this->api->output->command('display_message', $this->gettext('filtersaved'), 'confirmation');
 
-				// allow additional actions after rule is saved
-				$plugin = $rcmail->plugins->exec_hook('sieverules_saved', array(
-					'ruleset' => $this->current_ruleset, 'rule' => $script));
-
-				if ($plugin['rule']['disabled'] == 1)
-					$filter_name = $plugin['rule']['name'] . ' (' . $this->gettext('disabled') . ')';
+				if ($script['disabled'] == 1)
+					$filter_name = $script['name'] . ' (' . $this->gettext('disabled') . ')';
 				else
-					$filter_name = $plugin['rule']['name'];
+					$filter_name = $script['name'];
 
 				$dst = $iid - 1;
 				$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
@@ -941,12 +937,12 @@ class sieverules extends rcube_plugin
 					$this->api->output->add_script("parent.". JS_OBJECT_NAME .".sieverules_update_list('update', ". $iid .", '". Q($filter_name) ."');");
 			}
 			else {
-				if ($result == SIEVE_ERROR_BAD_ACTION)
+				if ($result === SIEVE_ERROR_BAD_ACTION)
 					$this->api->output->command('display_message', $this->gettext('filteractionerror'), 'error');
-				elseif ($result == SIEVE_ERROR_NOT_FOUND)
+				elseif ($result === SIEVE_ERROR_NOT_FOUND)
 					$this->api->output->command('display_message', $this->gettext('filtermissingerror'), 'error');
 				else
-					$this->api->output->command('display_message', $this->gettext('filtersaveerror'), 'error');
+					$this->api->output->command('display_message', $save !== false ? $save : $this->gettext('filtersaveerror'), 'error');
 			}
 
 			// update rule list
@@ -978,10 +974,10 @@ class sieverules extends rcube_plugin
 			$this->api->output->command('display_message', $this->gettext('filterdeleted'), 'confirmation');
 			$this->api->output->add_script("parent.". JS_OBJECT_NAME .".sieverules_update_list('delete', ". $ids .");");
 		}
-		elseif ($result == SIEVE_ERROR_NOT_FOUND)
+		elseif ($result === SIEVE_ERROR_NOT_FOUND)
 			$this->api->output->command('display_message', $this->gettext('filtermissingerror'), 'error');
 		else
-			$this->api->output->command('display_message', $this->gettext('filterdeleteerror'), 'error');
+			$this->api->output->command('display_message', $result !== false ? $result : $this->gettext('filterdeleteerror'), 'error');
 
 		// update rule list
 		if ($this->sieve_error)
@@ -1015,13 +1011,13 @@ class sieverules extends rcube_plugin
 				$this->sieve->script->add_text(file_get_contents($rcmail->config->get('sieverules_default_file')));
 				$save = $this->sieve->save();
 
-				if ($save && !$rcmail->config->get('sieverules_multiplerules', false))
+				if ($save === true && !$rcmail->config->get('sieverules_multiplerules', false))
 					$save = $this->sieve->set_active($this->current_ruleset);
 
-				if ($save)
+				if ($save === true)
 					$this->api->output->command('display_message', $this->gettext('filterimported'), 'confirmation');
 				else
-					$this->api->output->command('display_message', $this->gettext('filterimporterror'), 'error');
+					$this->api->output->command('display_message', $save !== false ? $save : $this->gettext('filterimporterror'), 'error');
 
 				// update rule list
 				if ($this->sieve_error)

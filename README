@@ -207,8 +207,14 @@ $rcmail_config['sieverules_default_flags'].
 
 sieverules_saved hook
 =====================
-When a rule is saved the plugin hook sieverules_saved is executed, this allows
-you to perform any custom actions like updating another system. Arguments:
-  * ruleset - (string) the name of the ruleset file being saved
-  * rule - (array) name, test and action information for the specific rule
-    being saved
+When filter information is saved to the managesieve server the plugin hook
+sieverules_saved is executed, this allows you to perform any custom actions
+like updating another system or performing further validation.
+Arguments:
+  * ruleset - (string) the name of the ruleset file
+  * script - (string) the raw sieve script
+
+Return:
+  * abort - (boolean) if true the script will not be saved
+  * message - (string) optional reason why the script was not saved which
+    will be shown to the user

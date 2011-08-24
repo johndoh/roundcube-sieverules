@@ -93,6 +93,13 @@ class rcube_sieve
 		if (!$script)
 			$script = '/* empty script */';
 
+		// allow additional actions after ruleset is saved
+		$data = rcmail::get_instance()->plugins->exec_hook('sieverules_saved', array(
+			'ruleset' => $this->ruleset, 'script' => $script));
+
+		if ($data['abort'])
+			return $data['message'] ? $data['message'] : false;
+
 		if (PEAR::isError($this->sieve->installScript($this->ruleset, $script)))
 			return $this->_set_error(SIEVE_ERROR_INSTALL);
 
