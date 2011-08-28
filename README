@@ -207,7 +207,7 @@ $rcmail_config['sieverules_default_flags'].
 
 sieverules_save hook
 =====================
-When filter information is saved to the managesieve server the plugin hook
+Before filter information is saved to the managesieve server the plugin hook
 sieverules_save is executed, this allows you to perform any custom actions
 like updating another system or performing further validation.
 Arguments:
