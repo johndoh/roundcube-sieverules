@@ -93,8 +93,8 @@ class rcube_sieve
 		if (!$script)
 			$script = '/* empty script */';
 
-		// allow additional actions after ruleset is saved
-		$data = rcmail::get_instance()->plugins->exec_hook('sieverules_saved', array(
+		// allow additional actions before ruleset is saved
+		$data = rcmail::get_instance()->plugins->exec_hook('sieverules_save', array(
 			'ruleset' => $this->ruleset, 'script' => $script));
 
 		if ($data['abort'])
