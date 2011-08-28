@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2011 08 28
+==========
+ * Fix typo, hook name should be sieverules_save
+
 2011 08 24
 ==========
  * Improve plugin hook sieverules_saved
