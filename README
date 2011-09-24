@@ -205,6 +205,28 @@ $rcmail_config['sieverules_default_headers'],
 $rcmail_config['sieverules_default_operators'] or
 $rcmail_config['sieverules_default_flags'].
 
+sieverules_connect hook
+=======================
+This hook is triggered right before connecting to the managesieve server and
+can be used to change connection details dynamically
+Arguments/Return:
+  * username - (string) the user's username
+  * password - (string) the user's password
+  * host - (string) the managesieve host
+  * port - (int) the managesieve port
+  * auth_type - (string) authentication type (eg. CRAM-MD5, DIGEST-MD5, PLAIN)
+  * usetls - (bool) enable TLS for managesieve server connection
+  * ruleset - (string) the name of the default ruleset file to be used
+  * dir - (string) the path to the plugin directory, use for locating the
+    import filters. This is th path to the directory containing the
+    importFilters directory
+  * elsif - (bool) the rule file can be written as one IF/ELSIF statement or as
+    a series of unrelated IF statements
+  * auth_cid - (string) optional managesieve authentication identifier to be
+    used as authorization proxy
+  * auth_pw - (string)  optional managesieve authentication password to be used
+    for sieverules_auth_cid
+
 sieverules_save hook
 =====================
 Before filter information is saved to the managesieve server the plugin hook

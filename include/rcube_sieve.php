@@ -33,6 +33,23 @@ class rcube_sieve
 	{
 		$this->sieve = new Net_Sieve();
 
+		$data = rcmail::get_instance()->plugins->exec_hook('sieverules_connect', array(
+			'username' => $username, 'password' => $password, 'host' => $host, 'port' => $port,
+			'auth_type' => $auth_type, 'usetls' => $usetls, 'ruleset' => $ruleset, 'dir' => $dir,
+			'elsif' => $elsif, 'auth_cid' => $auth_cid, 'auth_pw' => $auth_pw));
+
+		$username = $data['username'];
+		$password = $data['password'];
+		$host = $data['host'];
+		$port = $data['port'];
+		$auth_type = $data['auth_type'];
+		$usetls = $data['usetls'];
+		$ruleset = $data['ruleset'];
+		$dir = $data['dir'];
+		$elsif = $data['elsif'];
+		$auth_cid = $data['auth_cid'];
+		$auth_pw = $data['auth_pw'];
+
 		if (PEAR::isError($this->sieve->connect($host, $port, NULL, $usetls)))
 			return $this->_set_error(SIEVE_ERROR_CONNECTION);
 
