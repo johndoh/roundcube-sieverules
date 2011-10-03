@@ -541,6 +541,8 @@ if (window.rcmail) {
 			if (rcube_find_object('actions-table').tBodies[0].rows.length > 2)
 				rcmail.enable_command('plugin.sieverules.del_action', true);
 
+			rcmail.enable_command('toggle-editor', true);
+
 			// enable sig button
 			var acts = document.getElementsByName('_act[]');
 			for (var i = 1; i < acts.length; i++) {
@@ -1190,6 +1192,13 @@ rcmail.sieverules_toggle_vac_to = function(sel, id) {
 rcmail.sieverules_toggle_vac_osubj = function(sel, id) {
 	var obj = rcube_find_object('rcmfd_sievevactoh_' + id);
 	obj.value = sel.checked ? sel.value : "";
+}
+
+rcmail.sieverules_toggle_vac_html = function(obj, rowid, txtid) {
+	rcmail_toggle_editor(obj, txtid);
+
+	var sel = rcube_find_object('rcmfd_sievevachtmlhd_' + rowid);
+	sel.value = obj.checked ? obj.value : "";
 }
 
 rcmail.sieverules_notify_impt = function(sel, id) {

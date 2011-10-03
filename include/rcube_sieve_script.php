@@ -440,10 +440,39 @@ class rcube_sieve_script
 							if (!empty($action['handle'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":handle \"". $this->_escape_string($action['handle']) ."\"" . RCUBE_SIEVE_NEWLINE;
 							if (!empty($action['from'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":from \"". $this->_escape_string($action['from']) ."\"" . RCUBE_SIEVE_NEWLINE;
 
-							if ($action['charset'] != "UTF-8")
-								$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":mime text:". RCUBE_SIEVE_NEWLINE ."Content-Type: text/plain; charset=". $action['charset'] . RCUBE_SIEVE_NEWLINE . RCUBE_SIEVE_NEWLINE . $action['msg'] . RCUBE_SIEVE_NEWLINE . "." . RCUBE_SIEVE_NEWLINE . ";" . RCUBE_SIEVE_NEWLINE;
-							elseif (strpos($action['msg'], "\n")!==false)
+							if ($action['htmlmsg']) {
+								$MAIL_MIME = new Mail_mime("\r\n");
 
+								$action['msg'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">' .
+									"\r\n<html><body>\r\n" . $action['msg'] . "\r\n</body></html>\r\n";
+
+								$MAIL_MIME->setHTMLBody($action['msg']);
+
+								// add a plain text version of the e-mail as an alternative part.
+								$h2t = new html2text($action['msg'], false, true, 0);
+								$plainTextPart = $h2t->get_text();
+								if (!$plainTextPart) {
+									// empty message body breaks attachment handling in drafts
+									$plainTextPart = "\r\n";
+								}
+								else {
+									// make sure all line endings are CRLF (#1486712)
+									$plainTextPart = preg_replace('/\r?\n/', "\r\n", $plainTextPart);
+								}
+
+								$MAIL_MIME->setTXTBody($plainTextPart);
+
+								$MAIL_MIME->setParam('html_charset', $action['charset']);
+								$MAIL_MIME->setParam('text_charset', $action['charset']);
+
+								$action['msg'] = $MAIL_MIME->getMessage();
+							}
+
+							if ($action['htmlmsg'])
+								$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":mime text:". RCUBE_SIEVE_NEWLINE . $action['msg'] . RCUBE_SIEVE_NEWLINE . "." . RCUBE_SIEVE_NEWLINE . ";" . RCUBE_SIEVE_NEWLINE;
+							elseif ($action['charset'] != "UTF-8")
+								$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":mime text:". RCUBE_SIEVE_NEWLINE ."Content-Type: text/plain; charset=". $action['charset'] . RCUBE_SIEVE_NEWLINE . RCUBE_SIEVE_NEWLINE . $action['msg'] . RCUBE_SIEVE_NEWLINE . "." . RCUBE_SIEVE_NEWLINE . ";" . RCUBE_SIEVE_NEWLINE;
+							elseif (strpos($action['msg'], "\n") !== false)
 								$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . "text:" . RCUBE_SIEVE_NEWLINE . $action['msg'] . RCUBE_SIEVE_NEWLINE . "." . RCUBE_SIEVE_NEWLINE . ";" . RCUBE_SIEVE_NEWLINE;
 							else
 								$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . "\"" . $this->_escape_string($action['msg']) . "\";" . RCUBE_SIEVE_NEWLINE;
@@ -627,6 +656,19 @@ class rcube_sieve_script
 
 //					if (function_exists("mb_decode_mimeheader")) $matches[5] = mb_decode_mimeheader($matches[5]);
 
+					if (strpos($matches[10], 'Content-Type: multipart/alternative') !== false) {
+						$htmlmsg = true;
+
+						preg_match('/Content-Type: text\/html; charset=([^\r\n]+).*<body>(.+)<\/body>/sm', $matches[10], $htmlparts);
+						$msg = quoted_printable_decode($htmlparts[2]);
+						$charset = $htmlparts[1];
+					}
+					else {
+						$htmlmsg = false;
+						$msg = $this->_parse_string($matches[10]);
+						$charset = $this->_parse_charset($matches[10]);
+					}
+
 					$result[] = array('type' => 'vacation',
 									'days' => $matches[1],
 									'subject' => $this->_parse_string($matches[5]),
@@ -634,8 +676,9 @@ class rcube_sieve_script
 									'from' => $this->_parse_string($matches[9]),
 									'addresses' => $this->_parse_string(str_replace("\",\"", ",", $matches[3])),
 									'handle' => $this->_parse_string($matches[7]),
-									'msg' => $this->_parse_string($matches[10]),
-									'charset' => $this->_parse_charset($matches[10]));
+									'msg' => $msg,
+									'htmlmsg' => $htmlmsg,
+									'charset' => $charset);
 				}
 				elseif (preg_match('/^notify\s+:method\s+(".*?[^"\\\]")\s+(:options\s+\[(.*?[^\\\])\]\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:importance\s+(".*?[^"\\\]")\s+)?:message\s+(".*?[^"\\\]");$/sm', $content, $matches)) {
 					$result[] = array('type' => 'notify',

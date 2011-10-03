@@ -5,7 +5,7 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.14
+ * @version 1.15
  * @requires jQueryUI plugin
  * @author Philip Weir
  * Based on the Managesieve plugin by Aleksander Machniak
@@ -158,6 +158,14 @@ class sieverules extends rcube_plugin
 			$this->api->output->send('sieverules.editsieverule');
 		}
 		elseif ($this->action == 'plugin.sieverules.edit') {
+			rcube_html_editor('sieverules');
+			$this->api->output->add_script(sprintf("window.rcmail_editor_settings = %s",
+				json_encode(array(
+				'plugins' => 'paste,tabfocus',
+				'theme_advanced_buttons1' => 'bold,italic,underline,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,separator,outdent,indent,charmap,hr',
+				'theme_advanced_buttons2' => 'link,unlink,code,forecolor,fontselect,fontsizeselect',
+			))), 'head');
+
 			$this->api->output->set_pagetitle($this->gettext('edititem'));
 			$this->api->output->send('sieverules.editsieverule');
 		}
@@ -509,7 +517,7 @@ class sieverules extends rcube_plugin
 			'sieverules.vacdayswrongformat', 'sieverules.vacnomsg', 'sieverules.notifynomethod', 'sieverules.missingfoldername',
 			'sieverules.notifynomsg', 'sieverules.filterdeleteconfirm', 'sieverules.ruledeleteconfirm',
 			'sieverules.actiondeleteconfirm', 'sieverules.notifyinvalidmethod', 'sieverules.nobodycontentpart',
-			'sieverules.badoperator','sieverules.baddateformat','sieverules.badtimeformat','sieverules.vactoexp_err');
+			'sieverules.badoperator','sieverules.baddateformat','sieverules.badtimeformat','sieverules.vactoexp_err','editorwarning');
 
 		$ext = $this->sieve->get_extensions();
 		$iid = get_input_value('_iid', RCUBE_INPUT_GPC);
@@ -715,6 +723,7 @@ class sieverules extends rcube_plugin
 			$subjects = $_POST['_subject'];
 			$origsubjects = $_POST['_orig_subject'];
 			$msgs = $_POST['_msg'];
+			$htmlmsgs = $_POST['_htmlmsg'];
 			$charsets = $_POST['_charset'];
 			$flags = $_POST['_imapflags'];
 			$nfroms = $_POST['_nfrom'];
@@ -869,7 +878,8 @@ class sieverules extends rcube_plugin
 						$handle = $this->_strip_val($handles[$idx]);
 						$subject = $this->_strip_val($subjects[$idx]);
 						$origsubject = $this->_strip_val($origsubjects[$idx]);
-						$msg = $this->_strip_val($msgs[$idx]);
+						$htmlmsg = $this->_strip_val($htmlmsgs[$idx]);
+						$msg = ($htmlmsg == "1") ? $msgs[$idx] : $this->_strip_val($msgs[$idx]);
 						$charset = $this->_strip_val($charsets[$idx]);
 						$script['actions'][$i]['days'] = $day;
 						$script['actions'][$i]['subject'] = $subject;
@@ -878,6 +888,7 @@ class sieverules extends rcube_plugin
 						$script['actions'][$i]['addresses'] = $to;
 						$script['actions'][$i]['handle'] = $handle;
 						$script['actions'][$i]['msg'] = $msg;
+						$script['actions'][$i]['htmlmsg'] = ($htmlmsg == "1") ? true : false;
 						$script['actions'][$i]['charset'] = $charset;
 						break;
 					case 'imapflags':
@@ -1764,7 +1775,8 @@ class sieverules extends rcube_plugin
 			$handle = htmlspecialchars($action['handle']);
 			$subject = htmlspecialchars($action['subject']);
 			$origsubject = $action['origsubject'];
-			$msg = htmlspecialchars($action['msg']);
+			$msg = $action['msg'];
+			$htmlmsg = $action['htmlmsg'] ? '1' : '';
 			$charset = $action['charset'];
 			if (!$example)
 				$this->force_vacto = false;
@@ -1923,9 +1935,11 @@ class sieverules extends rcube_plugin
 		}
 
 		$field_id = 'rcmfd_sievevacmag_'. $rowid;
-		$input_msg = new html_textarea(array('id' => $field_id, 'name' => '_msg[]', 'rows' => '5', 'cols' => '40'));
+		$input_msg = new html_textarea(array('id' => $field_id, 'name' => '_msg[]', 'rows' => '8', 'cols' => '40', 'class' => $htmlmsg == 1 ? 'mce_editor' : ''));
+		$input_html = new html_checkbox(array('onclick' => JS_OBJECT_NAME . '.sieverules_toggle_vac_html(this, '. $rowid .', \'' . $field_id .'\');', 'value' => '1', 'class' => 'checkbox'));
+		$input_htmlhd = new html_hiddenfield(array('id' => 'rcmfd_sievevachtmlhd_'. $rowid, 'name' => '_htmlmsg[]', 'value' => $htmlmsg));
 		$vacs_table->add('msg', html::label($field_id, Q($this->gettext('message'))));
-		$vacs_table->add(array('colspan' => 2), $input_msg->show($msg));
+		$vacs_table->add(array('colspan' => 2), $input_msg->show($msg) . html::tag('div', null, $input_html->show($htmlmsg) . "&nbsp;" . html::label('rcmfd_sievevachtml_' . $rowid, Q($this->gettext('htmlmessage'))) . $input_htmlhd->show()));
 		$vacs_table->add_row();
 
 		$field_id = 'rcmfd_sievecharset_'. $rowid;

@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2011 10 03
+==========
+ * Add HTML editor option for vacation messages
+
 2011 09 24
 ==========
  * Add plugin hook sieverules_connect
