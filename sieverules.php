@@ -774,9 +774,10 @@ class sieverules extends rcube_plugin
 						$script['tests'][$i]['target'] = $target.$sizeunit;
 						break;
 					case 'spamtest':
+					case 'virustest':
 						$spamtestop = $this->_strip_val($spamtestops[$idx]);
 
-						$script['tests'][$i]['type'] = 'spamtest';
+						$script['tests'][$i]['type'] = $type;
 						$script['tests'][$i]['operator'] = $spamtestop;
 						$script['tests'][$i]['target'] = $target;
 						break;
@@ -1287,6 +1288,7 @@ class sieverules extends rcube_plugin
 		$datepart_style = 'display: none;';
 		$advcontentpart_style = 'display: none;';
 		$spam_prob_style = 'display: none;';
+		$virus_prob_style = 'display: none;';
 		$weekdays_style = 'display: none;';
 		$advweekdays_style = 'display: none;';
 		$advtarget_style = '';
@@ -1330,6 +1332,11 @@ class sieverules extends rcube_plugin
 			}
 			elseif ($rule['type'] == 'spamtest') {
 				$header = 'spamtest';
+				$spamtestop = $rule['operator'];
+				$target = $rule['target'];
+			}
+			elseif ($rule['type'] == 'virustest') {
+				$header = 'virustest';
 				$spamtestop = $rule['operator'];
 				$target = $rule['target'];
 			}
@@ -1404,6 +1411,19 @@ class sieverules extends rcube_plugin
 			$target = $rule['target'];
 			$spam_probability = $rule['target'];
 		}
+		elseif (isset($rule['type']) && $rule['type'] == 'virustest') {
+			$op_style = 'display: none;';
+			$target_style = 'display: none;';
+			$spamtestop_style = '';
+			$virus_prob_style = '';
+
+			$test = $rule['type'];
+			$selheader = 'virustest::virustest';
+			$header = 'virustest';
+			$spamtestop = $rule['operator'];
+			$target = $rule['target'];
+			$virus_probability = $rule['target'];
+		}
 		elseif (isset($rule['type']) && $rule['type'] == 'date') {
 			$op_style = 'display: none;';
 			$dateop_style = '';
@@ -1453,6 +1473,9 @@ class sieverules extends rcube_plugin
 
 		if (in_array('spamtest', $ext))
 			$select_header->add(Q($this->gettext('spamtest')), Q('spamtest::spamtest'));
+
+		if (in_array('virustest', $ext))
+			$select_header->add(Q($this->gettext('virustest')), Q('virustest::virustest'));
 
 		foreach($predefined_rules as $idx => $data)
 			$select_header->add(Q($data['name']), Q($data['type'] . '::predefined_' . $idx));
@@ -1515,9 +1538,9 @@ class sieverules extends rcube_plugin
 		$select_units->add(Q($this->gettext('MB')), 'M');
 
 		$select_spam_probability = new html_select(array('name' => "_spam_probability[]", 'style' => $spam_prob_style, 'class' => 'long'));
-		$select_spam_probability->add(Q($this->gettext('spamnotchecked')), '0');
+		$select_spam_probability->add(Q($this->gettext('notchecked')), '0');
 		$select_spam_probability->add(Q("0%"), '1');
-		$select_spam_probability->add(Q("5%"), '2');
+		$select_spam_probability->add(Q("10%"), '2');
 		$select_spam_probability->add(Q("20%"), '3');
 		$select_spam_probability->add(Q("40%"), '4');
 		$select_spam_probability->add(Q("50%"), '5');
@@ -1526,6 +1549,14 @@ class sieverules extends rcube_plugin
 		$select_spam_probability->add(Q("80%"), '8');
 		$select_spam_probability->add(Q("90%"), '9');
 		$select_spam_probability->add(Q("100%"), '10');
+
+		$select_virus_probability = new html_select(array('name' => "_virus_probability[]", 'style' => $virus_prob_style, 'class' => 'long'));
+		$select_virus_probability->add(Q($this->gettext('notchecked')), '0');
+		$select_virus_probability->add(Q($this->gettext('novirus')), '1');
+		$select_virus_probability->add(Q($this->gettext('virusremoved')), '2');
+		$select_virus_probability->add(Q($this->gettext('viruscured')), '3');
+		$select_virus_probability->add(Q($this->gettext('possiblevirus')), '4');
+		$select_virus_probability->add(Q($this->gettext('definitevirus')), '5');
 
 		$select_weekdays = new html_select(array('name' => "_weekday[]", 'style' => $weekdays_style, 'class' => 'long'));
 		$select_weekdays->add(Q($this->gettext('sunday')), '0');
@@ -1536,7 +1567,7 @@ class sieverules extends rcube_plugin
 		$select_weekdays->add(Q($this->gettext('friday')), '5');
 		$select_weekdays->add(Q($this->gettext('saturday')), '6');
 
-		$rules_table->add('target', $select_weekdays->show($target) . $select_spam_probability->show($spam_probability) . $input_target->show($target) . "&nbsp;" . $select_units->show($units));
+		$rules_table->add('target', $select_weekdays->show($target) . $select_spam_probability->show($spam_probability) . $select_virus_probability->show($virus_probability) . $input_target->show($target) . "&nbsp;" . $select_units->show($units));
 
 		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_rule', 'type' => 'link', 'class' => 'add', 'title' => 'sieverules.addsieverule', 'content' => ' '));
 		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_rule', 'type' => 'link', 'class' => 'delete', 'classact' => 'delete_act', 'title' => 'sieverules.deletesieverule', 'content' => ' '));

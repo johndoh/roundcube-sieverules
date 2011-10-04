@@ -371,6 +371,10 @@ if (window.rcmail) {
 						targets[i].value = document.getElementsByName('_spam_probability[]')[i].value;
 					}
 
+					if (headers[i].value == 'virustest') {
+						targets[i].value = document.getElementsByName('_virus_probability[]')[i].value;
+					}
+
 					if (headers[i].value == 'body' && (advops[i].value.indexOf('user') > -1 || advops[i].value.indexOf('detail') > -1 || advops[i].value.indexOf('domain') > -1)) {
 						alert(rcmail.gettext('badoperator','sieverules'));
 						advops[i].focus();
@@ -904,6 +908,7 @@ rcmail.sieverules_header_select = function(sel) {
 		document.getElementsByName('_date_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_spamtest_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_spam_probability[]')[idx].style.display = 'none';
+		document.getElementsByName('_virus_probability[]')[idx].style.display = 'none';
 		document.getElementsByName('_size_operator[]')[idx].style.display = '';
 		document.getElementsByName('_target[]')[idx].style.display = '';
 		document.getElementsByName('_target[]')[idx].className = 'short';
@@ -917,6 +922,20 @@ rcmail.sieverules_header_select = function(sel) {
 		document.getElementsByName('_date_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_spamtest_operator[]')[idx].style.display = '';
 		document.getElementsByName('_spam_probability[]')[idx].style.display = '';
+		document.getElementsByName('_virus_probability[]')[idx].style.display = 'none';
+		document.getElementsByName('_target[]')[idx].style.display = 'none';
+		document.getElementsByName('_target[]')[idx].value = document.getElementsByName('_spam_probability[]')[idx].value;
+		document.getElementsByName('_units[]')[idx].style.display = 'none';
+	}
+	else if (header == 'virustest') {
+		document.getElementsByName('_header[]')[idx].style.visibility = 'hidden';
+		document.getElementsByName('_headerhlp')[idx].style.visibility = 'hidden';
+		document.getElementsByName('_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_size_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_date_operator[]')[idx].style.display = 'none';
+		document.getElementsByName('_spamtest_operator[]')[idx].style.display = '';
+		document.getElementsByName('_spam_probability[]')[idx].style.display = 'none';
+		document.getElementsByName('_virus_probability[]')[idx].style.display = '';
 		document.getElementsByName('_target[]')[idx].style.display = 'none';
 		document.getElementsByName('_target[]')[idx].value = document.getElementsByName('_spam_probability[]')[idx].value;
 		document.getElementsByName('_units[]')[idx].style.display = 'none';
@@ -929,6 +948,7 @@ rcmail.sieverules_header_select = function(sel) {
 		document.getElementsByName('_date_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_spamtest_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_spam_probability[]')[idx].style.display = 'none';
+		document.getElementsByName('_virus_probability[]')[idx].style.display = 'none';
 		document.getElementsByName('_target[]')[idx].style.display = 'none';
 		document.getElementsByName('_units[]')[idx].style.display = 'none';
 
@@ -947,6 +967,12 @@ rcmail.sieverules_header_select = function(sel) {
 			selIdx = rcmail.sieverules_get_index(document.getElementsByName('_spamtest_operator[]')[idx], rcmail.env.predefined_rules[header.substring(11)][2]);
 			document.getElementsByName('_spamtest_operator[]')[idx].selectedIndex = selIdx;
 			document.getElementsByName('_spam_probability[]')[idx].value = rcmail.env.predefined_rules[header.substring(11)][3];
+		}
+		else if (rcmail.env.predefined_rules[header.substring(11)][0] == 'virustest') {
+			document.getElementsByName('_header[]')[idx].value = 'virustest';
+			selIdx = rcmail.sieverules_get_index(document.getElementsByName('_spamtest_operator[]')[idx], rcmail.env.predefined_rules[header.substring(11)][2]);
+			document.getElementsByName('_spamtest_operator[]')[idx].selectedIndex = selIdx;
+			document.getElementsByName('_virus_probability[]')[idx].value = rcmail.env.predefined_rules[header.substring(11)][3];
 		}
 		else {
 			document.getElementsByName('_header[]')[idx].value = rcmail.env.predefined_rules[header.substring(11)][1];
@@ -970,6 +996,7 @@ rcmail.sieverules_header_select = function(sel) {
 		document.getElementsByName('_size_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_spamtest_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_spam_probability[]')[idx].style.display = 'none';
+		document.getElementsByName('_virus_probability[]')[idx].style.display = 'none';
 		document.getElementsByName('_date_operator[]')[idx].style.display = 'none';
 		document.getElementsByName('_target[]')[idx].style.display = '';
 		document.getElementsByName('_units[]')[idx].style.display = 'none';

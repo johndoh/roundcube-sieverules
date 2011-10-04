@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2011 10 04
+==========
+ * Add support for virustest extension
+
 2011 10 03
 ==========
  * Add HTML editor option for vacation messages

@@ -17,7 +17,7 @@
  |   * Added support for notify action                                   |
  |   * Added support for stop action                                     |
  |   * Added support for body and copy                                   |
- |   * Added support for spamtest (Vladislav Bogdanov)                   |
+ |   * Added support for spamtest and virustest                          |
  |   * Added support for date                                            |
  +-----------------------------------------------------------------------+
 */
@@ -49,6 +49,7 @@ class rcube_sieve_script
 						'notify',
 						'enotify',
 						'spamtest',
+						'virustest',
 						'date',
 						);
 	public $raw = '';
@@ -195,12 +196,13 @@ class rcube_sieve_script
 							$tests[$i] .= ($test['not'] ? 'not ' : '');
 							$tests[$i] .= 'size :' . ($test['operator']=='under' ? 'under ' : 'over ') . $test['target'];
 							break;
+						case 'virustest':
 						case 'spamtest':
-							array_push($exts, 'spamtest');
+							array_push($exts, $test['type']);
 							array_push($exts, 'relational');
 							array_push($exts, 'comparator-i;ascii-numeric');
 							$tests[$i] .= ($test['not'] ? 'not ' : '');
-							$tests[$i] .= 'spamtest :value ' . ($test['operator'] == 'eq' ? '"eq" ' :
+							$tests[$i] .= $test['type'] . ' :value ' . ($test['operator'] == 'eq' ? '"eq" ' :
 									($test['operator'] == 'le' ? '"le" ' : '"ge" ')) .
 									':comparator "i;ascii-numeric" "' . $test['target'] .'"';
 							break;
@@ -575,7 +577,7 @@ class rcube_sieve_script
 	{
 		$result = NULL;
 
-		if (preg_match('/^(if|elsif|else)\s+((true|not\s+true|allof|anyof|exists|header|not|size|envelope|address|spamtest|date|currentdate)\s+(.*))\s+\{(.*)\}$/sm', trim($content), $matches)) {
+		if (preg_match('/^(if|elsif|else)\s+((true|not\s+true|allof|anyof|exists|header|not|size|envelope|address|spamtest|virustest|date|currentdate)\s+(.*))\s+\{(.*)\}$/sm', trim($content), $matches)) {
 			list($tests, $join) = $this->_parse_tests(trim($matches[2]));
 			$actions = $this->_parse_actions(trim($matches[5]));
 
@@ -720,7 +722,7 @@ class rcube_sieve_script
 		$patterns[] = '(not\s+)?(exists)\s+(".*?[^\\\]")';
 		$patterns[] = '(not\s+)?(true)';
 		$patterns[] = '(not\s+)?(size)\s+:(under|over)\s+([0-9]+[KGM]{0,1})';
-		$patterns[] = '(not\s+)?(spamtest)\s+:value\s+"(eq|ge|le)"\s+:comparator\s+"i;ascii-numeric"\s+"(.*?[^\\\])"';
+		$patterns[] = '(not\s+)?(spamtest|virustest)\s+:value\s+"(eq|ge|le)"\s+:comparator\s+"i;ascii-numeric"\s+"(.*?[^\\\])"';
 		$patterns[] = '(not\s+)?(header|address|envelope)\s+:(contains|is|matches|regex|user|detail|domain)((\s+))\[(.*?[^\\\]")\]\s+\[(.*?[^\\\]")\]';
 		$patterns[] = '(not\s+)?(header|address|envelope)\s+:(contains|is|matches|regex|user|detail|domain)((\s+))(".*?[^\\\]")\s+(".*?[^\\\]")';
 		$patterns[] = '(not\s+)?(header|address|envelope)\s+:(contains|is|matches|regex|user|detail|domain)((\s+))\[(.*?[^\\\]")\]\s+(".*?[^\\\]")';
@@ -752,9 +754,9 @@ class rcube_sieve_script
 									'target'	=> $match[$size-1], // value
 								);
 				}
-				elseif (preg_match('/^(not\s+)?spamtest/', $match[0])) {
+				elseif (preg_match('/^(not\s+)?(spamtest|virustest)/', $match[0])) {
 					$result[] = array(
-									'type'		=> 'spamtest',
+									'type'		=> $match[$size-3],
 									'not'		=> $match[$size-4] ? true : false,
 									'operator'	=> $match[$size-2], // ge/le/eq
 									'target'	=> $match[$size-1], // value
