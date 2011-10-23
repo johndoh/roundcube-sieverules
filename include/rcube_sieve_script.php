@@ -316,7 +316,7 @@ class rcube_sieve_script
 									$zone .= str_pad(intval(($server_time / 60) % 60), 2, "0", STR_PAD_LEFT);
 								}
 
-								$tests[$i] .= ' :zone ' . $zone;
+								$tests[$i] .= ' :zone ' . '"' . $zone . '"';
 							}
 
 							$tests[$i] .= ' :' . $test['operator'];
@@ -735,8 +735,8 @@ class rcube_sieve_script
 		$patterns[] = '(not\s+)?(body)(\s+:(raw|text|content\s+".*?[^\\\]"))?\s+:(contains|is|matches|regex)((\s+))(".*?[^\\\]")';
 		$patterns[] = '(not\s+)?(body)(\s+:(raw|text|content\s+".*?[^\\\]"))?\s+:(count\s+".*?[^\\\]"|value\s+".*?[^\\\]")(\s+:comparator\s+"(.*?[^\\\])")?\s+\[(.*?[^\\\]")\]';
 		$patterns[] = '(not\s+)?(body)(\s+:(raw|text|content\s+".*?[^\\\]"))?\s+:(count\s+".*?[^\\\]"|value\s+".*?[^\\\]")(\s+:comparator\s+"(.*?[^\\\])")?\s+(".*?[^\\\]")';
-		$patterns[] = '(not\s+)?(date|currentdate)(\s+:zone\s+([\+\-][0-9]{4}))?\s+:(contains|is|matches|regex)((\s+))(".*?[^\\\]"\s+)?(".*?[^\\\]")\s+(".*?[^\\\]")';
-		$patterns[] = '(not\s+)?(date|currentdate)(\s+:zone\s+([\+\-][0-9]{4}))?\s+:(count\s+".*?[^\\\]"|value\s+".*?[^\\\]")(\s+:comparator\s+"(.*?[^\\\])")?(\s+".*?[^\\\]")?\s+(".*?[^\\\]")\s+(".*?[^\\\]")';
+		$patterns[] = '(not\s+)?(date|currentdate)(\s+:zone\s+"([\+\-][0-9]{4})")?\s+:(contains|is|matches|regex)((\s+))(".*?[^\\\]"\s+)?(".*?[^\\\]")\s+(".*?[^\\\]")';
+		$patterns[] = '(not\s+)?(date|currentdate)(\s+:zone\s+"([\+\-][0-9]{4})")?\s+:(count\s+".*?[^\\\]"|value\s+".*?[^\\\]")(\s+:comparator\s+"(.*?[^\\\])")?(\s+".*?[^\\\]")?\s+(".*?[^\\\]")\s+(".*?[^\\\]")';
 
 		// join patterns...
 		$pattern = '/(' . implode(')|(', $patterns) . ')/';
