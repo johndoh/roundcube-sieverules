@@ -566,7 +566,7 @@ if (window.rcmail) {
 						var target_obj = $("input[name='_target[]']")[i];
 
 						if (obj.value == 'date')
-							$(target_obj).mask('9999-99-99', {example: 'YYYY-MM-DD'});
+							$(target_obj).datepicker({ dateFormat: 'yy-mm-dd' });
 						else if (obj.value == 'time')
 							$(target_obj).mask('99:99:99', {example: 'HH:MM:SS', placeholder: '0'});
 					}
@@ -1027,7 +1027,7 @@ rcmail.sieverules_header_select = function(sel) {
 
 			document.getElementsByName('_datepart[]')[idx].selectedIndex = 0;
 			document.getElementsByName('_body_contentpart[]')[idx].parentNode.parentNode.style.display = 'none';
-			$(target_obj).mask('9999-99-99', {example: 'YYYY-MM-DD'});
+			$(target_obj).datepicker({ dateFormat: 'yy-mm-dd' });
 		}
 		else {
 			document.getElementsByName('_header[]')[idx].style.display = '';
@@ -1072,7 +1072,7 @@ rcmail.sieverules_datepart_select = function(sel) {
 	$(target_obj).unmask();
 
 	if (obj.value == 'date')
-		$(target_obj).mask('9999-99-99', {example: 'YYYY-MM-DD'});
+		$(target_obj).datepicker({ dateFormat: 'yy-mm-dd' });
 	else if (obj.value == 'time')
 		$(target_obj).mask('99:99:99', {example: 'HH:MM:SS', placeholder: '0'});
 
