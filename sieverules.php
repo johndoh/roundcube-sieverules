@@ -54,8 +54,7 @@ class sieverules extends rcube_plugin
 		$this->load_config();
 
 		// load required plugin
-		if ($rcmail->config->get('sieverules_multiplerules'))
-			$this->require_plugin('jqueryui');
+		$this->require_plugin('jqueryui');
 
 		if ($rcmail->config->get('sieverules_multiplerules') && get_input_value('_ruleset', RCUBE_INPUT_GET, true))
 			$this->current_ruleset = get_input_value('_ruleset', RCUBE_INPUT_GET, true);
