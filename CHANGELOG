@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2011 11 13
+==========
+ * Fix escaping if lines starting with . in vacation message
+
 2011 10 04
 ==========
  * Add support for virustest extension

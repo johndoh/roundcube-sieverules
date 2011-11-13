@@ -470,6 +470,9 @@ class rcube_sieve_script
 								$action['msg'] = $MAIL_MIME->getMessage();
 							}
 
+							// escape lines which start is a .
+							$action['msg'] = preg_replace('/(^|\r?\n)\./', "$1..", $action['msg']);
+
 							if ($action['htmlmsg'])
 								$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":mime text:". RCUBE_SIEVE_NEWLINE . $action['msg'] . RCUBE_SIEVE_NEWLINE . "." . RCUBE_SIEVE_NEWLINE . ";" . RCUBE_SIEVE_NEWLINE;
 							elseif ($action['charset'] != "UTF-8")
@@ -670,6 +673,9 @@ class rcube_sieve_script
 						$msg = $this->_parse_string($matches[10]);
 						$charset = $this->_parse_charset($matches[10]);
 					}
+
+					// unescape lines which start is a .
+					$msg = preg_replace('/(^|\r?\n)\.\./', "$1.", $msg);
 
 					$result[] = array('type' => 'vacation',
 									'days' => $matches[1],
