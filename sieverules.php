@@ -5,7 +5,7 @@
  *
  * Plugin to allow the user to manage their Sieve filters using the managesieve protocol
  *
- * @version 1.15
+ * @version @package_version@
  * @requires jQueryUI plugin
  * @author Philip Weir
  * Based on the Managesieve plugin by Aleksander Machniak
