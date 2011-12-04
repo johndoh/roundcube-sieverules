@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2011 12 04
+==========
+ * Use core function to sanitize input
+
 2011 11 13
 ==========
  * Fix escaping if lines starting with . in vacation message
