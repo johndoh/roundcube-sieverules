@@ -65,6 +65,7 @@
 			<file name="localization/sk_SK.inc" role="data"/>
 			<file name="localization/sl_SI.inc" role="data"/>
 			<file name="localization/sv_SE.inc" role="data"/>
+			<file name="localization/zh_TW.inc" role="data"/>
 			<file name="skins/default/help.gif" role="data"/>
 			<file name="skins/default/icons.gif" role="data"/>
 			<file name="skins/default/icons.png" role="data"/>
