@@ -249,7 +249,7 @@ class sieverules extends rcube_plugin
 			$table->add('control', $down_link . $up_link);
 		}
 
-		return html::tag('div', array('id' => 'sieverules-list-filters'), $table->show($attrib));
+		return html::tag('div', array('id' => 'sieverules-list-filters'), $table->show());
 	}
 
 	function gen_js_list()
@@ -279,7 +279,7 @@ class sieverules extends rcube_plugin
 		$this->api->output->send();
 	}
 
-	function gen_examples($attrib)
+	function gen_examples()
 	{
 		if (sizeof($this->examples) > 0) {
 			$this->api->output->add_gui_object('sieverules_examples', 'sieverules-examples');
@@ -292,7 +292,7 @@ class sieverules extends rcube_plugin
 				$examples->add(null, Q($filter['name']));
 			}
 
-			return html::tag('div', array('id' => 'sieverules-list-examples'), $examples->show($attrib));
+			return html::tag('div', array('id' => 'sieverules-list-examples'), $examples->show());
 		}
 		else {
 			return '';
@@ -609,7 +609,7 @@ class sieverules extends rcube_plugin
 		$out .= html::tag('fieldset', null, html::tag('legend', null, Q($this->gettext('messagesrules')))
 				. Q((!$rcmail->config->get('sieverules_use_elsif', true)) ? $this->gettext('sieveruleexp_stop'): $this->gettext('sieveruleexp')) . "<br /><br />"
 				. $join_type . "<br /><br />"
-				. $rules_table->show($attrib));
+				. $rules_table->show());
 
 		$rcmail->imap_connect();
 		$actions_table = new html_table(array('id' => 'actions-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 3));
@@ -624,7 +624,7 @@ class sieverules extends rcube_plugin
 
 		$out .= html::tag('fieldset', null, html::tag('legend', null, Q($this->gettext('messagesactions')))
 				. Q($this->gettext('sieveactexp')). "<br /><br />"
-				. $actions_table->show($attrib));
+				. $actions_table->show());
 
 		$out .= $form_end;
 
