@@ -271,7 +271,8 @@ span.disableLink
   width: 310px;
 }
 
-#actions-table td.folder table.records-table input.checkbox
+#actions-table td.folder table.records-table input.checkbox,
+#actions-table td.folder table.records-table input.radio
 {
   width: auto;
 }
