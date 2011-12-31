@@ -923,10 +923,6 @@ $(document).ready(function() {
 						window.location.href = rcmail.env.comm_path+'&_action=plugin.sieverules.del_ruleset&_ruleset=' + rcmail.env.ruleset + '&_next=' + rcmail.env.ruleset_next;
 				}, false);
 
-				rcmail.register_command('plugin.sieverules.copy_rule', function(props, obj) {
-					parent.rcmail.command('plugin.sieverules.ruleset_dialog', 'copyto_ruleset', obj);
-				}, true);
-
 				rcmail.register_command('plugin.sieverules.sieverules_adveditor', function(props, obj) {
 					var chkbox = document.createElement('checkbox');
 
@@ -1026,6 +1022,10 @@ $(document).ready(function() {
 
 					return false;
 				}, false);
+
+				rcmail.register_command('plugin.sieverules.copy_rule', function(props, obj) {
+					parent.rcmail.command('plugin.sieverules.ruleset_dialog', 'copyto_ruleset', obj);
+				}, true);
 
 				rcmail.register_command('plugin.sieverules.add_action', function(props, obj) {
 					rcmail.enable_command('plugin.sieverules.del_action', true);
