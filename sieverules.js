@@ -793,7 +793,7 @@ $(document).ready(function() {
 	if (window.rcmail) {
 		rcmail.addEventListener('init', function(evt) {
 			if (rcmail.env.action == 'plugin.sieverules.add' || rcmail.env.action == 'plugin.sieverules.edit' || rcmail.env.action == 'plugin.sieverules.setup' || rcmail.env.action == 'plugin.sieverules.advanced')
-				var tab = $('<span>').attr('id', 'settingstabpluginsieverules').addClass('tablink-selected');
+				var tab = $('<span>').attr('id', 'settingstabpluginsieverules').addClass('tablink selected');
 			else
 				var tab = $('<span>').attr('id', 'settingstabpluginsieverules').addClass('tablink');
 
@@ -998,12 +998,8 @@ $(document).ready(function() {
 
 					rcmail.env.sieverules_rules++;
 					var tmp = $(newNode2).html().replace(/rowid/g, rcmail.env.sieverules_rules);
-					// remove nohtc class (IE6 fix)
-					tmp.replace(/class=["']?nohtc["']? /ig, "");
 					$(newNode2).html(tmp);
 					var tmp = $(newNode3).html().replace(/rowid/g, rcmail.env.sieverules_rules);
-					// remove nohtc class (IE6 fix)
-					tmp.replace(/class=["']?nohtc["']? /ig, "");
 					$(newNode3).html(tmp);
 
 					newNode1.style.display = "";
@@ -1044,8 +1040,6 @@ $(document).ready(function() {
 
 					rcmail.env.sieverules_actions++;
 					var tmp = $(newNode).html().replace(/rowid/g, rcmail.env.sieverules_actions);
-					// remove nohtc class (IE6 fix)
-					tmp.replace(/class=["']?nohtc["']? /ig, "");
 					$(newNode).html(tmp);
 
 					newNode.style.display = "";

@@ -40,11 +40,6 @@ table.records-table td.vacdaysexp
   word-wrap: break-word;
 }
 
-img.nohtc
-{
-  behavior: none;
-}
-
 #sieverules-advancedbox
 {
   height: expression((parseInt(document.documentElement.clientHeight)-177)+'px');

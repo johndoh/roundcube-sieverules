@@ -1266,12 +1266,9 @@ class sieverules extends rcube_plugin
 	private function _rule_row($ext, $rules_table, $rule, $predefined_rules, $attrib)
 	{
 		$rcmail = rcmail::get_instance();
-		$imgclass = null;
 
-		if (!isset($rule)) {
+		if (!isset($rule))
 			$rules_table->set_row_attribs(array('style' => 'display: none;'));
-			$imgclass = 'nohtc';
-		}
 
 		if (in_array('regex', $ext) || in_array('relational', $ext) || in_array('subaddress', $ext))
 			$this->operators['filteradvoptions'] = 'advoptions';
@@ -1487,7 +1484,7 @@ class sieverules extends rcube_plugin
 		$input_test = new html_hiddenfield(array('name' => '_test[]', 'value' => $test));
 		$rules_table->add('selheader', $select_header->show($selheader) . $input_test->show());
 
-		$help_button = html::img(array('class' => $imgclass, 'src' => $attrib['helpicon'], 'alt' => $this->gettext('sieveruleheaders'), 'border' => 0, 'style' => 'margin-left: 4px;'));
+		$help_button = html::img(array('src' => $attrib['helpicon'], 'alt' => $this->gettext('sieveruleheaders'), 'border' => 0, 'style' => 'margin-left: 4px;'));
 		$help_button = html::a(array('name' => '_headerhlp', 'href' => "#", 'onclick' => 'return '. JS_OBJECT_NAME .'.sieverules_xheaders(this);', 'title' => $this->gettext('sieveruleheaders'), 'style' => $header_style), $help_button);
 
 		$input_header = new html_inputfield(array('name' => '_header[]', 'style' => $header_style, 'class' => 'short'));
@@ -1616,7 +1613,7 @@ class sieverules extends rcube_plugin
 		$advanced_table->add(array('colspan' => 2, 'style' => 'white-space: normal;'), Q($this->gettext('advancedoptions')));
 		$advanced_table->add_row();
 
-		$help_button = html::img(array('class' => $imgclass, 'src' => $attrib['helpicon'], 'alt' => $this->gettext('contentpart'), 'border' => 0, 'style' => 'margin-left: 4px;'));
+		$help_button = html::img(array('src' => $attrib['helpicon'], 'alt' => $this->gettext('contentpart'), 'border' => 0, 'style' => 'margin-left: 4px;'));
 		$help_button = html::a(array('href' => "#", 'onclick' => 'return '. JS_OBJECT_NAME .'.sieverules_help(this, ' . $advanced_table->size() . ');', 'title' => $this->gettext('contentpart')), $help_button);
 
 		$field_id = 'rcmfd_advcontentpart_'. $rowid;
@@ -1707,12 +1704,9 @@ class sieverules extends rcube_plugin
 	{
 		$rcmail = rcmail::get_instance();
 		static $a_mailboxes;
-		$imgclass = null;
 
-		if (!isset($action)) {
+		if (!isset($action))
 			$actions_table->set_row_attribs(array('style' => 'display: none;'));
-			$imgclass = 'nohtc';
-		}
 
 		$help_icon = html::img(array('src' => $attrib['helpicon'], 'alt' => $this->gettext('messagehelp'), 'border' => 0));
 
