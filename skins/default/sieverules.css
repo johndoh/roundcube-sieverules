@@ -326,12 +326,12 @@ table.records-table td.vacdaysexp
   height: 100%;
 }
 
-.droptarget
+.records-table tbody tr.droptarget td
 {
   border-top: 2px solid #000000;
 }
 
-.droptargetend
+.records-table tbody tr.droptargetend td
 {
   border-bottom: 2px solid #000000;
 }

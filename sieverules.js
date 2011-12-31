@@ -54,12 +54,11 @@ rcube_webmail.prototype.sieverules_mouse_up = function(e) {
 
 		if (rcmail.env.sieverules_last_target == 'end') {
 			var _dst = rcmail.sieverules_list.rows.length;
-			$(rcmail.gui_objects.sieverules_list).removeClass('droptargetend');
+			$(rcmail.gui_objects.sieverules_list).children('tbody').children('tr:last').removeClass('droptargetend');
 		}
 		else {
 			var _dst = rcmail.env.sieverules_last_target.substr(6);
-			$('#' + rcmail.env.sieverules_last_target + ' td:eq(0)').removeClass('droptarget');
-			$('#' + rcmail.env.sieverules_last_target + ' td:eq(1)').removeClass('droptarget');
+			$('#' + rcmail.env.sieverules_last_target).removeClass('droptarget');
 		}
 
 		rcmail.command('plugin.sieverules.move', { source:_src, dest:_dst });
@@ -111,11 +110,11 @@ rcube_webmail.prototype.sieverules_drag_move = function(e) {
 
 		// if mouse pointer is outside of folderlist
 		if (mouse.x < pos.x1 || mouse.x >= pos.x2 || mouse.y < pos.y1 || mouse.y >= pos.y2) {
-			$(rcmail.gui_objects.sieverules_list).removeClass('droptargetend');
+			$(rcmail.gui_objects.sieverules_list).children('tbody').children('tr:last').removeClass('droptargetend');
 			rcmail.env.sieverules_last_target = null;
 		}
 		else {
-			$(rcmail.gui_objects.sieverules_list).addClass('droptargetend');
+			$(rcmail.gui_objects.sieverules_list).children('tbody').children('tr:last').addClass('droptargetend');
 			rcmail.env.sieverules_last_target = 'end';
 		}
 
@@ -123,15 +122,13 @@ rcube_webmail.prototype.sieverules_drag_move = function(e) {
 		for (var k in rcmail.env.sieverules_coords) {
 			pos = rcmail.env.sieverules_coords[k];
 			if (mouse.x >= pos.x1 && mouse.x < pos.x2 && mouse.y >= pos.y1 && mouse.y < pos.y2) {
-				$(rcmail.gui_objects.sieverules_list).removeClass('droptargetend');
-				$('#' + k + ' td:eq(0)').addClass('droptarget');
-				$('#' + k + ' td:eq(1)').addClass('droptarget');
+				$(rcmail.gui_objects.sieverules_list).children('tbody').children('tr:last').removeClass('droptargetend');
+				$('#' + k).addClass('droptarget');
 				rcmail.env.sieverules_last_target = k;
 				rcmail.env.sieverules_coords[k].on = 1;
 			}
 			else if (pos.on) {
-				$('#' + k + ' td:eq(0)').removeClass('droptarget');
-				$('#' + k + ' td:eq(1)').removeClass('droptarget');
+				$('#' + k).removeClass('droptarget');
 				rcmail.env.sieverules_last_target = null;
 				rcmail.env.sieverules_coords[k].on = 0;
 			}
@@ -148,13 +145,12 @@ rcube_webmail.prototype.sieverules_drag_end = function(e) {
 	if (rcmail.gui_objects.sieverules_list && rcmail.env.sieverules_coords) {
 		for (var k in rcmail.env.sieverules_coords) {
 			if (rcmail.env.sieverules_coords[k].on) {
-				$('#' + k + ' td:eq(0)').removeClass('droptarget');
-				$('#' + k + ' td:eq(1)').removeClass('droptarget');
+				$('#' + k).removeClass('droptarget');
 			}
 		}
 	}
 
-	$(rcmail.gui_objects.sieverules_list).removeClass('droptargetend');
+	$(rcmail.gui_objects.sieverules_list).children('tbody').children('tr:last').removeClass('droptargetend');
 };
 
 rcube_webmail.prototype.sieverules_load = function(id, action) {
