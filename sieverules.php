@@ -621,6 +621,7 @@ class sieverules extends rcube_plugin
 			$actions_table = $this->_action_row($ext, $actions_table, $idx, $actions, $attrib, $example);
 
 		$this->api->output->set_env('sieverules_actions', $actions_table->size());
+		$this->api->output->set_env('sieverules_htmleditor', $rcmail->config->get('htmleditor'));
 
 		$out .= html::tag('fieldset', null, html::tag('legend', null, Q($this->gettext('messagesactions')))
 				. Q($this->gettext('sieveactexp')). "<br /><br />"
@@ -1802,6 +1803,18 @@ class sieverules extends rcube_plugin
 			$msg = $action['msg'];
 			$htmlmsg = $action['htmlmsg'] ? '1' : '';
 			$charset = $action['charset'];
+
+			if ($htmlmsg == '1' && $rcmail->config->get('htmleditor') == '0') {
+				$h2t = new html2text($msg, false, true, 0);
+				$msg = $h2t->get_text();
+				$htmlmsg = '';
+			}
+			elseif ($htmlmsg == '' && $rcmail->config->get('htmleditor') == '1') {
+				$msg = htmlspecialchars($msg);
+				$msg = nl2br($msg);
+				$htmlmsg = '1';
+			}
+
 			if (!$example)
 				$this->force_vacto = false;
 
@@ -1960,10 +1973,10 @@ class sieverules extends rcube_plugin
 
 		$field_id = 'rcmfd_sievevacmag_'. $rowid;
 		$input_msg = new html_textarea(array('id' => $field_id, 'name' => '_msg[]', 'rows' => '8', 'cols' => '40', 'class' => $htmlmsg == 1 ? 'mce_editor' : ''));
-		$input_html = new html_checkbox(array('onclick' => JS_OBJECT_NAME . '.sieverules_toggle_vac_html(this, '. $rowid .', \'' . $field_id .'\');', 'value' => '1', 'class' => 'checkbox'));
+		$input_html = new html_checkbox(array('id' => 'rcmfd_sievevachtmlcb_'. $rowid, 'onclick' => JS_OBJECT_NAME . '.sieverules_toggle_vac_html(this, '. $rowid .', \'' . $field_id .'\');', 'value' => '1', 'class' => 'checkbox'));
 		$input_htmlhd = new html_hiddenfield(array('id' => 'rcmfd_sievevachtmlhd_'. $rowid, 'name' => '_htmlmsg[]', 'value' => $htmlmsg));
 		$vacs_table->add('msg', html::label($field_id, Q($this->gettext('message'))));
-		$vacs_table->add(array('colspan' => 2), $input_msg->show($msg) . html::tag('div', null, $input_html->show($htmlmsg) . "&nbsp;" . html::label('rcmfd_sievevachtml_' . $rowid, Q($this->gettext('htmlmessage'))) . $input_htmlhd->show()));
+		$vacs_table->add(array('colspan' => 2), $input_msg->show($msg) . html::tag('div', in_array('htmleditor', $rcmail->config->get('dont_override')) ? array('style' => 'display: none;') : null, $input_html->show($htmlmsg) . "&nbsp;" . html::label('rcmfd_sievevachtml_' . $rowid, Q($this->gettext('htmlmessage')))) . $input_htmlhd->show());
 		$vacs_table->add_row();
 
 		$field_id = 'rcmfd_sievecharset_'. $rowid;

@@ -576,6 +576,13 @@ rcube_webmail.prototype.sieverules_action_select = function(sel) {
 		document.getElementsByName('_reject[]')[idx].style.display = '';
 	else if (obj.value == 'vacation') {
 		document.getElementsByName('_day[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
+
+		if (rcmail.env.sieverules_htmleditor == 1) {
+			rowid = document.getElementsByName('_msg[]')[idx].id.replace('rcmfd_sievevacmag_', '');
+			document.getElementById('rcmfd_sievevachtmlcb_' + rowid).checked = true;
+			rcmail.sieverules_toggle_vac_html(document.getElementById('rcmfd_sievevachtmlcb_' + rowid), rowid, 'rcmfd_sievevacmag_' + rowid);
+		}
+
 		rcmail.enable_sig(document.getElementsByName('_vacfrom[]')[idx]);
 	}
 	else if (obj.value == 'notify' || obj.value == 'enotify')
