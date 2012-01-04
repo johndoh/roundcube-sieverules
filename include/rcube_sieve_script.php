@@ -293,30 +293,9 @@ class rcube_sieve_script
 
 							$timezone = rcmail::get_instance()->config->get('timezone', 'auto');
 							if ($timezone != 'auto') {
-								$server_time = gmdate('U');
-								$user_time = format_date(time(), 'U');
-
-								if ($server_time == $user_time) {
-									$zone = '+0000';
-								}
-								else if ($user_time > $server_time) {
-									$user_time -= $server_time;
-
-									// hours
-									$zone = '+' . str_pad(intval(intval($user_time) / 3600), 2, "0", STR_PAD_LEFT);
-									// minutes
-									$zone .= str_pad(intval(($user_time / 60) % 60), 2, "0", STR_PAD_LEFT);
-								}
-								else {
-									$server_time -= $user_time;
-
-									// hours
-									$zone = '-' . str_pad(intval(intval($server_time) / 3600), 2, "0", STR_PAD_LEFT);
-									// minutes
-									$zone .= str_pad(intval(($server_time / 60) % 60), 2, "0", STR_PAD_LEFT);
-								}
-
-								$tests[$i] .= ' :zone ' . '"' . $zone . '"';
+								$tz = new DateTimeZone($timezone);
+								$date = new DateTime('now', $tz);
+								$tests[$i] .= ' :zone ' . '"' . $date->format('O') . '"';
 							}
 
 							$tests[$i] .= ' :' . $test['operator'];
