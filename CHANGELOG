@@ -1,6 +1,18 @@
 Roundcube Webmail SieveRules
 ============================
 
+2012 01 04
+==========
+ * Update code to use new timezone format (r5707)
+
+2012 01 02
+==========
+ * Respect settings for html editor from core
+
+2011 12 31
+==========
+ * Fix display for radio and checkboxes in notify action
+
 2011 12 04
 ==========
  * Use core function to sanitize input
