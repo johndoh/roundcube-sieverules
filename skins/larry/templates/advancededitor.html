@@ -1,0 +1,60 @@
+<roundcube:object name="doctype" value="html5" />
+<html>
+<head>
+<title><roundcube:object name="pagetitle" /></title>
+<roundcube:include file="/includes/links.html" />
+<link rel="stylesheet" type="text/css" href="/this/sieverules.css" />
+<roundcube:if condition="browser:ie" />
+<link rel="stylesheet" type="text/css" href="/this/iehacks.css" />
+<roundcube:endif />
+<roundcube:if condition="browser:safari" />
+<link rel="stylesheet" type="text/css" href="/this/safari.css" />
+<roundcube:endif />
+</head>
+<body>
+
+<roundcube:include file="/includes/header.html" />
+
+<div id="mainscreen" class="offset">
+
+<roundcube:include file="/includes/settingstabs.html" />
+
+<div id="sieverules-advanced" class="uibox contentbox">
+
+<h1 class="boxtitle"><roundcube:object name="steptitle" /></h1>
+
+<div id="sieverules-advancedbox" class="boxcontent">
+<roundcube:object name="advancededitor" class="propform" />
+</div>
+
+<div id="sieverules-advbuttons">
+<div class="footerleft formbuttons">
+<roundcube:button command="plugin.sieverules.save" type="input" label="save" class="button mainaction" />
+</div>
+</div>
+
+<div class="boxfooter">
+<roundcube:button name="sieverulesactions" id="sieverulesactionsmenulink" type="link" title="sieverules.moreactions" class="listbutton groupactions"  onclick="UI.show_popup('sieverulesactionsmenu', true, {id: 'sieverulesactionsmenu', obj:$('#sieverulesactionsmenu'), above:1}); return false" innerClass="inner" content="&#9881;" />
+<roundcube:object name="message" id="message" />
+</div>
+</div>
+
+</div>
+
+<roundcube:include file="/includes/footer.html" />
+
+<div id="sieverulesactionsmenu" class="popupmenu">
+<ul class="toolbarmenu">
+<roundcube:if condition="config:sieverules_multiplerules == true" />
+<li class="separator_below"><roundcube:button command="plugin.sieverules.ruleset_dialog" type="link" label="sieverules.newruleset" classAct="active" /></li>
+<roundcube:object name="rulelist" type="link" />
+<li class="separator_above"><roundcube:button command="plugin.sieverules.ruleset_dialog" prop="rename_ruleset" type="link" label="sieverules.renameruleset" classAct="active" /></li>
+<li><roundcube:button command="plugin.sieverules.del_ruleset" type="link" label="sieverules.delruleset" classAct="active" /></li>
+<li><roundcube:button command="plugin.sieverules.activate_ruleset" type="link" label="sieverules.activateruleset" classAct="active" /></li>
+<roundcube:endif />
+<li<roundcube:exp expression="config:sieverules_multiplerules == true ? ' class=separator_above' : ''" />><roundcube:button command="plugin.sieverules.sieverules_adveditor" prop="0" type="link" label="sieverules.stdeditor" classAct="active" /></li>
+</ul>
+</div>
+
+</body>
+</html>

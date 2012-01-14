@@ -1,0 +1,412 @@
+/**
+ * SieveRules plugin styles
+ */
+
+#sieverules-list
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 260px;
+  bottom: 0;
+}
+
+#sieverules-list-filters
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  overflow: auto;
+}
+
+#sieverules-list-examples
+{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  overflow: auto;
+}
+
+#sieverules-details
+{
+  position: absolute;
+  top: 0;
+  left: 270px;
+  right: 0;
+  bottom: 0;
+}
+
+#sieverules-advanced
+{
+  position: absolute;
+  top: 0;
+  left: 232px;
+  right: 0;
+  bottom: 0;
+}
+
+span.disableLink
+{
+  float: right;
+  width: 200px;
+  text-align: right;
+}
+
+#sieverules-table,
+#sieverules-examples
+{
+  width: 100%;
+}
+
+#sieverules-table tbody td
+{
+  cursor: default;
+}
+
+#sieverules-table tbody td.control,
+#rules-table tbody td.control,
+#actions-table tbody td.control
+{
+  text-align: right;
+}
+
+#sieverules-table tbody td.control a,
+#rules-table tbody td.control a,
+#actions-table tbody td.control a
+{
+  display: block;
+  float: right;
+  width: 16px;
+  height: 16px;
+  background-image: url(icons.png);
+}
+
+#sieverules-table tbody td.control a.up_arrow
+{
+  background-position: 0 0;
+}
+
+#sieverules-table tbody td.control a.down_arrow
+{
+  background-position: 0 -18px;
+}
+
+#rules-table tbody td.control,
+#actions-table tbody td.control
+{
+  vertical-align: top;
+}
+
+#rules-table tbody td.control a.add,
+#actions-table tbody td.control  a.add
+{
+  margin-left: 5px;
+  background-position: 0 -78px;
+}
+
+#rules-table tbody td.control a.delete,
+#actions-table tbody td.control  a.delete
+{
+  background-position: 0 -59px;
+}
+
+#rules-table tbody td.control a.delete_act,
+#actions-table tbody td.control  a.delete_act
+{
+  background-position: 0 -39px;
+}
+
+#actions-table tbody a.vacsig
+{
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-image: url(icons.png);
+  background-position: -1px -126px;
+}
+
+#actions-table tbody a.vacsig_act
+{
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-image: url(icons.png);
+  background-position: -1px -102px;
+}
+
+table.records-table
+{
+  width: auto;
+  border: 0;
+}
+
+table.records-table tbody td,
+table.records-table thead td
+{
+  border: 0;
+}
+
+#rules-table,
+#actions-table
+{
+  width: 100%;
+}
+
+#rules-table td table.records-table
+{
+  width: auto;
+}
+
+#rules-table td,
+#actions-table td,
+#rules-table td table.records-table td
+{
+  width: auto;
+}
+
+#rules-table td.selheader,
+#rules-table td.op
+{
+  width: 130px;
+}
+
+#rules-table td.header
+{
+  width: 135px;
+}
+
+#rules-table td.target
+{
+  width: 180px;
+}
+
+#rules-table input
+{
+  width: 150px;
+}
+
+#rules-table input.short
+{
+  width: 100px;
+}
+
+#rules-table select
+{
+  width: 123px;
+}
+
+#rules-table select.short
+{
+  width: 45px;
+}
+
+#rules-table select.long
+{
+  width: 157px;
+}
+
+#rules-table td table.records-table select
+{
+  width: 432px;
+}
+
+#rules-table td table.records-table input
+{
+  width: 426px;
+}
+
+#rules-table td table.records-table input.short
+{
+  width: 406px;
+}
+
+#rules-table td table.records-table input.radio
+{
+  width: auto;
+}
+
+#actions-table td.action
+{
+  width: 165px;
+  vertical-align: top;
+}
+
+#actions-table td.folder
+{
+  width: 420px;
+  vertical-align: top;
+}
+
+#actions-table td.action select
+{
+  width: 160px;
+}
+
+#actions-table td.folder input,
+#actions-table td.folder textarea
+{
+  width: 400px;
+}
+
+#actions-table td.folder select
+{
+  width: 408px;
+}
+
+#actions-table td.folder table.records-table select
+{
+  width: 337px;
+}
+
+#actions-table td.folder table.records-table input,
+#actions-table td.folder table.records-table textarea
+{
+  width: 330px;
+}
+
+#actions-table td.folder table.records-table input.short,
+#actions-table td.folder table.records-table select.short
+{
+  width: 310px;
+}
+
+#actions-table td.folder table.records-table input.checkbox,
+#actions-table td.folder table.records-table input.radio
+{
+  width: auto;
+}
+
+table.records-table td.msg
+{
+  vertical-align: top;
+}
+
+table.records-table td.vacdaysexp
+{
+  width: 398px;
+  white-space: -moz-pre-wrap !important;
+  white-space: pre-wrap !important;
+  white-space: pre;
+}
+
+#advancedmode
+{
+  white-space: nowrap;
+  text-align: right;
+  position: absolute;
+  bottom: 30px;
+  right: 20px;
+  width: 460px;
+}
+
+#sieverules-advancedbox
+{
+  position: absolute;
+  top: 34px;
+  left: 0;
+  bottom: 100px;
+  right: 8px;
+}
+
+#sieverules-advanced textarea
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.listing tbody tr.droptarget td
+{
+  border-top: 2px solid #0e5266;
+  background-color: #D9ECF4;
+}
+
+.listing tbody tr.droptargetend td
+{
+  border-bottom: 2px solid #0e5266;
+  background-color: #D9ECF4;
+}
+
+#sieverulesrsdialog h3
+{
+  color: #333;
+  font-size: medium;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+}
+
+#sieverulesrsdialog table td input
+{
+  width: 20em;
+}
+
+#sieverulesrsdialog .formbuttons
+{
+  margin-top: 1.5em;
+  text-align: center;
+}
+
+input.inputmask
+{
+  color: #999999;
+}
+
+#sieverulesactionsmenu a.selected
+{
+  font-weight: bold;
+}
+
+#sieverules-advbuttons
+{
+  position: absolute;
+  left: 0;
+  bottom: 45px;
+}
+
+#sieverules-advanced .boxfooter
+{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 27px;
+  padding-left: 1px;
+  border-top: 1px solid #ddd;
+  border-radius: 0 0 4px 4px;
+  background: #eaeaea;
+  background: -moz-linear-gradient(top, #eaeaea 0%, #c8c8c8 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eaeaea), color-stop(100%,#c8c8c8));
+  background: -o-linear-gradient(top, #eaeaea 0%, #c8c8c8 100%);
+  background: -ms-linear-gradient(top, #eaeaea 0%, #c8c8c8 100%);
+  background: linear-gradient(top, #eaeaea 0%, #c8c8c8 100%);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#sieverules-advanced .boxfooter .listbutton
+{
+  background: #C4BEBE;
+}
+
+#sieverules-advanced .boxfooter .listbutton .inner
+{
+  height: 20px;
+  background-image: url(listicons.png);
+  background-position: 5px -52px;
+}
+
+#sieverules-advanced .boxfooter #message
+{
+  position: absolute;
+  top: 0;
+  left: 65px;
+}

@@ -1,0 +1,33 @@
+<roundcube:object name="doctype" value="html5" />
+<html>
+<head>
+<title><roundcube:object name="pagetitle" /></title>
+<roundcube:include file="/includes/links.html" />
+<link rel="stylesheet" type="text/css" href="/this/sieverules.css" />
+<roundcube:if condition="browser:ie" />
+<link rel="stylesheet" type="text/css" href="/this/iehacks.css" />
+<roundcube:endif />
+<roundcube:if condition="browser:safari" />
+<link rel="stylesheet" type="text/css" href="/this/safari.css" />
+<roundcube:endif />
+</head>
+<body class="iframe">
+
+<h1 class="boxtitle"><roundcube:object name="steptitle" /></h1>
+
+<div id="preferences-details" class="boxcontent">
+<roundcube:object name="sieveruleform" class="propform" helpIcon="/this/help.png" />
+</div>
+
+<div id="formfooter">
+<div class="footerleft formbuttons">
+<roundcube:button command="plugin.sieverules.save" type="input" class="button mainaction" label="save" />
+<roundcube:button command="plugin.sieverules.delete" type="input" class="button" label="delete" condition="env:action=='plugin.sieverules.edit'" />
+<roundcube:button command="plugin.sieverules.copy_rule" type="input" class="button" label="sieverules.copy" condition="env:action=='plugin.sieverules.edit' && config:sieverules_multiplerules == true" />
+</div>
+</div>
+
+<roundcube:include file="/includes/footer.html" />
+
+</body>
+</html>

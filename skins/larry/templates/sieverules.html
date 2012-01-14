@@ -1,0 +1,76 @@
+<roundcube:object name="doctype" value="html5" />
+<html>
+<head>
+<title><roundcube:object name="pagetitle" /></title>
+<roundcube:include file="/includes/links.html" />
+<link rel="stylesheet" type="text/css" href="/this/sieverules.css" />
+<roundcube:if condition="browser:ie" />
+<link rel="stylesheet" type="text/css" href="/this/iehacks.css" />
+<roundcube:endif />
+<roundcube:if condition="browser:safari" />
+<link rel="stylesheet" type="text/css" href="/this/safari.css" />
+<roundcube:endif />
+</head>
+<body>
+
+<roundcube:include file="/includes/header.html" />
+
+<div id="mainscreen" class="offset">
+
+<roundcube:include file="/includes/settingstabs.html" />
+
+<div id="settings-right">
+
+<div id="sieverules-list" class="uibox listbox">
+<div class="scroller withfooter">
+<roundcube:object name="sieveruleslist" class="listing" cellspacing="0" noheader="true" />
+<roundcube:object name="sieverulesexamplelist" class="listing" cellspacing="0" noheader="true" />
+</div>
+<div class="boxfooter">
+<roundcube:button command="plugin.sieverules.add" type="link" title="sieverules.newfilter" class="listbutton add disabled" classAct="listbutton add" innerClass="inner" content="+" /><roundcube:if condition="config:sieverules_multiplerules == true || config:sieverules_adveditor == 1 || config:sieverules_adveditor == 2" /><roundcube:button name="sieverulesactions" id="sieverulesactionsmenulink" type="link" title="sieverules.moreactions" class="listbutton groupactions"  onclick="UI.show_popup('sieverulesactionsmenu', true, {id: 'sieverulesactionsmenu', obj:$('#sieverulesactionsmenu'), above:1}); return false" innerClass="inner" content="&#9881;" /><roundcube:endif />
+</div>
+</div>
+
+<div id="sieverules-details" class="uibox contentbox">
+<roundcube:object name="sieverulesframe" id="preferences-frame" style="width:100%; height:96%" src="/watermark.html" />
+<roundcube:object name="message" id="message" class="statusbar" />
+</div>
+
+</div>
+
+</div>
+
+<roundcube:include file="/includes/footer.html" />
+
+<div id="sieverulesactionsmenu" class="popupmenu">
+<ul class="toolbarmenu">
+<roundcube:if condition="config:sieverules_multiplerules == true" />
+<li class="separator_below"><roundcube:button command="plugin.sieverules.ruleset_dialog" type="link" label="sieverules.newruleset" classAct="active" /></li>
+<roundcube:object name="rulelist" type="link" />
+<li class="separator_above"><roundcube:button command="plugin.sieverules.ruleset_dialog" prop="rename_ruleset" type="link" label="sieverules.renameruleset" classAct="active" /></li>
+<li><roundcube:button command="plugin.sieverules.del_ruleset" type="link" label="sieverules.delruleset" classAct="active" /></li>
+<li><roundcube:button command="plugin.sieverules.activate_ruleset" type="link" label="sieverules.activateruleset" classAct="active" /></li>
+<roundcube:endif />
+<roundcube:if condition="config:sieverules_adveditor == 1 || config:sieverules_adveditor == 2" />
+<li<roundcube:exp expression="config:sieverules_multiplerules == true ? ' class=separator_above' : ''" />><roundcube:button command="plugin.sieverules.sieverules_adveditor" prop="1" type="link" label="sieverules.adveditor" classAct="active" /></li>
+<roundcube:endif />
+</ul>
+</div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+
+$(document).ready(function(){
+	new rcube_splitter({id:'sieverulesviewsplitter', p1: '#sieverules-list', p2: '#sieverules-details', orientation: 'v', relative: true, start: 240}).init();
+
+	if ($('#sieverules-list-examples').length > 0) {
+		var filtersHeight = parseInt($('#sieverules-list').height() - 210);
+		new rcube_splitter({id:'sievefiltersviewsplitter', p1: '#sieverules-list-filters', p2: '#sieverules-list-examples', orientation: 'h', relative: true, start: filtersHeight}).init();
+	}
+});
+
+/* ]]> */
+</script>
+
+</body>
+</html>
