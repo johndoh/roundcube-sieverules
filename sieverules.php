@@ -2154,7 +2154,7 @@ class sieverules extends rcube_plugin
 
 	private function _mbox_encode($text, $encoding)
 	{
-		return rcube_charset_convert($text, 'UTF7-IMAP', $encoding);
+		return rcube_charset::convert($text, 'UTF7-IMAP', $encoding);
 	}
 }
 
