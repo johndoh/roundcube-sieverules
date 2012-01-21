@@ -421,7 +421,7 @@ class sieverules extends rcube_plugin
 			$buttons .= $this->api->output->button(array('command' => 'plugin.sieverules.import', 'prop' => '_import=_default_', 'type' => 'input', 'class' => 'button', 'label' => 'sieverules.usedefaultfilter'));
 		}
 		elseif ($rcmail->config->get('sieverules_default_file', false) && !is_readable($rcmail->config->get('sieverules_default_file'))) {
-			raise_error(array(
+			rcube_ui::raise_error(array(
 				'code' => 600,
 				'type' => 'php',
 				'file' => __FILE__,
@@ -483,7 +483,7 @@ class sieverules extends rcube_plugin
 		}
 		else {
 			if ($rcmail->config->get('sieverules_auto_load_default') && !is_readable($rcmail->config->get('sieverules_default_file')))
-				raise_error(array(
+				rcube_ui::raise_error(array(
 					'code' => 600,
 					'type' => 'php',
 					'file' => __FILE__,
@@ -1038,7 +1038,7 @@ class sieverules extends rcube_plugin
 					$this->script = $this->sieve->script->as_array();
 			}
 			elseif ($rcmail->config->get('sieverules_default_file', false) && !is_readable($rcmail->config->get('sieverules_default_file'))) {
-				raise_error(array(
+				rcube_ui::raise_error(array(
 					'code' => 600,
 					'type' => 'php',
 					'file' => __FILE__,
@@ -1212,7 +1212,7 @@ class sieverules extends rcube_plugin
 					$this->action = 'plugin.sieverules.setup';
 				}
 				elseif ($rcmail->config->get('sieverules_default_file', false) && !is_readable($rcmail->config->get('sieverules_default_file'))) {
-					raise_error(array(
+					rcube_ui::raise_error(array(
 						'code' => 600,
 						'type' => 'php',
 						'file' => __FILE__,
@@ -1249,7 +1249,7 @@ class sieverules extends rcube_plugin
 				if ($rcmail->config->get('sieverules_example_file', false) && is_readable($rcmail->config->get('sieverules_example_file')))
 					$this->examples = $this->sieve->script->parse_text(file_get_contents($rcmail->config->get('sieverules_example_file')));
 				elseif ($rcmail->config->get('sieverules_example_file', false) && !is_readable($rcmail->config->get('sieverules_example_file')))
-					raise_error(array(
+					rcube_ui::raise_error(array(
 						'code' => 600,
 						'type' => 'php',
 						'file' => __FILE__,
