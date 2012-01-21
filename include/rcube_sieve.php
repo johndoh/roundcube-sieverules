@@ -231,7 +231,7 @@ class rcube_sieve
 
 	public function debug_handler(&$sieve, $message)
 	{
-		write_log('sieverules', preg_replace('/\r\n$/', '', $message));
+		rcmail::write_log('sieverules', preg_replace('/\r\n$/', '', $message));
 	}
 
 	private function _set_error($error)
