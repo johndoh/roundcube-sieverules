@@ -56,8 +56,8 @@ class sieverules extends rcube_plugin
 		// load required plugin
 		$this->require_plugin('jqueryui');
 
-		if ($rcmail->config->get('sieverules_multiplerules') && rcube_ui::get_input_value('_ruleset', RCUBE_INPUT_GET, true))
-			$this->current_ruleset = rcube_ui::get_input_value('_ruleset', RCUBE_INPUT_GET, true);
+		if ($rcmail->config->get('sieverules_multiplerules') && rcube_ui::get_input_value('_ruleset', rcube_ui::INPUT_GET, true))
+			$this->current_ruleset = rcube_ui::get_input_value('_ruleset', rcube_ui::INPUT_GET, true);
 		elseif ($rcmail->config->get('sieverules_multiplerules') && $_SESSION['sieverules_current_ruleset'])
 			$this->current_ruleset = $_SESSION['sieverules_current_ruleset'];
 		elseif ($rcmail->config->get('sieverules_multiplerules'))
@@ -130,7 +130,7 @@ class sieverules extends rcube_plugin
 			$_SESSION['sieverules_current_ruleset'] = $this->current_ruleset;
 
 		$this->api->output->set_env('ruleset', $this->current_ruleset);
-		if ($rcmail->config->get('sieverules_adveditor') == 2 && rcube_ui::get_input_value('_override', RCUBE_INPUT_GET) != '1' && $this->action == 'plugin.sieverules') {
+		if ($rcmail->config->get('sieverules_adveditor') == 2 && rcube_ui::get_input_value('_override', rcube_ui::INPUT_GET) != '1' && $this->action == 'plugin.sieverules') {
 			$rcmail->overwrite_action('plugin.sieverules.advanced');
 			$this->action = 'plugin.sieverules.advanced';
 		}
@@ -519,7 +519,7 @@ class sieverules extends rcube_plugin
 			'sieverules.badoperator','sieverules.baddateformat','sieverules.badtimeformat','sieverules.vactoexp_err','editorwarning');
 
 		$ext = $this->sieve->get_extensions();
-		$iid = rcube_ui::get_input_value('_iid', RCUBE_INPUT_GPC);
+		$iid = rcube_ui::get_input_value('_iid', rcube_ui::INPUT_GPC);
 		if ($iid == '')
 			$iid = sizeof($this->script);
 
@@ -655,8 +655,8 @@ class sieverules extends rcube_plugin
 	{
 		$this->_startup();
 
-		$src = rcube_ui::get_input_value('_src', RCUBE_INPUT_GET);
-		$dst = rcube_ui::get_input_value('_dst', RCUBE_INPUT_GET);
+		$src = rcube_ui::get_input_value('_src', rcube_ui::INPUT_GET);
+		$dst = rcube_ui::get_input_value('_dst', rcube_ui::INPUT_GET);
 
 		$result = $this->sieve->script->move_rule($src, $dst);
 		$result = $this->sieve->save();
@@ -674,7 +674,7 @@ class sieverules extends rcube_plugin
 		$rcmail = rcmail::get_instance();
 		$this->_startup();
 
-		$script = trim(rcube_ui::get_input_value('_script', RCUBE_INPUT_POST, true));
+		$script = trim(rcube_ui::get_input_value('_script', rcube_ui::INPUT_POST, true));
 		if ($script != '' && ($rcmail->config->get('sieverules_adveditor') == 1 || $rcmail->config->get('sieverules_adveditor') == 2)) {
 			$script = $this->_strip_val($script);
 			$save = $this->sieve->save($script);
@@ -693,47 +693,47 @@ class sieverules extends rcube_plugin
 			$this->init_html();
 		}
 		else {
-			$name = trim(rcube_ui::get_input_value('_name', RCUBE_INPUT_POST, true));
-			$iid = trim(rcube_ui::get_input_value('_iid', RCUBE_INPUT_POST));
-			$join = trim(rcube_ui::get_input_value('_join', RCUBE_INPUT_POST));
-			$disabled = trim(rcube_ui::get_input_value('_disable', RCUBE_INPUT_POST));
+			$name = trim(rcube_ui::get_input_value('_name', rcube_ui::INPUT_POST, true));
+			$iid = trim(rcube_ui::get_input_value('_iid', rcube_ui::INPUT_POST));
+			$join = trim(rcube_ui::get_input_value('_join', rcube_ui::INPUT_POST));
+			$disabled = trim(rcube_ui::get_input_value('_disable', rcube_ui::INPUT_POST));
 
-			$tests = rcube_ui::get_input_value('_test', RCUBE_INPUT_POST);
-			$headers = rcube_ui::get_input_value('_header', RCUBE_INPUT_POST);
-			$bodyparts = rcube_ui::get_input_value('_bodypart', RCUBE_INPUT_POST);
-			$ops = rcube_ui::get_input_value('_operator', RCUBE_INPUT_POST);
-			$sizeops = rcube_ui::get_input_value('_size_operator', RCUBE_INPUT_POST);
-			$dateops = rcube_ui::get_input_value('_date_operator', RCUBE_INPUT_POST);
-			$spamtestops = rcube_ui::get_input_value('_spamtest_operator', RCUBE_INPUT_POST);
-			$targets = rcube_ui::get_input_value('_target', RCUBE_INPUT_POST, true);
-			$sizeunits = rcube_ui::get_input_value('_units', RCUBE_INPUT_POST);
-			$contentparts = rcube_ui::get_input_value('_body_contentpart', RCUBE_INPUT_POST);
-			$comparators = rcube_ui::get_input_value('_comparator', RCUBE_INPUT_POST);
-			$advops = rcube_ui::get_input_value('_advoperator', RCUBE_INPUT_POST);
-			$advtargets = rcube_ui::get_input_value('_advtarget', RCUBE_INPUT_POST, true);
-			$actions = rcube_ui::get_input_value('_act', RCUBE_INPUT_POST);
-			$folders = rcube_ui::get_input_value('_folder', RCUBE_INPUT_POST);
-			$customfolders = rcube_ui::get_input_value('_customfolder', RCUBE_INPUT_POST);
-			$addresses = rcube_ui::get_input_value('_redirect', RCUBE_INPUT_POST);
-			$rejects = rcube_ui::get_input_value('_reject', RCUBE_INPUT_POST);
-			$vacfroms = rcube_ui::get_input_value('_vacfrom', RCUBE_INPUT_POST);
-			$vactos = rcube_ui::get_input_value('_vacto', RCUBE_INPUT_POST);
-			$days = rcube_ui::get_input_value('_day', RCUBE_INPUT_POST);
-			$handles = rcube_ui::get_input_value('_handle', RCUBE_INPUT_POST);
-			$subjects = rcube_ui::get_input_value('_subject', RCUBE_INPUT_POST, true);
-			$origsubjects = rcube_ui::get_input_value('_orig_subject', RCUBE_INPUT_POST, true);
-			$msgs = rcube_ui::get_input_value('_msg', RCUBE_INPUT_POST, true);
-			$htmlmsgs = rcube_ui::get_input_value('_htmlmsg', RCUBE_INPUT_POST, true);
-			$charsets = rcube_ui::get_input_value('_charset', RCUBE_INPUT_POST);
-			$flags = rcube_ui::get_input_value('_imapflags', RCUBE_INPUT_POST);
-			$nfroms = rcube_ui::get_input_value('_nfrom', RCUBE_INPUT_POST);
-			$nimpts = rcube_ui::get_input_value('_nimpt', RCUBE_INPUT_POST);
-			$nmethods = rcube_ui::get_input_value('_nmethod', RCUBE_INPUT_POST);
-			$noptions = rcube_ui::get_input_value('_noption', RCUBE_INPUT_POST);
-			$nmsgs = rcube_ui::get_input_value('_nmsg', RCUBE_INPUT_POST, true);
-			$dateparts = rcube_ui::get_input_value('_datepart', RCUBE_INPUT_POST);
-			$weekdays = rcube_ui::get_input_value('_weekday', RCUBE_INPUT_POST);
-			$advweekdays = rcube_ui::get_input_value('_advweekday', RCUBE_INPUT_POST);
+			$tests = rcube_ui::get_input_value('_test', rcube_ui::INPUT_POST);
+			$headers = rcube_ui::get_input_value('_header', rcube_ui::INPUT_POST);
+			$bodyparts = rcube_ui::get_input_value('_bodypart', rcube_ui::INPUT_POST);
+			$ops = rcube_ui::get_input_value('_operator', rcube_ui::INPUT_POST);
+			$sizeops = rcube_ui::get_input_value('_size_operator', rcube_ui::INPUT_POST);
+			$dateops = rcube_ui::get_input_value('_date_operator', rcube_ui::INPUT_POST);
+			$spamtestops = rcube_ui::get_input_value('_spamtest_operator', rcube_ui::INPUT_POST);
+			$targets = rcube_ui::get_input_value('_target', rcube_ui::INPUT_POST, true);
+			$sizeunits = rcube_ui::get_input_value('_units', rcube_ui::INPUT_POST);
+			$contentparts = rcube_ui::get_input_value('_body_contentpart', rcube_ui::INPUT_POST);
+			$comparators = rcube_ui::get_input_value('_comparator', rcube_ui::INPUT_POST);
+			$advops = rcube_ui::get_input_value('_advoperator', rcube_ui::INPUT_POST);
+			$advtargets = rcube_ui::get_input_value('_advtarget', rcube_ui::INPUT_POST, true);
+			$actions = rcube_ui::get_input_value('_act', rcube_ui::INPUT_POST);
+			$folders = rcube_ui::get_input_value('_folder', rcube_ui::INPUT_POST);
+			$customfolders = rcube_ui::get_input_value('_customfolder', rcube_ui::INPUT_POST);
+			$addresses = rcube_ui::get_input_value('_redirect', rcube_ui::INPUT_POST);
+			$rejects = rcube_ui::get_input_value('_reject', rcube_ui::INPUT_POST);
+			$vacfroms = rcube_ui::get_input_value('_vacfrom', rcube_ui::INPUT_POST);
+			$vactos = rcube_ui::get_input_value('_vacto', rcube_ui::INPUT_POST);
+			$days = rcube_ui::get_input_value('_day', rcube_ui::INPUT_POST);
+			$handles = rcube_ui::get_input_value('_handle', rcube_ui::INPUT_POST);
+			$subjects = rcube_ui::get_input_value('_subject', rcube_ui::INPUT_POST, true);
+			$origsubjects = rcube_ui::get_input_value('_orig_subject', rcube_ui::INPUT_POST, true);
+			$msgs = rcube_ui::get_input_value('_msg', rcube_ui::INPUT_POST, true);
+			$htmlmsgs = rcube_ui::get_input_value('_htmlmsg', rcube_ui::INPUT_POST, true);
+			$charsets = rcube_ui::get_input_value('_charset', rcube_ui::INPUT_POST);
+			$flags = rcube_ui::get_input_value('_imapflags', rcube_ui::INPUT_POST);
+			$nfroms = rcube_ui::get_input_value('_nfrom', rcube_ui::INPUT_POST);
+			$nimpts = rcube_ui::get_input_value('_nimpt', rcube_ui::INPUT_POST);
+			$nmethods = rcube_ui::get_input_value('_nmethod', rcube_ui::INPUT_POST);
+			$noptions = rcube_ui::get_input_value('_noption', rcube_ui::INPUT_POST);
+			$nmsgs = rcube_ui::get_input_value('_nmsg', rcube_ui::INPUT_POST, true);
+			$dateparts = rcube_ui::get_input_value('_datepart', rcube_ui::INPUT_POST);
+			$weekdays = rcube_ui::get_input_value('_weekday', rcube_ui::INPUT_POST);
+			$advweekdays = rcube_ui::get_input_value('_advweekday', rcube_ui::INPUT_POST);
 
 			$script = array();
 			$script['join'] = ($join == 'allof') ? true : false;
@@ -975,7 +975,7 @@ class sieverules extends rcube_plugin
 		$this->_startup();
 
 		$result = false;
-		$ids = rcube_ui::get_input_value('_iid', RCUBE_INPUT_GET);
+		$ids = rcube_ui::get_input_value('_iid', rcube_ui::INPUT_GET);
 		if (is_numeric($ids) && isset($this->script[$ids]) && !$this->sieve_error) {
 			$result = $this->sieve->script->delete_rule($ids);
 			if ($result === true)
@@ -1014,8 +1014,8 @@ class sieverules extends rcube_plugin
 		$this->_startup();
 
 		if (!$type && !$ruleset) {
-			$type = rcube_ui::get_input_value('_type', RCUBE_INPUT_GET);
-			$ruleset = rcube_ui::get_input_value('_import', RCUBE_INPUT_GET);
+			$type = rcube_ui::get_input_value('_type', rcube_ui::INPUT_GET);
+			$ruleset = rcube_ui::get_input_value('_import', rcube_ui::INPUT_GET);
 		}
 
 		if ($ruleset == '_default_') {
@@ -1048,9 +1048,9 @@ class sieverules extends rcube_plugin
 			}
 		}
 		elseif ($ruleset == '_example_') {
-			if (rcube_ui::get_input_value('_eids', RCUBE_INPUT_GET)) {
-				$pos = rcube_ui::get_input_value('_pos', RCUBE_INPUT_GET);
-				$eids = explode(",", rcube_ui::get_input_value('_eids', RCUBE_INPUT_GET));
+			if (rcube_ui::get_input_value('_eids', rcube_ui::INPUT_GET)) {
+				$pos = rcube_ui::get_input_value('_pos', rcube_ui::INPUT_GET);
+				$eids = explode(",", rcube_ui::get_input_value('_eids', rcube_ui::INPUT_GET));
 
 				if ($pos == 'end')
 					$pos = null;
@@ -1109,7 +1109,7 @@ class sieverules extends rcube_plugin
 		$this->_startup();
 		$this->sieve->del_script($this->current_ruleset);
 
-		$this->current_ruleset = rcube_ui::get_input_value('_next', RCUBE_INPUT_GET);
+		$this->current_ruleset = rcube_ui::get_input_value('_next', rcube_ui::INPUT_GET);
 
 		rcmail::get_instance()->overwrite_action('plugin.sieverules');
 		$this->action = 'plugin.sieverules';
@@ -1123,7 +1123,7 @@ class sieverules extends rcube_plugin
 		$active = $this->sieve->get_active() == $this->current_ruleset ? true : false;
 
 		$old_ruleset = $this->current_ruleset;
-		$this->current_ruleset = rcube_ui::get_input_value('_new', RCUBE_INPUT_GET, true);
+		$this->current_ruleset = rcube_ui::get_input_value('_new', rcube_ui::INPUT_GET, true);
 		$this->sieve->set_ruleset($this->current_ruleset);
 		$this->sieve->save($script);
 
@@ -1142,10 +1142,10 @@ class sieverules extends rcube_plugin
 	function enable_ruleset()
 	{
 		$this->_startup();
-		$activeruleset = rcube_ui::get_input_value('_ruleset', RCUBE_INPUT_GET, true);
+		$activeruleset = rcube_ui::get_input_value('_ruleset', rcube_ui::INPUT_GET, true);
 		$this->sieve->set_active($activeruleset);
 
-		if (rcube_ui::get_input_value('_reload', RCUBE_INPUT_GET, true) == "1") {
+		if (rcube_ui::get_input_value('_reload', rcube_ui::INPUT_GET, true) == "1") {
 			rcmail::get_instance()->overwrite_action('plugin.sieverules');
 			$this->action = 'plugin.sieverules';
 			$this->init_html();
@@ -1171,8 +1171,8 @@ class sieverules extends rcube_plugin
 	function copy_filter()
 	{
 		$this->_startup();
-		$script = $this->script[rcube_ui::get_input_value('_iid', RCUBE_INPUT_GET)];
-		$this->current_ruleset = rcube_ui::get_input_value('_dest', RCUBE_INPUT_GET);
+		$script = $this->script[rcube_ui::get_input_value('_iid', rcube_ui::INPUT_GET)];
+		$this->current_ruleset = rcube_ui::get_input_value('_dest', rcube_ui::INPUT_GET);
 		$this->_startup();
 		$this->sieve->script->add_rule($script);
 		$this->sieve->save();
