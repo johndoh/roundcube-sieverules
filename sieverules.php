@@ -78,6 +78,7 @@ class sieverules extends rcube_plugin
 		$this->action = $rcmail->action;
 
 		$this->add_texts('localization/', array('filters', 'managefilters'));
+		$this->include_stylesheet($this->local_skin_path() . '/tabstyles.css');
 		$this->include_script('sieverules.js');
 
 		$this->register_action('plugin.sieverules', array($this, 'init_html'));

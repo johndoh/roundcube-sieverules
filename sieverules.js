@@ -812,6 +812,10 @@ $(document).ready(function() {
 			if ((rcmail.env.action == 'plugin.sieverules' || rcmail.env.action == 'plugin.sieverules.advanced') && !rcmail.env.sieveruleserror) {
 				if (rcmail.gui_objects.sieverules_list) {
 					rcmail.sieverules_list = new rcube_list_widget(rcmail.gui_objects.sieverules_list, {multiselect:false, draggable:true, keyboard:true});
+
+					// override blur function to prevent current rule being deselected
+					rcmail.sieverules_list.blur = function() {}
+
 					rcmail.sieverules_list.addEventListener('select', function(o) { rcmail.sieverules_select(o); });
 					rcmail.sieverules_list.addEventListener('keypress', function(o) { rcmail.sieverules_keypress(o); });
 					rcmail.sieverules_list.addEventListener('dragstart', function(o) { rcmail.sieverules_drag_start(o); });
