@@ -611,7 +611,7 @@ class sieverules extends rcube_plugin
 				. $join_type . "<br /><br />"
 				. $rules_table->show($attrib));
 
-		$rcmail->imap_connect();
+		$rcmail->storage_connect();
 		$actions_table = new html_table(array('id' => 'actions-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 3));
 		$actions_table = $this->_action_row($ext, $actions_table, 'rowid', null, $attrib, $example);
 
@@ -851,16 +851,16 @@ class sieverules extends rcube_plugin
 					case 'fileinto_copy':
 						$folder = $this->_strip_val($folders[$idx]);
 						$rcmail = rcmail::get_instance();
-						$rcmail->imap_connect();
+						$rcmail->storage_connect();
 						$script['actions'][$i]['create'] = false;
 						if ($folder == '@@newfolder') {
 							$script['actions'][$i]['create'] = true;
 							$folder = $this->_strip_val($customfolders[$idx]);
-							$folder = $rcmail->config->get('sieverules_include_imap_root', true) ? $rcmail->imap->mod_mailbox($folder, 'IN') : $folder;
+							$folder = $rcmail->config->get('sieverules_include_imap_root', true) ? $rcmail->storage->mod_folder($folder, 'IN') : $folder;
 						}
-						$script['actions'][$i]['target'] = $rcmail->config->get('sieverules_include_imap_root', true) ? $folder : $rcmail->imap->mod_mailbox($folder);
+						$script['actions'][$i]['target'] = $rcmail->config->get('sieverules_include_imap_root', true) ? $folder : $rcmail->storage->mod_folder($folder);
 						if ($rcmail->config->get('sieverules_folder_delimiter', false))
-							$script['actions'][$i]['target'] = str_replace($rcmail->imap->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $script['actions'][$i]['target']);
+							$script['actions'][$i]['target'] = str_replace($rcmail->storage->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $script['actions'][$i]['target']);
 						break;
 					case 'redirect':
 					case 'redirect_copy':
@@ -1782,10 +1782,10 @@ class sieverules extends rcube_plugin
 
 		if ($action['type'] == 'fileinto' || $action['type'] == 'fileinto_copy') {
 			$method = $action['type'];
-			$folder = $rcmail->config->get('sieverules_include_imap_root', true) ? $action['target'] : $rcmail->imap->mod_mailbox($action['target']);
+			$folder = $rcmail->config->get('sieverules_include_imap_root', true) ? $action['target'] : $rcmail->storage->mod_folder($action['target']);
 
 			if ($rcmail->config->get('sieverules_folder_delimiter', false))
-				$folder = str_replace($rcmail->imap->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $folder);
+				$folder = str_replace($rcmail->storage->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $folder);
 		}
 		elseif ($action['type'] == 'reject' || $action['type'] == 'ereject') {
 			$method = $action['type'];
@@ -2049,17 +2049,17 @@ class sieverules extends rcube_plugin
 		}
 
 		// get mailbox list
-		$mbox_name = $rcmail->imap->get_mailbox_name();
+		$mbox_name = $rcmail->storage->get_folder();
 
 		// build the folders tree
 		if (empty($a_mailboxes)) {
 			// get mailbox list
 			if ($rcmail->config->get('sieverules_fileinto_options', 0) > 0)
-				$a_folders = $rcmail->imap->list_unsubscribed();
+				$a_folders = $rcmail->storage->list_folders();
 			else
-				$a_folders = $rcmail->imap->list_mailboxes();
+				$a_folders = $rcmail->storage->list_folders_subscribed();
 
-			$delimiter = $rcmail->imap->get_hierarchy_delimiter();
+			$delimiter = $rcmail->storage->get_hierarchy_delimiter();
 			$a_mailboxes = array();
 
 			foreach ($a_folders as $ifolder) {
@@ -2080,8 +2080,8 @@ class sieverules extends rcube_plugin
 		rcmail_render_folder_tree_select($a_mailboxes, $mbox_name, 100, $input_folderlist, false);
 
 		$show_customfolder = 'display: none;';
-		if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2 && !$rcmail->imap->mailbox_exists($folder)) {
-			$customfolder = $rcmail->imap->mod_mailbox($folder);
+		if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2 && !$rcmail->storage->folder_exists($folder)) {
+			$customfolder = $rcmail->storage->mod_folder($folder);
 			$folder = '@@newfolder';
 			$show_customfolder = '';
 		}
@@ -2154,7 +2154,7 @@ class sieverules extends rcube_plugin
 
 	private function _mbox_encode($text, $encoding)
 	{
-		return rcube_charset_convert($text, 'UTF7-IMAP', $encoding);
+		return rcube_charset::convert($text, 'UTF7-IMAP', $encoding);
 	}
 }
 
