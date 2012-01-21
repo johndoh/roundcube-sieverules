@@ -13,11 +13,11 @@
 		<email>roundcube@tehinterweb.co.uk</email>
 		<active>yes</active>
 	</lead>
-	<date>2012-01-15</date>
-	<time>11:36:43</time>
+	<date>2012-01-21</date>
+	<time>11:26:15</time>
 	<version>
-		<release>1.16</release>
-		<api>1.16</api>
+		<release>1.17</release>
+		<api>1.17</api>
 	</version>
 	<stability>
 		<release>stable</release>
@@ -73,10 +73,22 @@
 			<file name="skins/default/iehacks.css" role="data"/>
 			<file name="skins/default/safari.css" role="data"/>
 			<file name="skins/default/sieverules.css" role="data"/>
+			<file name="skins/default/tabstyles.css" role="data"/>
 			<file name="skins/default/templates/advancededitor.html" role="data"/>
 			<file name="skins/default/templates/editsieverule.html" role="data"/>
 			<file name="skins/default/templates/setupsieverules.html" role="data"/>
 			<file name="skins/default/templates/sieverules.html" role="data"/>
+			<file name="skins/larry/help.png" role="data"/>
+			<file name="skins/larry/icons.png" role="data"/>
+			<file name="skins/larry/iehacks.css" role="data"/>
+			<file name="skins/larry/listicons.png" role="data"/>
+			<file name="skins/larry/safari.css" role="data"/>
+			<file name="skins/larry/sieverules.css" role="data"/>
+			<file name="skins/larry/tabstyles.css" role="data"/>
+			<file name="skins/larry/templates/advancededitor.html" role="data"/>
+			<file name="skins/larry/templates/editsieverule.html" role="data"/>
+			<file name="skins/larry/templates/setupsieverules.html" role="data"/>
+			<file name="skins/larry/templates/sieverules.html" role="data"/>
 		</dir>
 		<!-- / -->
 	</contents>
