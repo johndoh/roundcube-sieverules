@@ -265,7 +265,7 @@ class sieverules extends rcube_plugin
 			else
 				$filter_name = $filter['name'];
 
-			$tmp_output = new rcube_template('settings');
+			$tmp_output = new rcube_output_html('settings');
 			$dst = $idx - 1;
 			$up_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
 			$up_link = str_replace("'", "\'", $up_link);
@@ -1982,7 +1982,7 @@ class sieverules extends rcube_plugin
 		$field_id = 'rcmfd_sievecharset_'. $rowid;
 		$vacs_table->set_row_attribs(array('class' => 'advanced', 'style' => $vacadvstyle));
 		$vacs_table->add(null, html::label($field_id, rcube_ui::Q($this->gettext('charset'))));
-		$vacs_table->add(array('colspan' => 2), $this->_charset_selector(array('id' => $field_id, 'name' => '_charset[]'), $charset));
+		$vacs_table->add(array('colspan' => 2), $rcmail->output->charset_selector(array('id' => $field_id, 'name' => '_charset[]', 'selected' => $charset)));
 		$vacs_table->add_row();
 
 		$input_advopts = new html_checkbox(array('id' => 'vadvopts' . $rowid, 'name' => '_vadv_opts[]', 'onclick' => JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1', 'class' => 'checkbox'));
@@ -2117,34 +2117,6 @@ class sieverules extends rcube_plugin
 		}
 
 		return false;
-	}
-
-	// coppied from rcube_template.php
-	private function _charset_selector($attrib, $charset)
-	{
-		$charsets = array(
-			'US-ASCII'		=> 'ASCII (English)',
-			'EUC-JP'		=> 'EUC-JP (Japanese)',
-			'EUC-KR'		=> 'EUC-KR (Korean)',
-			'BIG5'			=> 'BIG5 (Chinese)',
-			'GB2312'		=> 'GB2312 (Chinese)',
-			'ISO-2022-JP'	=> 'ISO-2022-JP (Japanese)',
-			'ISO-8859-1'	=> 'ISO-8859-1 (Latin-1)',
-			'ISO-8859-2'	=> 'ISO-8859-2 (Central European)',
-			'ISO-8859-7'	=> 'ISO-8859-7 (Greek)',
-			'ISO-8859-9'	=> 'ISO-8859-9 (Turkish)',
-			'Windows-1251'	=> 'Windows-1251 (Cyrillic)',
-			'Windows-1252'	=> 'Windows-1252 (Western)',
-			'Windows-1255'	=> 'Windows-1255 (Hebrew)',
-			'Windows-1256'	=> 'Windows-1256 (Arabic)',
-			'Windows-1257'	=> 'Windows-1257 (Baltic)',
-			'UTF-8'			=> 'UTF-8'
-			);
-
-		$select = new html_select($attrib);
-		$select->add(array_values($charsets), array_keys($charsets));
-
-		return $select->show($charset);
 	}
 
 	private function _strip_val($str)
