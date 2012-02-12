@@ -724,7 +724,7 @@ class sieverules extends rcube_plugin
 			$origsubjects = rcube_ui::get_input_value('_orig_subject', rcube_ui::INPUT_POST, true);
 			$msgs = rcube_ui::get_input_value('_msg', rcube_ui::INPUT_POST, true);
 			$htmlmsgs = rcube_ui::get_input_value('_htmlmsg', rcube_ui::INPUT_POST, true);
-			$charsets = rcube_ui::get_input_value('_charset', rcube_ui::INPUT_POST);
+			$charsets = rcube_ui::get_input_value('_vaccharset', rcube_ui::INPUT_POST);
 			$flags = rcube_ui::get_input_value('_imapflags', rcube_ui::INPUT_POST);
 			$nfroms = rcube_ui::get_input_value('_nfrom', rcube_ui::INPUT_POST);
 			$nimpts = rcube_ui::get_input_value('_nimpt', rcube_ui::INPUT_POST);
@@ -1982,7 +1982,7 @@ class sieverules extends rcube_plugin
 		$field_id = 'rcmfd_sievecharset_'. $rowid;
 		$vacs_table->set_row_attribs(array('class' => 'advanced', 'style' => $vacadvstyle));
 		$vacs_table->add(null, html::label($field_id, rcube_ui::Q($this->gettext('charset'))));
-		$vacs_table->add(array('colspan' => 2), $rcmail->output->charset_selector(array('id' => $field_id, 'name' => '_charset[]', 'selected' => $charset)));
+		$vacs_table->add(array('colspan' => 2), $rcmail->output->charset_selector(array('id' => $field_id, 'name' => '_vaccharset[]', 'selected' => $charset)));
 		$vacs_table->add_row();
 
 		$input_advopts = new html_checkbox(array('id' => 'vadvopts' . $rowid, 'name' => '_vadv_opts[]', 'onclick' => JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1', 'class' => 'checkbox'));
