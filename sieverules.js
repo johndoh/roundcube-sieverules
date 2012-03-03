@@ -884,26 +884,30 @@ $(document).ready(function() {
 					rcube_find_object('sieverulesrsdialog_name').value = '';
 
 					if (props == 'rename_ruleset') {
-						rcube_find_object('sieverulesrsdialog_edit').style.display = '';
+						//rcube_find_object('sieverulesrsdialog_edit').style.display = '';
+						boxtitle = rcube_find_object('sieverulesrsdialog_edit').innerHTML;
 						rcube_find_object('sieverulesrsdialog_input').style.display = '';
 						rcube_find_object('sieverulesrsdialog_name').value = rcmail.env.ruleset;
 					}
 					else if (props == 'copyto_ruleset') {
-						rcube_find_object('sieverulesrsdialog_copyto').style.display = '';
+						//rcube_find_object('sieverulesrsdialog_copyto').style.display = '';
+						boxtitle = rcube_find_object('sieverulesrsdialog_copyto').innerHTML;
 						rcube_find_object('sieverulesrsdialog_select').style.display = '';
 					}
 					else if (props == 'copyfrom_ruleset') {
-						rcube_find_object('sieverulesrsdialog_copyfrom').style.display = '';
+						//rcube_find_object('sieverulesrsdialog_copyfrom').style.display = '';
+						boxtitle = rcube_find_object('sieverulesrsdialog_copyfrom').innerHTML;
 						rcube_find_object('sieverulesrsdialog_select').style.display = '';
 					}
 					else {
-						rcube_find_object('sieverulesrsdialog_add').style.display = '';
+						//rcube_find_object('sieverulesrsdialog_add').style.display = '';
+						boxtitle = rcube_find_object('sieverulesrsdialog_add').innerHTML;
 						rcube_find_object('sieverulesrsdialog_input').style.display = '';
 					}
 
 					rcube_find_object('sieverulesrsdialog_action').value = props;
 
-					$('#sieverulesrsdialog').dialog({ width: 512, resizable: false, modal: true });
+					$('#sieverulesrsdialog').dialog({ title: boxtitle, width: 512, resizable: false, modal: true });
 				}, true);
 
 				rcmail.register_command('plugin.sieverules.activate_ruleset', function(props, obj) {
@@ -975,11 +979,12 @@ $(document).ready(function() {
 					target.rcube_find_object('sieverulesrsdialog_add').style.display = 'none';
 					target.rcube_find_object('sieverulesrsdialog_edit').style.display = 'none';
 					target.rcube_find_object('sieverulesrsdialog_input').style.display = 'none';
-					target.rcube_find_object('sieverulesrsdialog_copyfrom').style.display = '';
+					//target.rcube_find_object('sieverulesrsdialog_copyfrom').style.display = '';
+					boxtitle = rcube_find_object('sieverulesrsdialog_copyfrom').innerHTML;
 					target.rcube_find_object('sieverulesrsdialog_select').style.display = '';
 					target.rcube_find_object('sieverulesrsdialog_action').value = props;
 
-					target.$('#sieverulesrsdialog').dialog({ width: 512, resizable: false, modal: true });
+					target.$('#sieverulesrsdialog').dialog({ title: boxtitle, width: 512, resizable: false, modal: true });
 				}, true);
 			}
 
