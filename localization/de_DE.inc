@@ -126,6 +126,12 @@ $labels['copytoruleset'] = 'Kopiere Filter in anderen Regelsatz';
 $labels['copyfromruleset'] = 'Kopiere Filter aus anderem Regelsatz';
 $labels['time'] = 'Zeit';
 $labels['weekday'] = 'Wochentag';
+$labels['virustest'] = 'Viruswahrscheinlichkeit';
+$labels['novirus'] = 'keinen Virus gefunden';
+$labels['virusremoved'] = 'Virus gefunden und entfernt';
+$labels['viruscured'] = 'Virus gefunden und kuriert';
+$labels['possiblevirus'] = 'Nachricht enthält möglicherweise einen Virus';
+$labels['definitevirus'] = 'Nachricht enthält definitiv einen Virus';
 
 $messages = array();
 $messages['nosieverules'] = 'Keine Filter gefunden.';
@@ -181,5 +187,6 @@ $messages['filtercopied'] = 'Filter erfolgreich kopiert.';
 $messages['nosieverulesets'] = 'Keine Regelsätze gefunden.';
 $messages['baddateformat'] = 'Fehler: Bitte das Datum im Format JJJJ-MM-TT eingeben.';
 $messages['badtimeformat'] = 'Fehler: Bitte die Uhrzeit im Format HH:MM:SS eingeben.';
+$messages['missingfoldername'] = 'Fehler: Bitte ein Verzeichnisnamen eingeben.';
 
 ?>
