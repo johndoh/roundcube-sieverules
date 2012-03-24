@@ -490,6 +490,7 @@ rcube_webmail.prototype.sieverules_datepart_select = function(sel) {
 	var obj = document.getElementsByName('_datepart[]')[eidx];
 	var opr = document.getElementsByName('_operator[]')[eidx];
 	var target_obj = $("input[name='_target[]']")[eidx];
+	$(target_obj).datepicker("destroy");
 	$(target_obj).unmask();
 
 	if (obj.value == 'date')
@@ -1362,6 +1363,9 @@ $(document).ready(function() {
 						if (headers[i].value.indexOf('date::') == 0) {
 							var obj = document.getElementsByName('_datepart[]')[i];
 							var target_obj = $("input[name='_target[]']")[i];
+
+							$(target_obj).datepicker("destroy");
+							$(target_obj).unmask();
 
 							if (obj.value == 'date')
 								$(target_obj).datepicker({ dateFormat: 'yy-mm-dd' });
