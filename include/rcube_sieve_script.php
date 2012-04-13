@@ -19,6 +19,7 @@
  |   * Added support for body and copy                                   |
  |   * Added support for spamtest and virustest                          |
  |   * Added support for date                                            |
+ |   * Added support for editheader                                      |
  +-----------------------------------------------------------------------+
 */
 
@@ -51,6 +52,7 @@ class rcube_sieve_script
 						'spamtest',
 						'virustest',
 						'date',
+						'editheader'
 						);
 	public $raw = '';
 
@@ -63,6 +65,9 @@ class rcube_sieve_script
 		$this->supported = array_intersect($this->supported, $ext);
 		if (in_array('copy', $ext))
 			$this->supported = array_merge($this->supported, array('fileinto_copy','redirect_copy'));
+
+		if (in_array('editheader', $ext))
+			$this->supported = array_merge($this->supported, array('editheaderadd','editheaderrem'));
 
 		// include standard actions in supported list
 		$this->supported = array_merge($this->supported, array('redirect','keep','discard','stop'));
@@ -490,6 +495,34 @@ class rcube_sieve_script
 							$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":message \"". $this->_escape_string($action['msg']) ."\"" . RCUBE_SIEVE_NEWLINE;
 							$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . "\"" . $this->_escape_string($action['method']) . "\";" . RCUBE_SIEVE_NEWLINE;
 							break;
+						case 'editheaderadd':
+							array_push($exts, 'editheader');
+							$actions .= RCUBE_SIEVE_INDENT . "addheader";
+
+							if ($action['index'] == 'last')
+								$actions .= " :last";
+
+							$actions .= " \"". $this->_escape_string($action['name']) ."\" \"". $this->_escape_string($action['value']) ."\";" . RCUBE_SIEVE_NEWLINE;
+							break;
+						case 'editheaderrem':
+							array_push($exts, 'editheader');
+							$actions .= RCUBE_SIEVE_INDENT . "deleteheader";
+
+							if (is_numeric($action['index']))
+								$actions .= " :index " . $action['index'];
+							elseif ($action['index'] == 'last')
+								$actions .= " :last";
+
+							if (strlen($action['operator']) > 0)
+								$actions .= " :" . $action['operator'];
+
+							$actions .= " \"". $this->_escape_string($action['name']) ."\"";
+
+							if (strlen($action['value']) > 0)
+								$actions .= " \"". $this->_escape_string($action['value']) ."\"";
+
+							$actions .= ";" . RCUBE_SIEVE_NEWLINE;
+							break;
 						case 'keep':
 						case 'discard':
 						case 'stop':
@@ -596,6 +629,8 @@ class rcube_sieve_script
 		$patterns[] = '^\s*vacation\s+:days\s+([0-9]+)\s+(:addresses\s+\[(.*?[^\\\])\]\s+)?(:subject\s+(".*?[^"\\\]")\s+)?(:handle\s+(".*?[^"\\\]")\s+)?(:from\s+(".*?[^"\\\]")\s+)?(.*?[^\\\]);';
 		$patterns[] = '^\s*notify\s+:method\s+(".*?[^"\\\]")\s+(:options\s+\[(.*?[^\\\])\]\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:importance\s+(".*?[^"\\\]")\s+)?:message\s+(".*?[^"\\\]");';
 		$patterns[] = '^\s*notify\s+(:options\s+\[(.*?[^\\\])\]\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:importance\s+(".*?[^"\\\]")\s+)?:message\s+(".*?[^"\\\]")\s+(.*);';
+		$patterns[] = '^\s*addheader\s+(:(last))?\s*(".*?[^"\\\]")\s+(".*?[^"\\\]");';
+		$patterns[] = '^\s*deleteheader\s+(:(last)|:index\s([0-9])+)?\s*(:(contains))?\s*(".*?[^"\\\]")\s*(".*?[^"\\\]")?;';
 
 		$pattern = '/(' . implode('$)|(', $patterns) . '$)/ms';
 
@@ -682,6 +717,19 @@ class rcube_sieve_script
 									'from' => $this->_parse_string($matches[4]),
 									'importance' => $this->_parse_string($matches[6]),
 									'msg' => $this->_parse_string($matches[7]));
+				}
+				elseif (preg_match('/^addheader/', $content)) {
+					$result[] = array('type' => 'editheaderadd',
+									'index' => $m[sizeof($m)-3],
+									'name' => $this->_parse_string($m[sizeof($m)-2]),
+									'value' => $this->_parse_string($m[sizeof($m)-1]));
+				}
+				elseif (preg_match('/^deleteheader/', $content)) {
+					$result[] = array('type' => 'editheaderrem',
+									'index' => $m[sizeof($m)-6] == 'last' ? $m[sizeof($m)-6] : $m[sizeof($m)-5],
+									'operator' => $m[sizeof($m)-3],
+									'name' => $this->_parse_string($m[sizeof($m)-2]),
+									'value' => $this->_parse_string($m[sizeof($m)-1]));
 				}
 			}
 		}

@@ -570,6 +570,7 @@ rcube_webmail.prototype.sieverules_action_select = function(sel) {
 	document.getElementsByName('_imapflags[]')[idx].style.display = 'none';
 	document.getElementsByName('_day[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
 	document.getElementsByName('_nmethod[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+	document.getElementsByName('_eheadname[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
 
 	if (obj.value == 'fileinto' || obj.value == 'fileinto_copy')
 		document.getElementsByName('_folder[]')[idx].style.display = '';
@@ -592,6 +593,14 @@ rcube_webmail.prototype.sieverules_action_select = function(sel) {
 		document.getElementsByName('_redirect[]')[idx].style.display = '';
 	else if (obj.value == 'imapflags' || obj.value == 'imap4flags')
 		document.getElementsByName('_imapflags[]')[idx].style.display = '';
+	else if (obj.value == 'editheaderadd' || obj.value == 'editheaderrem') {
+		document.getElementsByName('_eheadname[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
+
+		if (obj.value == 'editheaderrem')
+			document.getElementsByName('_eheadval[]')[idx].parentNode.parentNode.style.display = 'none';
+		else
+			document.getElementsByName('_eheadval[]')[idx].parentNode.parentNode.style.display = '';
+	}
 
 	if ($(document.getElementsByName('_folder[]')[idx]).is(':visible') && document.getElementsByName('_folder[]')[idx].value == '@@newfolder')
 		$(document.getElementsByName('_customfolder[]')[idx]).parent().show();
@@ -1109,6 +1118,8 @@ $(document).ready(function() {
 					var msgs = document.getElementsByName('_msg[]');
 					var nmethods = document.getElementsByName('_nmethod[]');
 					var nmsgs = document.getElementsByName('_nmsg[]');
+					var eheadernames = document.getElementsByName('_eheadname[]');
+					var eheadervals = document.getElementsByName('_eheadval[]');
 					var size_test = new RegExp('^[0-9]+$');
 					var spamtest_test = new RegExp('^[0-9]+$');
 					var header_test = new RegExp('^[a-zA-Z0-9\-]+( ?, ?[a-zA-Z0-9\-]+)*$');
@@ -1278,6 +1289,21 @@ $(document).ready(function() {
 								alert(rcmail.gettext('notifynomsg','sieverules'));
 								nmsgs[i].focus();
 								return false;
+							}
+						}
+						else if (acts[i][idx].value == 'editheaderadd' || acts[i][idx].value == 'editheaderrem') {
+							if (eheadernames[i].value == '') {
+								alert(rcmail.gettext('eheadernoname','sieverules'));
+								eheadernames[i].focus();
+								return false;
+							}
+
+							if (acts[i][idx].value == 'editheaderadd') {
+								if (eheadervals[i].value == '') {
+									alert(rcmail.gettext('eheadernoval','sieverules'));
+									eheadervals[i].focus();
+									return false;
+								}
 							}
 						}
 					}

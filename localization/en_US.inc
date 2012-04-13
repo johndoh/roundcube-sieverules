@@ -132,6 +132,10 @@ $labels['virusremoved'] = 'virus found and removed';
 $labels['viruscured'] = 'virus found and cured';
 $labels['possiblevirus'] = 'message possibly contains a virus';
 $labels['definitevirus'] = 'message possibly defiantly a virus';
+$labels['addheader'] = 'Add header';
+$labels['removeheader'] = 'Remove header';
+$labels['headername'] = 'Header name';
+$labels['headervalue'] = 'Header value';
 
 $messages = array();
 $messages['nosieverules'] = 'No filters found.';
@@ -188,5 +192,7 @@ $messages['nosieverulesets'] = 'No rulesets found.';
 $messages['baddateformat'] = 'Error: Please enter the date in the format YYYY-MM-DD';
 $messages['badtimeformat'] = 'Error: Please enter the time in the format HH:MM:SS';
 $messages['missingfoldername'] = 'Error: Please enter a folder name';
+$messages['eheadernoname'] = 'Error: Please enter a header name';
+$messages['eheadernoval'] = 'Error: Please enter a header value';
 
 ?>

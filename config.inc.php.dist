@@ -63,7 +63,9 @@ $rcmail_config['sieverules_allowed_actions'] = array(
 											'discard' => TRUE,
 											'imapflags' => TRUE,
 											'notify' => TRUE,
-											'stop' => TRUE
+											'stop' => TRUE,
+											'editheaderadd' => TRUE,
+											'editheaderrem' => TRUE
 											);
 
 // headers listed as examples of "Other headers"

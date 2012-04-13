@@ -517,7 +517,8 @@ class sieverules extends rcube_plugin
 			'sieverules.vacdayswrongformat', 'sieverules.vacnomsg', 'sieverules.notifynomethod', 'sieverules.missingfoldername',
 			'sieverules.notifynomsg', 'sieverules.filterdeleteconfirm', 'sieverules.ruledeleteconfirm',
 			'sieverules.actiondeleteconfirm', 'sieverules.notifyinvalidmethod', 'sieverules.nobodycontentpart',
-			'sieverules.badoperator','sieverules.baddateformat','sieverules.badtimeformat','sieverules.vactoexp_err','editorwarning');
+			'sieverules.badoperator','sieverules.baddateformat','sieverules.badtimeformat','sieverules.vactoexp_err','editorwarning',
+			'sieverules.eheadernoname','sieverules.eheadernoval');
 
 		$ext = $this->sieve->get_extensions();
 		$iid = get_input_value('_iid', RCUBE_INPUT_GPC);
@@ -735,6 +736,8 @@ class sieverules extends rcube_plugin
 			$dateparts = get_input_value('_datepart', RCUBE_INPUT_POST);
 			$weekdays = get_input_value('_weekday', RCUBE_INPUT_POST);
 			$advweekdays = get_input_value('_advweekday', RCUBE_INPUT_POST);
+			$eheadnames = get_input_value('_eheadname', RCUBE_INPUT_POST, true);
+			$eheadvals = get_input_value('_eheadval', RCUBE_INPUT_POST, true);
 
 			$script = array();
 			$script['join'] = ($join == 'allof') ? true : false;
@@ -910,6 +913,13 @@ class sieverules extends rcube_plugin
 						$script['actions'][$i]['method'] = $method;
 						$script['actions'][$i]['options'] = $option;
 						$script['actions'][$i]['msg'] = $msg;
+						break;
+					case 'editheaderadd':
+					case 'editheaderrem':
+						$name = $this->_strip_val($eheadnames[$idx]);
+						$value = $this->_strip_val($eheadvals[$idx]);
+						$script['actions'][$i]['name'] = $name;
+						$script['actions'][$i]['value'] = $value;
 						break;
 				}
 
@@ -1742,6 +1752,10 @@ class sieverules extends rcube_plugin
 			$allowed_actions['notify'] = $this->gettext('messagenotify');
 		elseif (in_array('enotify', $ext) && ($config_actions['notify'] || $action['type'] == 'enotify'))
 			$allowed_actions['enotify'] = $this->gettext('messagenotify');
+		if (in_array('editheader', $ext) && ($config_actions['editheaderadd'] || $action['type'] == 'editheaderadd'))
+			$allowed_actions['editheaderadd'] = $this->gettext('addheader');
+		if (in_array('editheader', $ext) && ($config_actions['editheaderrem'] || $action['type'] == 'editheaderrem'))
+			$allowed_actions['editheaderrem'] = $this->gettext('removeheader');
 		if ($config_actions['redirect'] || $action['type'] == 'redirect')
 			$allowed_actions['redirect'] = $this->gettext('messageredirect');
 		if (in_array('copy', $ext) && ($config_actions['redirect'] || $action['type'] == 'redirect_copy'))
@@ -1848,6 +1862,11 @@ class sieverules extends rcube_plugin
 				$noteadvstyle = '';
 				$noteshowadv = '1';
 			}
+		}
+		elseif ($action['type'] == 'editheaderadd' || $action['type'] == 'editheaderrem') {
+			$method = $action['type'];
+			$headername = htmlspecialchars($action['name']);
+			$headerval = htmlspecialchars($action['value']);
 		}
 		elseif ($action['type'] == 'discard' || $action['type'] == 'keep' || $action['type'] == 'stop') {
 			$method = $action['type'];
@@ -2049,6 +2068,23 @@ class sieverules extends rcube_plugin
 			$notify_table->add(array('colspan' => '3', 'style' => 'text-align: right'), html::label('nadvopts' . $rowid, Q($this->gettext('advancedoptions'))) . $input_advopts->show($noteshowadv));
 		}
 
+		$headers_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 2, 'style' => ($method == 'editheaderadd' || $method == 'editheaderrem') ? '' : 'display: none;'));
+
+		$field_id = 'rcmfd_eheadname_'. $rowid;
+		$input_header = new html_inputfield(array('id' => $field_id, 'name' => '_eheadname[]'));
+		$headers_table->add(null, html::label($field_id, Q($this->gettext('headername'))));
+		$headers_table->add(null, $input_header->show($headername));
+		$headers_table->add_row();
+
+		if ($method == 'editheaderrem')
+			$headers_table->set_row_attribs(array('style' => 'display: none;'));
+
+		$field_id = 'rcmfd_eheadval_'. $rowid;
+		$input_header = new html_inputfield(array('id' => $field_id, 'name' => '_eheadval[]'));
+		$headers_table->add(null, html::label($field_id, Q($this->gettext('headervalue'))));
+		$headers_table->add(null, $input_header->show($headerval));
+		$headers_table->add_row();
+
 		// get mailbox list
 		$mbox_name = $rcmail->storage->get_folder();
 
@@ -2096,7 +2132,7 @@ class sieverules extends rcube_plugin
 		foreach($this->flags as $name => $val)
 			$input_imapflags->add(Q($this->gettext($name)), Q($val));
 
-		$actions_table->add('folder', $input_folderlist->show($folder) . $otherfolders . $input_address->show($address) . $vacs_table->show() . $notify_table->show() . $input_imapflags->show($flags) . $input_reject->show($reject));
+		$actions_table->add('folder', $input_folderlist->show($folder) . $otherfolders . $input_address->show($address) . $vacs_table->show() . $notify_table->show() . $input_imapflags->show($flags) . $input_reject->show($reject) . $headers_table->show());
 
 		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_action', 'type' => 'link', 'class' => 'add', 'title' => 'sieverules.addsieveact', 'content' => ' '));
 		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_action', 'type' => 'link', 'class' => 'delete', 'classact' => 'delete_act', 'title' => 'sieverules.deletesieveact', 'content' => ' '));

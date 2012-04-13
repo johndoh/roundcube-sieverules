@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2012 04 13
+==========
+ * Add basic support for editheader extension
+
 2012 01 21
 ==========
  * Update after r5781
