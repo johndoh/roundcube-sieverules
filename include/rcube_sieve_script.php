@@ -296,7 +296,7 @@ class rcube_sieve_script
 							$tests[$i] .= ($test['not'] ? 'not ' : '');
 							$tests[$i] .= $test['header'];
 
-							$timezone = rcmail::get_instance()->config->get('timezone', 'auto');
+							$timezone = rcube::get_instance()->config->get('timezone', 'auto');
 							if ($timezone != 'auto') {
 								$tz = new DateTimeZone($timezone);
 								$date = new DateTime('now', $tz);

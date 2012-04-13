@@ -33,7 +33,7 @@ class rcube_sieve
 	{
 		$this->sieve = new Net_Sieve();
 
-		$data = rcmail::get_instance()->plugins->exec_hook('sieverules_connect', array(
+		$data = rcube::get_instance()->plugins->exec_hook('sieverules_connect', array(
 			'username' => $username, 'password' => $password, 'host' => $host, 'port' => $port,
 			'auth_type' => $auth_type, 'usetls' => $usetls, 'ruleset' => $ruleset, 'dir' => $dir,
 			'elsif' => $elsif, 'auth_cid' => $auth_cid, 'auth_pw' => $auth_pw));
@@ -111,7 +111,7 @@ class rcube_sieve
 			$script = '/* empty script */';
 
 		// allow additional actions before ruleset is saved
-		$data = rcmail::get_instance()->plugins->exec_hook('sieverules_save', array(
+		$data = rcube::get_instance()->plugins->exec_hook('sieverules_save', array(
 			'ruleset' => $this->ruleset, 'script' => $script));
 
 		if ($data['abort'])
@@ -231,7 +231,7 @@ class rcube_sieve
 
 	public function debug_handler(&$sieve, $message)
 	{
-		write_log('sieverules', preg_replace('/\r\n$/', '', $message));
+		rcube::write_log('sieverules', preg_replace('/\r\n$/', '', $message));
 	}
 
 	private function _set_error($error)
