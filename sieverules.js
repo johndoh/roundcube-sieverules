@@ -596,10 +596,18 @@ rcube_webmail.prototype.sieverules_action_select = function(sel) {
 	else if (obj.value == 'editheaderadd' || obj.value == 'editheaderrem') {
 		document.getElementsByName('_eheadname[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
 
-		if (obj.value == 'editheaderrem')
+		if (obj.value == 'editheaderrem') {
 			document.getElementsByName('_eheadval[]')[idx].parentNode.parentNode.style.display = 'none';
-		else
+			document.getElementsByName('_eheadaddlast[]')[idx].parentNode.parentNode.style.display = 'none';
+			document.getElementsByName('_hadv_opts[]')[idx].parentNode.parentNode.style.display = '';
+		}
+		else {
 			document.getElementsByName('_eheadval[]')[idx].parentNode.parentNode.style.display = '';
+			document.getElementsByName('_eheadaddlast[]')[idx].parentNode.parentNode.style.display = '';
+			document.getElementsByName('_eheadopp[]')[idx].parentNode.parentNode.style.display = 'none';
+			document.getElementsByName('_eheadindex[]')[idx].parentNode.parentNode.style.display = 'none';
+			document.getElementsByName('_hadv_opts[]')[idx].parentNode.parentNode.style.display = 'none';
+		}
 	}
 
 	if ($(document.getElementsByName('_folder[]')[idx]).is(':visible') && document.getElementsByName('_folder[]')[idx].value == '@@newfolder')
@@ -804,6 +812,15 @@ rcube_webmail.prototype.enable_sig = function(obj) {
 		rcmail.enable_command('plugin.sieverules.vacation_sig', true);
 	else
 		rcmail.enable_command('plugin.sieverules.vacation_sig', false);
+}
+
+rcube_webmail.prototype.sieverules_toggle_eheadlast = function(obj) {
+	var selectobj = document.getElementById(obj.id.replace('_eheadaddlast_', '_eheadindex_'));
+
+	if (obj.checked)
+		selectobj.selectedIndex = 6;
+	else
+		selectobj.selectedIndex = 0;
 }
 
 $(document).ready(function() {

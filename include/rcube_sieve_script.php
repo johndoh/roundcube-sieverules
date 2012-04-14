@@ -728,8 +728,8 @@ class rcube_sieve_script
 					$result[] = array('type' => 'editheaderrem',
 									'index' => $m[sizeof($m)-6] == 'last' ? $m[sizeof($m)-6] : $m[sizeof($m)-5],
 									'operator' => $m[sizeof($m)-3],
-									'name' => $this->_parse_string($m[sizeof($m)-2]),
-									'value' => $this->_parse_string($m[sizeof($m)-1]));
+									'name' => strlen($m[sizeof($m)-2]) == 0 ? $this->_parse_string($m[sizeof($m)-1]) : $this->_parse_string($m[sizeof($m)-2]),
+									'value' => strlen($m[sizeof($m)-2]) == 0 ? '' : $this->_parse_string($m[sizeof($m)-1]));
 				}
 			}
 		}

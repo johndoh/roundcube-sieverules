@@ -738,6 +738,9 @@ class sieverules extends rcube_plugin
 			$advweekdays = rcube_ui::get_input_value('_advweekday', rcube_ui::INPUT_POST);
 			$advweekdays = rcube_ui::get_input_value('_advweekday', rcube_ui::INPUT_POST);
 			$eheadnames = rcube_ui:: get_input_value('_eheadname', rcube_ui::INPUT_POST, true);
+			$eheadvals = rcube_ui::get_input_value('_eheadval', rcube_ui::INPUT_POST, true);
+			$eheadopps = rcube_ui::get_input_value('_eheadopp', rcube_ui::INPUT_POST);
+			$eheadindexes = rcube_ui::get_input_value('_eheadindex', rcube_ui::INPUT_POST);
 
 			$script = array();
 			$script['join'] = ($join == 'allof') ? true : false;
@@ -920,6 +923,11 @@ class sieverules extends rcube_plugin
 						$value = $this->_strip_val($eheadvals[$idx]);
 						$script['actions'][$i]['name'] = $name;
 						$script['actions'][$i]['value'] = $value;
+						$script['actions'][$i]['index'] = $eheadindexes[$idx];
+
+						if (strlen($script['actions'][$i]['value']) > 0)
+							$script['actions'][$i]['operator'] = $eheadopps[$idx];
+
 						break;
 				}
 
@@ -1730,6 +1738,8 @@ class sieverules extends rcube_plugin
 		$vacshowadv = ($action['type'] != 'vacation' && $this->force_vacto) ? '1' : '';
 		$noteadvstyle = 'display: none;';
 		$noteshowadv = '';
+		$eheadadvstyle = 'display: none;';
+		$eheadshowadv = '';
 
 		// setup allowed actions
 		$allowed_actions = array();
@@ -1867,6 +1877,13 @@ class sieverules extends rcube_plugin
 			$method = $action['type'];
 			$headername = htmlspecialchars($action['name']);
 			$headerval = htmlspecialchars($action['value']);
+			$headerindex = $action['index'];
+			$headeropp = $action['operator'];
+
+			if ($action['type'] == 'editheaderrem' && (!empty($headerindex) || !empty($headerval))) {
+				$eheadadvstyle = '';
+				$eheadshowadv = '1';
+			}
 		}
 		elseif ($action['type'] == 'discard' || $action['type'] == 'keep' || $action['type'] == 'stop') {
 			$method = $action['type'];
@@ -2076,14 +2093,55 @@ class sieverules extends rcube_plugin
 		$headers_table->add(null, $input_header->show($headername));
 		$headers_table->add_row();
 
-		if ($method == 'editheaderrem')
-			$headers_table->set_row_attribs(array('style' => 'display: none;'));
+		$field_id = 'rcmfd_eheadindex_'. $rowid;
+		$select_index = new html_select(array('id' => $field_id, 'name' => "_eheadindex[]"));
+		$select_index->add(rcube_ui::Q($this->gettext('headerdelall')), "");
+		$select_index->add(rcube_ui::Q("1"), "1");
+		$select_index->add(rcube_ui::Q("2"), "2");
+		$select_index->add(rcube_ui::Q("3"), "3");
+		$select_index->add(rcube_ui::Q("4"), "4");
+		$select_index->add(rcube_ui::Q("5"), "5");
+		$select_index->add(rcube_ui::Q($this->gettext('last')), "last");
+
+		$headers_table->set_row_attribs(array('class' => 'advanced', 'style' => $eheadadvstyle));
+		$headers_table->add(null, html::label($field_id, rcube_ui::Q($this->gettext('headerindex'))));
+		$headers_table->add(null, $select_index->show($headerindex));
+		$headers_table->add_row();
+
+		$field_id = 'rcmfd_eheadopp_'. $rowid;
+		$select_match = new html_select(array('id' => $field_id, 'name' => "_eheadopp[]"));
+		$select_match->add(rcube_ui::Q($this->gettext('filteris')), "");
+		$select_match->add(rcube_ui::Q($this->gettext('filtercontains')), "contains");
+
+		$headers_table->set_row_attribs(array('class' => 'advanced', 'style' => $eheadadvstyle));
+		$headers_table->add(null, html::label($field_id, rcube_ui::Q($this->gettext('operator'))));
+		$headers_table->add(null, $select_match->show($headeropp));
+		$headers_table->add_row();
 
 		$field_id = 'rcmfd_eheadval_'. $rowid;
 		$input_header = new html_inputfield(array('id' => $field_id, 'name' => '_eheadval[]'));
+
+		if ($method == 'editheaderrem')
+			$headers_table->set_row_attribs(array('class' => 'advanced', 'style' => $eheadadvstyle));
+
 		$headers_table->add(null, html::label($field_id, rcube_ui::Q($this->gettext('headervalue'))));
 		$headers_table->add(null, $input_header->show($headerval));
 		$headers_table->add_row();
+
+		if ($method == 'editheaderrem')
+			$headers_table->set_row_attribs(array('style' => 'display: none;'));
+
+		$field_id = 'rcmfd_eheadaddlast_'. $rowid;
+		$input_index = new html_checkbox(array('id' => $field_id, 'value' => 'last', 'onclick' => JS_OBJECT_NAME . '.sieverules_toggle_eheadlast(this);', 'name' => '_eheadaddlast[]', 'class' => 'checkbox'));
+		$headers_table->add(null, '&nbsp;');
+		$headers_table->add(null, $input_index->show($headerindex) . "&nbsp;" . html::label($field_id, rcube_ui::Q($this->gettext('headerappend'))));
+		$headers_table->add_row();
+
+		if ($method == 'editheaderadd')
+			$headers_table->set_row_attribs(array('style' => 'display: none;'));
+
+		$input_advopts = new html_checkbox(array('id' => 'hadvopts' . $rowid, 'name' => '_hadv_opts[]', 'onclick' => JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1', 'class' => 'checkbox'));
+		$headers_table->add(array('colspan' => '3', 'style' => 'text-align: right'), html::label('nadvopts' . $rowid, rcube_ui::Q($this->gettext('advancedoptions'))) . $input_advopts->show($eheadshowadv));
 
 		// get mailbox list
 		$mbox_name = $rcmail->storage->get_folder();

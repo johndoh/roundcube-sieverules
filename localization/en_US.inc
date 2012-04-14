@@ -136,6 +136,10 @@ $labels['addheader'] = 'Add header';
 $labels['removeheader'] = 'Remove header';
 $labels['headername'] = 'Header name';
 $labels['headervalue'] = 'Header value';
+$labels['headerappend'] = 'Append to existing message header.';
+$labels['headerindex'] = 'Header index';
+$labels['headerdelall'] = 'all occurrences';
+$labels['last'] = 'last';
 
 $messages = array();
 $messages['nosieverules'] = 'No filters found.';
