@@ -1306,33 +1306,71 @@ $(document).ready(function() {
 
 				rcmail.register_command('plugin.sieverules.vacation_sig', function(id) {
 					var obj = document.getElementById("rcmfd_sievevacfrom_" + id);
-					var input_message = $("#rcmfd_sievevacmag_" + id);
+					var is_html = ($("#rcmfd_sievevachtmlcb_" + id).is(':checked'));
 
 					if (!obj || !obj.options)
 						return false;
 
-					var cursor_pos, sig, id;
+					var sig, id;
 					var sig_separator = '-- ';
-					var message = input_message.val();
 
 					if (obj.options[0].value == 'auto' || obj.options[0].value == '')
 						id = obj.selectedIndex;
 					else
 						id = obj.selectedIndex + 1;
 
-					// add the signature string
-					if (rcmail.env.signatures && rcmail.env.signatures[id]) {
-						sig = rcmail.env.signatures[id]['text'];
-						sig = sig.replace(/\r\n/g, '\n');
+					if (is_html) {
+						var editor = tinyMCE.get("rcmfd_sievevacmag_" + id),
+						sigElem = editor.dom.get('_rc_sig');
 
-						if (!sig.match(/^--[ -]\n/))
-							sig = sig_separator + '\n' + sig;
+						// Append the signature as a div within the body
+						if (!sigElem) {
+							var body = editor.getBody(),
+							doc = editor.getDoc();
 
-						message = message.replace(/[\r\n]+$/, '');
-						message += '\n\n' + sig;
+							sigElem = doc.createElement('div');
+							sigElem.setAttribute('id', '_rc_sig');
+
+							if (bw.ie)  // add empty line before signature on IE
+								body.appendChild(doc.createElement('br'));
+
+							body.appendChild(sigElem);
+						}
+
+						if (rcmail.env.signatures[id]) {
+							if (rcmail.env.signatures[id].is_html) {
+								sig = rcmail.env.signatures[id].text;
+								if (!rcmail.env.signatures[id].plain_text.match(/^--[ -]\r?\n/m))
+									sig = sig_separator + '<br />' + sig;
+							}
+							else {
+								sig = rcmail.env.signatures[id].text;
+								if (!sig.match(/^--[ -]\r?\n/m))
+									sig = sig_separator + '\n' + sig;
+
+								sig = '<pre>' + sig + '</pre>';
+							}
+
+							sigElem.innerHTML = sig;
+						}
 					}
+					else {
+						var input_message = $("#rcmfd_sievevacmag_" + id);
+						var message = input_message.val();
 
-					input_message.val(message);
+						if (rcmail.env.signatures && rcmail.env.signatures[id]) {
+							sig = rcmail.env.signatures[id]['text'];
+							sig = sig.replace(/\r\n/g, '\n');
+
+							if (!sig.match(/^--[ -]\n/))
+								sig = sig_separator + '\n' + sig;
+
+							message = message.replace(/[\r\n]+$/, '');
+							message += '\n\n' + sig;
+						}
+
+						input_message.val(message);
+					}
 
 					return false;
 				}, false);
