@@ -1807,7 +1807,7 @@ class sieverules extends rcube_plugin
 
 		if ($action['type'] == 'fileinto' || $action['type'] == 'fileinto_copy') {
 			$method = $action['type'];
-			$folder = $rcmail->config->get('sieverules_include_imap_root', true) ? $action['target'] : $rcmail->storage->mod_folder($action['target']);
+			$folder = $rcmail->config->get('sieverules_include_imap_root', true) ? $action['target'] : $rcmail->storage->mod_folder($action['target'], 'IN');
 
 			if ($rcmail->config->get('sieverules_folder_delimiter', false))
 				$folder = str_replace($rcmail->storage->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $folder);
