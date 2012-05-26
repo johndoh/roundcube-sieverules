@@ -613,7 +613,7 @@ class sieverules extends rcube_plugin
 				. $join_type . "<br /><br />"
 				. $rules_table->show($attrib));
 
-		$rcmail->storage_connect();
+		$rcmail->storage_init();
 		$actions_table = new html_table(array('id' => 'actions-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 3));
 		$actions_table = $this->_action_row($ext, $actions_table, 'rowid', null, $attrib, $example);
 
@@ -858,7 +858,7 @@ class sieverules extends rcube_plugin
 					case 'fileinto_copy':
 						$folder = $this->_strip_val($folders[$idx]);
 						$rcmail = rcube::get_instance();
-						$rcmail->storage_connect();
+						$rcmail->storage_init();
 						$script['actions'][$i]['create'] = false;
 						if ($folder == '@@newfolder') {
 							$script['actions'][$i]['create'] = true;
@@ -2009,7 +2009,7 @@ class sieverules extends rcube_plugin
 		}
 
 		$field_id = 'rcmfd_sievevacmag_'. $rowid;
-		$input_msg = new html_textarea(array('id' => $field_id, 'name' => '_msg[]', 'rows' => '8', 'cols' => '40', 'class' => $htmlmsg == 1 ? 'mce_editor' : ''));
+		$input_msg = new html_textarea(array('id' => $field_id, 'name' => '_msg[]', 'rows' => '8', 'cols' => '40', 'class' => $htmlmsg == 1 ? 'mce_editor' : '', 'is_escaped' => $htmlmsg == 1 ? true : null));
 		$input_html = new html_checkbox(array('id' => 'rcmfd_sievevachtmlcb_'. $rowid, 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_toggle_vac_html(this, '. $rowid .', \'' . $field_id .'\');', 'value' => '1', 'class' => 'checkbox'));
 		$input_htmlhd = new html_hiddenfield(array('id' => 'rcmfd_sievevachtmlhd_'. $rowid, 'name' => '_htmlmsg[]', 'value' => $htmlmsg));
 		$vacs_table->add('msg', html::label($field_id, rcmail::Q($this->gettext('message'))));
