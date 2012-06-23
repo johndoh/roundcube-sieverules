@@ -224,7 +224,7 @@ class sieverules extends rcube_plugin
 
 	function gen_list($attrib)
 	{
-		$this->api->output->add_label('sieverules.movingfilter', 'loading', 'sieverules.switchtoadveditor');
+		$this->api->output->add_label('sieverules.movingfilter', 'loading', 'sieverules.switchtoadveditor', 'sieverules.filterdeleteconfirm');
 		$this->api->output->add_gui_object('sieverules_list', 'sieverules-table');
 
 		$table = new html_table(array('id' => 'sieverules-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 2));
@@ -274,7 +274,7 @@ class sieverules extends rcube_plugin
 			$down_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'down_arrow', 'title' => 'sieverules.movedown', 'content' => ' '));
 			$down_link = str_replace("'", "\'", $down_link);
 
-			$this->api->output->command('sieverules_update_list', $idx == 0 ? 'add-first' : 'add', 'rcmrow' . $idx, rcmail::Q($filter_name), $down_link, $up_link);
+			$this->api->output->command('sieverules_update_list', $idx == 0 ? 'add-first' : 'add', 'rcmrow' . $idx, rcmail::JQ($filter_name), $down_link, $up_link);
 		}
 
 		$this->api->output->send();
@@ -515,7 +515,7 @@ class sieverules extends rcube_plugin
 			'sieverules.headerbadchars', 'sieverules.noheadervalue', 'sieverules.sizewrongformat',
 			'sieverules.noredirect', 'sieverules.redirectaddresserror', 'sieverules.noreject', 'sieverules.vacnodays',
 			'sieverules.vacdayswrongformat', 'sieverules.vacnomsg', 'sieverules.notifynomethod', 'sieverules.missingfoldername',
-			'sieverules.notifynomsg', 'sieverules.filterdeleteconfirm', 'sieverules.ruledeleteconfirm',
+			'sieverules.notifynomsg', 'sieverules.ruledeleteconfirm',
 			'sieverules.actiondeleteconfirm', 'sieverules.notifyinvalidmethod', 'sieverules.nobodycontentpart',
 			'sieverules.badoperator','sieverules.baddateformat','sieverules.badtimeformat','sieverules.vactoexp_err','editorwarning',
 			'sieverules.eheadernoname','sieverules.eheadernoval');
@@ -1021,8 +1021,8 @@ class sieverules extends rcube_plugin
 		}
 		else {
 			// go to sieverules page
-			rcube::get_instance()->overwrite_action('plugin.sieverules.edit');
-			$this->action = 'plugin.sieverules.edit';
+			rcube::get_instance()->overwrite_action('plugin.sieverules');
+			$this->action = 'plugin.sieverules';
 			$this->init_html();
 		}
 	}
