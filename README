@@ -238,6 +238,21 @@ Arguments:
   * script - (string) the raw sieve script
 
 Return:
+  * script - (string) the raw sieve script
   * abort - (boolean) if true the script will not be saved
   * message - (string) optional reason why the script was not saved which
     will be shown to the user
+
+sieverules_load hook
+=====================
+Before filter information is loaded into the UI the plugin hook sieverules_load
+is executed, this allows you to perform any custom actions like hiding rules
+you dont want end users to see.
+NOTE: rules removed using this hook will need to be added back via the
+sieverules_save hook if you want to keep them on the server.
+Arguments:
+  * ruleset - (string) the name of the ruleset file
+  * script - (string) the raw sieve script
+
+Return:
+  * script - (string) the raw sieve script

@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2012 06 23
+==========
+ * Add sieverules_load hook
+
 2012 04 16
 ==========
  * rcube_ui > rcube_utils (r6091)

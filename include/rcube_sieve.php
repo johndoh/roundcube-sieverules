@@ -117,10 +117,11 @@ class rcube_sieve
 		if ($data['abort'])
 			return $data['message'] ? $data['message'] : false;
 
-		if (PEAR::isError($this->sieve->installScript($this->ruleset, $script)))
+		if (PEAR::isError($this->sieve->installScript($this->ruleset, $data['script'])))
 			return $this->_set_error(SIEVE_ERROR_INSTALL);
 
 		if ($this->cache) $_SESSION['sieverules_script_cache_' . $this->ruleset] = serialize($this->script);
+
 		return true;
 	}
 
@@ -193,7 +194,11 @@ class rcube_sieve
 			$script = '';
 		}
 
-		$this->script = new rcube_sieve_script($script, $this->get_extensions(), $this->elsif);
+		$data = rcube::get_instance()->plugins->exec_hook('sieverules_load', array(
+			'ruleset' => $this->ruleset, 'script' => $script));
+
+		$this->script = new rcube_sieve_script($data['script'], $this->get_extensions(), $this->elsif);
+
 		if ($this->cache) {
 			$_SESSION['sieverules_scripts_list'] = serialize($this->list);
 			$_SESSION['sieverules_script_cache_' . $this->ruleset] = serialize($this->script);
