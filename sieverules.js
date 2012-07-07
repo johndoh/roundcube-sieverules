@@ -154,9 +154,10 @@ rcube_webmail.prototype.sieverules_drag_end = function(e) {
 };
 
 rcube_webmail.prototype.sieverules_load = function(id, action) {
-	if (action == 'plugin.sieverules.edit' && (!id || id==rcmail.env.iid))
+	if (action == 'plugin.sieverules.edit' && (!id || id == rcmail.env.iid))
 		return false;
 
+	rcmail.env.iid = id;
 	var add_url = '';
 	var target = window;
 	if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
@@ -170,6 +171,7 @@ rcube_webmail.prototype.sieverules_load = function(id, action) {
 		target.location.href = rcmail.env.comm_path+'&_action='+action+'&_iid='+id+add_url;
 	}
 
+	rcmail.enable_command('plugin.sieverules.delete', true);
 	return true;
 }
 
@@ -743,7 +745,7 @@ rcube_webmail.prototype.sieverules_add_ruleset = function(val, text) {
 
 rcube_webmail.prototype.sieverules_disable_ruleset_options = function() {
 	$('#rulelist').attr("disabled", "disabled");
-	rcmail.enable_command('plugin.sieverules.ruleset_dialog', 'plugin.sieverules.activate_ruleset', 'plugin.sieverules.del_ruleset', false)
+	rcmail.enable_command('plugin.sieverules.ruleset_dialog', 'plugin.sieverules.activate_ruleset', 'plugin.sieverules.del_ruleset', false);
 }
 
 rcube_webmail.prototype.sieverulesdialog_submit = function() {
@@ -947,6 +949,22 @@ $(document).ready(function() {
 
 					rcmail.sieverules_adveditor(chkbox);
 				}, true);
+
+				rcmail.register_command('plugin.sieverules.delete', function(id) {
+					if (confirm(rcmail.gettext('filterdeleteconfirm','sieverules'))) {
+						var add_url = '';
+
+						var target = window;
+						if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
+							add_url = '&_framed=1';
+							target = window.frames[rcmail.env.contentframe];
+							rcube_find_object(rcmail.env.contentframe).style.visibility = 'inherit';
+						}
+
+						target.location.href = rcmail.env.comm_path+'&_action=plugin.sieverules.delete&_iid=' + rcmail.env.iid + add_url;
+						rcmail.enable_command('plugin.sieverules.delete', false);
+					}
+				}, false);
 
 				if (rcmail.env.action == 'plugin.sieverules.advanced') {
 					rcmail.register_command('plugin.sieverules.save', function() {
@@ -1287,21 +1305,6 @@ $(document).ready(function() {
 						document.getElementsByName('_comparator[]')[i].disabled = false;
 
 					rcmail.gui_objects.editform.submit();
-				}, true);
-
-				rcmail.register_command('plugin.sieverules.delete', function(id) {
-					if (confirm(rcmail.gettext('filterdeleteconfirm','sieverules'))) {
-						var add_url = '';
-
-						var target = window;
-						if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
-							add_url = '&_framed=1';
-							target = window.frames[rcmail.env.contentframe];
-							rcube_find_object(rcmail.env.contentframe).style.visibility = 'inherit';
-						}
-
-						target.location.href = rcmail.env.comm_path+'&_action=plugin.sieverules.delete&_iid=' + rcmail.env.iid;
-					}
 				}, true);
 
 				rcmail.register_command('plugin.sieverules.vacation_sig', function(id) {
