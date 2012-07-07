@@ -118,7 +118,7 @@ class rcube_sieve_script
 				return SIEVE_ERROR_BAD_ACTION;
 		}
 
-		if ($pos != null)
+		if ($pos !== null)
 			array_splice($this->content, $pos, 0, array($content));
 		else
 			array_push($this->content, $content);
