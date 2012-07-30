@@ -13,8 +13,8 @@
 		<email>roundcube@tehinterweb.co.uk</email>
 		<active>yes</active>
 	</lead>
-	<date>2012-03-03</date>
-	<time>08:48:05</time>
+	<date>2012-07-30</date>
+	<time>18:21:58</time>
 	<version>
 		<release>1.17</release>
 		<api>1.17</api>
@@ -67,18 +67,18 @@
 			<file name="localization/sl_SI.inc" role="data"/>
 			<file name="localization/sv_SE.inc" role="data"/>
 			<file name="localization/zh_TW.inc" role="data"/>
-			<file name="skins/default/help.gif" role="data"/>
-			<file name="skins/default/icons.gif" role="data"/>
-			<file name="skins/default/icons.png" role="data"/>
-			<file name="skins/default/ie6hacks.css" role="data"/>
-			<file name="skins/default/iehacks.css" role="data"/>
-			<file name="skins/default/safari.css" role="data"/>
-			<file name="skins/default/sieverules.css" role="data"/>
-			<file name="skins/default/tabstyles.css" role="data"/>
-			<file name="skins/default/templates/advancededitor.html" role="data"/>
-			<file name="skins/default/templates/editsieverule.html" role="data"/>
-			<file name="skins/default/templates/setupsieverules.html" role="data"/>
-			<file name="skins/default/templates/sieverules.html" role="data"/>
+			<file name="skins/classic/help.gif" role="data"/>
+			<file name="skins/classic/icons.gif" role="data"/>
+			<file name="skins/classic/icons.png" role="data"/>
+			<file name="skins/classic/ie6hacks.css" role="data"/>
+			<file name="skins/classic/iehacks.css" role="data"/>
+			<file name="skins/classic/safari.css" role="data"/>
+			<file name="skins/classic/sieverules.css" role="data"/>
+			<file name="skins/classic/tabstyles.css" role="data"/>
+			<file name="skins/classic/templates/advancededitor.html" role="data"/>
+			<file name="skins/classic/templates/editsieverule.html" role="data"/>
+			<file name="skins/classic/templates/setupsieverules.html" role="data"/>
+			<file name="skins/classic/templates/sieverules.html" role="data"/>
 			<file name="skins/larry/help.png" role="data"/>
 			<file name="skins/larry/icons.png" role="data"/>
 			<file name="skins/larry/iehacks.css" role="data"/>
