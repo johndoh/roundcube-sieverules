@@ -6,10 +6,11 @@
 
 // managesieve server address
 // The host can contain the following macros that will be expanded as follows:
-// %h - user's IMAP hostname
-// %n - http hostname ($_SERVER['SERVER_NAME'])
-// %d - domain (http hostname without the first part)
-// For example %n = mail.domain.tld, %d = domain.tld
+// %n - hostname ($_SERVER['SERVER_NAME'])
+// %t - hostname without the first part
+// %d - domain (http hostname $_SERVER['HTTP_HOST'] without the first part)
+// %s - domain name after the '@' from e-mail address provided at login screen
+// For example %n = mail.domain.tld, %t = domain.tld
 $rcmail_config['sieverules_host'] = 'localhost';
 
 // managesieve server port
