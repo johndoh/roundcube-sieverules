@@ -1,304 +1,157 @@
 Roundcube Webmail SieveRules
 ============================
 
-2012 06 23
-==========
- * Add sieverules_load hook
-
-2012 04 16
-==========
+ * rename default skin to classic (c40419bdfe)
  * rcube_ui > rcube_utils (r6091)
-
-2012 04 14
-==========
  * Update for Roundcube framework
  * Add advanced options for editheader extension to UI
-
-2012 04 13
-==========
  * Add basic support for editheader extension
 
-2012 01 21
-==========
+Version 1.17 (2012-07-07, rc-0.8)
+=================================================
+ * Add sieverules_load hook
  * Update after r5781
  * Add inital support for Larry
 
-2012 01 04
-==========
+Version 1.16 (2012-01-21, rc-0.8)
+=================================================
  * Update code to use new timezone format (r5707)
-
-2012 01 02
-==========
  * Respect settings for html editor from core
-
-2011 12 31
-==========
  * Fix display for radio and checkboxes in notify action
-
-2011 12 04
-==========
  * Use core function to sanitize input
 
-2011 11 13
-==========
+Version 1.15 (2011-12-04, rc-0.7)
+=================================================
  * Fix escaping if lines starting with . in vacation message
-
-2011 10 04
-==========
  * Add support for virustest extension
-
-2011 10 03
-==========
  * Add HTML editor option for vacation messages
 
-2011 09 24
-==========
+Version 1.14 (2011-10-03, rc-0.6)
+=================================================
  * Add plugin hook sieverules_connect
-
-2011 08 28
-==========
  * Fix typo, hook name should be sieverules_save
-
-2011 08 24
-==========
  * Improve plugin hook sieverules_saved
-
-2011 08 20
-==========
  * Add plugin hook sieverules_saved
-
-2011 08 06
-==========
  * Improve fileinto :create, now requires mailbox extension
 
-2011 06 19
-==========
+Version 1.13 (2011-08-06, rc-0.6)
+=================================================
  * Add button to insert sig into vacation message
 
-2011 05 06
-==========
+Version 1.12 (2011-06-19, rc-0.6)
+=================================================
  * Use JQueryUI plugin for dialog box (r4715)
 
-2011 03 12
-==========
+Version 1.11 (2011-05-06, rc-0.6)
+=================================================
  * Allow users to enter folder names for fileinto
 
-2011 02 03
-==========
+Version 1.10 (2011-03-12, rc-0.5)
+=================================================
  * idn_to_ascii -> rcube_idn_to_ascii (r4484)
-
-2011 01 31
-==========
  * Fix double request when clicking on tab using Firefox (from r4472)
-
-2011 01 29
-==========
  * Enable :from and :handle options for vaction
 
-2010 10 26
-==========
+Version 1.9 (2011-01-29, rc-0.5)
+=================================================
  * Added support for SASL proxy authentication
-
-2010 10 14
-==========
  * Automatically import rulesets when auto_load_default is true, multiplerules is false and it is the active ruleset
-
-2010 10 02
-==========
  * Add debug logging
-
-2010 09 29
-==========
  * Add Internationalized Domain Name (IDNA) support (r4009)
-
-2010 09 19
-==========
  * Allow free entry of vacation alias addresses
-
-2010 09 06
-==========
  * Fix duplicate comparator listing
 
-2010 07 03
-==========
+Version 1.8 (2010-07-10, rc-0.4)
+=================================================
  * Update to Net_Sieve 1.3.0
-
-2010 06 19
-==========
  * Skin update after r3757
-
-2010 06 15
-==========
  * Update to Net_Sieve 1.2.2
-
-2010 06 13
-==========
  * Update skin r3733
-
-2010 06 04
-==========
  * Add support for %n and %d in host (r3701)
-
-2010 04 24
-==========
  * Add support for date extension
 
-2010 04 19
-==========
+Version 1.7 (2010-04-24, rc-0.4)
+=================================================
  * Update to Net_Sieve 1.2.1
-
-2010 04 06
-==========
  * Update to Net_Sieve 1.2.0
-
-2010 03 27
-==========
  * Use same folder path as RC by default
-
-2010 03 06
-==========
  * Use imap_connect after r3278
-
-2010 02 14
-==========
  * The Sender header is not always present, test From by default instead
 
-2010 01 29
-==========
+Version 1.6 (2010-02-06, rc-0.4)
+=================================================
  * Add hidden options to config file
-
-2010 01 28
-==========
  * Fix handeling of text in <> in adv editor
 
-2009 12 30
-==========
+Version 1.5 (2009-12-31, rc-0.4)
+=================================================
  * Fix default display when fileinto action is disabled
-
-2009 12 10
-==========
  * Add ruleset selector to advanced editor
-
-2009 11 25
-==========
  * Allow default headers, operators and flags to be overridden
  * Fix bug in body action
-
-2009 11 16
-==========
  * Allow file header to be overridden
-
-2009 11 14
-==========
  * Allow appending of original subject to vacation messages (requires variables
    extension in sieve)
  * Parse multiple email addresses when setting redirect
-
-2009 11 09
-==========
  * Fix bug in detection of vacation charset
-
-2009 11 08
-==========
  * Add support for multiple rulesets
  * Use core config function (WARNING: Complete re-write of config file!)
  * Some JS cleanup
 
-2009 10 31
-==========
+Version 1.4 (2009-11-08, rc-0.4)
+=================================================
  * Use frames to avoid full page reloads
  * Use rule cache to speed things up a little
 
-2009 09 23
-==========
+Version 1.3 (2009-11-01, rc-0.4)
+=================================================
+ * Read custom settings from config (elsif etc)
+
+Version 1.2 (2009-10-25, rc-0.3)
+=================================================
  * Support folder name encoding
+
+Version 1.1 (2009-09-23, rc-0.3)
+=================================================
  * Support multiple hosts
 
-2009 09 05
-==========
+Version 1.0 (2009-09-16, rc-0.3)
+=================================================
  * Minor layout updates
-
-2009 09 03
-==========
  * Localisation updates
-
-2009 08 25
-==========
  * Add support for spamtest extension (by Vladislav Bogdanov)
-
-2009 07 17
-==========
  * Fix get_form_tags() call after r2755
-
-2009 07 11
-==========
  * Fix support for dovecot 1.2
  * Add support for copy extension
  * Add support for body extension
  * Better error reporting
-
-2009 06 27
-==========
  * Use imap->mod_mailbox()
  * Use better identity checking
-
-2009 06 07
-==========
  * Add possibility to easily switch between \r\n and \n in sieve file and also
    change indent
  * Swap split() for explode(), PHP 5.3 compatibility
-
-2009 05 31
-==========
  * Use list.js from the core
-
-2009 05 30
-==========
  * Added config var to auto load default rules when no user ones exist and skip
    setup screen
  * Added support ESC key to stop dragging
  * Added support for enotify and imap4flags
  * Added delete icon
  * Fixed JS bug when adding second rule
-
-2009 05 25
-==========
  * Fixed bug in rule moving
-
-2009 05 24
-==========
  * Added support for plugin template system
  * Added up/down/delete key support on the filters list
  * Added ability to drag examples to filters list
  * Added ability to drag rules within the filter list to change the order
  * Fixed display bug when deleting penultimate rule
-
-2009 05 19
-==========
  * Swapped decrypt_passwd for decrypt
-
-2009 05 12
-==========
  * Improved INGO rule filter
-
-2009 05 09
-==========
  * Added basic import system
  * Added Advanced editor - allows for editing of sieve file directly
  * Moved example rules to more obvious position
  * Updated list.js to latest version
-
-2009 05 03
-==========
  * Set busy while moving filter
-
-2009 04 27
-==========
  * Updated de_DE
  * Small changes to init functions for when labels are added to UI
-
-Version 1.0-BETA
-=================
  * Translated from sieverules patch
  * Added support for default rules file
  * Added support for example rules file
