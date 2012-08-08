@@ -194,7 +194,7 @@ class rcube_sieve
 			$script = '';
 		}
 
-		$data = rcube::get_instance()->plugins->exec_hook('sieverules_load', array(
+		$data = rcmail::get_instance()->plugins->exec_hook('sieverules_load', array(
 			'ruleset' => $this->ruleset, 'script' => $script));
 
 		$this->script = new rcube_sieve_script($data['script'], $this->get_extensions(), $this->elsif);
