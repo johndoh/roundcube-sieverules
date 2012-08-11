@@ -136,6 +136,11 @@ $rcmail_config['sieverules_use_elsif'] = TRUE;
 // 2 - List subscribed and unsubscribed folders and allow users to enter a folder name (for advanced users only, requires sieve mailbox extension)
 $rcmail_config['sieverules_fileinto_options'] = 0;
 
+// Define the format of the :from option value for vacation and notify actions
+// 0 - Use only the email address - :from "user@example.com"
+// 1 - Use the name and email address, not all servers support this option - :from "First Last <user@example.com>"
+$rcmail_config['sieverules_from_format'] = 0;
+
 // For information on customising the rule file see "The structure of the rule file" in the README
 // For information on customising the contents of the drop downs see "Default values for header, operator and flag drop downs" in the README
 

@@ -1230,12 +1230,12 @@ $(document).ready(function() {
 							if (dateparts[i].value == 'date' && !date_test.test(targets[i].value)) {
 								alert(rcmail.gettext('baddateformat','sieverules'));
 								targets[i].focus();
-								return false
+								return false;
 							}
 							else if (dateparts[i].value == 'time' && !time_test.test(targets[i].value)) {
 								alert(rcmail.gettext('badtimeformat','sieverules'));
 								targets[i].focus();
-								return false
+								return false;
 							}
 						}
 					}
@@ -1271,7 +1271,7 @@ $(document).ready(function() {
 							}
 						}
 						else if (acts[i][idx].value == 'vacation') {
-							if (senders[i].value != '' && senders[i].value != 'auto' && !rcube_check_email(senders[i].value.replace(/^\s+/, '').replace(/[\s,;]+$/, ''), true)) {
+							if (senders[i].value != '' && senders[i].value != 'auto' && !rcube_check_email(senders[i].value.replace(/^\s+/, '').replace(/[\s,;]+$/, ''), true) && !$.isNumeric(senders[i].value)) {
 								alert(rcmail.gettext('redirectaddresserror','sieverules'));
 								senders[i].focus();
 								return false;
@@ -1301,7 +1301,8 @@ $(document).ready(function() {
 							//	return false;
 							//}
 
-							if (msgs[i].value == '') {
+							var editor = tinyMCE.get("rcmfd_sievevacmag_" + (i - 1));
+							if ((editor && editor.getContent() == '') || (!editor && msgs[i].value == '')) {
 								alert(rcmail.gettext('vacnomsg','sieverules'));
 								msgs[i].focus();
 								return false;

@@ -889,6 +889,18 @@ class sieverules extends rcube_plugin
 						$htmlmsg = $this->_strip_val($htmlmsgs[$idx]);
 						$msg = ($htmlmsg == "1") ? $msgs[$idx] : $this->_strip_val($msgs[$idx]);
 						$charset = $this->_strip_val($charsets[$idx]);
+
+						// format from address
+						if (is_numeric($from)) {
+							if (is_array($identity_arr = $this->_rcmail_get_identity($from))) {
+								if ($identity_arr['val_string'])
+									$from = $identity_arr['val_string'];
+							}
+							else {
+								$from = null;
+							}
+						}
+
 						$script['actions'][$i]['days'] = $day;
 						$script['actions'][$i]['subject'] = $subject;
 						$script['actions'][$i]['origsubject'] = $origsubject;
@@ -911,6 +923,18 @@ class sieverules extends rcube_plugin
 						$method = $this->_strip_val($nmethods[$idx]);
 						$option = $this->_strip_val($noptions[$idx]);
 						$msg = $this->_strip_val($nmsgs[$idx]);
+
+						// format from address
+						if (is_numeric($from)) {
+							if (is_array($identity_arr = $this->_rcmail_get_identity($from))) {
+								if ($identity_arr['val_string'])
+									$from = $identity_arr['val_string'];
+							}
+							else {
+								$from = null;
+							}
+						}
+
 						$script['actions'][$i]['from'] = $from;
 						$script['actions'][$i]['importance'] = $importance;
 						$script['actions'][$i]['method'] = $method;
@@ -1910,7 +1934,15 @@ class sieverules extends rcube_plugin
 				$select_id->add(rcmail::Q($this->gettext('autodetect')), "");
 
 			foreach ($user_identities as $sql_arr) {
-				$select_id->add($sql_arr['email'], $sql_arr['email']);
+				$from = $this->_rcmail_get_identity($sql_arr['identity_id']);
+
+				// find currently selected from address
+				if ($vacfrom != '' && $vacfrom == rcmail::Q($from['string']))
+					$vacfrom = $sql_arr['identity_id'];
+				elseif ($vacfrom != '' && $vacfrom == $from['mailto'])
+					$vacfrom = $sql_arr['identity_id'];
+
+				$select_id->add($from['disp_string'], $sql_arr['identity_id']);
 
 				$ffield_id = 'rcmfd_vac_' . $rowid . '_' . $sql_arr['identity_id'];
 
@@ -2033,8 +2065,17 @@ class sieverules extends rcube_plugin
 			$select_id = new html_select(array('id' => $field_id, 'name' => "_nfrom[]"));
 			$select_id->add(rcmail::Q($this->gettext('autodetect')), "");
 
-			foreach ($user_identities as $sql_arr)
-				$select_id->add($sql_arr['email'], $sql_arr['email']);
+			foreach ($user_identities as $sql_arr) {
+				$from = $this->_rcmail_get_identity($sql_arr['identity_id']);
+
+				// find currently selected from address
+				if ($nfrom != '' && $nfrom == rcmail::Q($from['string']))
+					$nfrom = $sql_arr['identity_id'];
+				elseif ($nfrom != '' && $nfrom == $from['mailto'])
+					$nfrom = $sql_arr['identity_id'];
+
+				$select_id->add($from['disp_string'], $sql_arr['identity_id']);
+			}
 
 			$notify_table->set_row_attribs(array('class' => 'advanced', 'style' => $noteadvstyle));
 			$notify_table->add(null, html::label($field_id, rcmail::Q($this->gettext('sievefrom'))));
@@ -2222,6 +2263,31 @@ class sieverules extends rcube_plugin
 	private function _mbox_encode($text, $encoding)
 	{
 		return rcube_charset::convert($text, 'UTF7-IMAP', $encoding);
+	}
+
+	// get identity record
+	private function _rcmail_get_identity($id)
+	{
+		$rcmail = rcube::get_instance();
+
+		if ($sql_arr = $rcmail->user->get_identity($id)) {
+			$out = $sql_arr;
+			$out['mailto'] = $sql_arr['email'];
+			$out['string'] = format_email_recipient($sql_arr['email'], rcube_charset::convert($sql_arr['name'], RCMAIL_CHARSET, $this->api->output->get_charset()));
+
+			if ($rcmail->config->get('sieverules_from_format', 0) == 1) {
+				$out['disp_string'] = $out['string'];
+				$out['val_string'] = $out['string'];
+			}
+			else {
+				$out['disp_string'] = $out['mailto'];
+				$out['val_string'] = $out['mailto'];
+			}
+
+			return $out;
+		}
+
+		return FALSE;
 	}
 }
 

@@ -404,6 +404,9 @@ class rcube_sieve_script
 
 								$action['from'] = "\${from}";
 							}
+							elseif ($action['from'] == 'auto') {
+								$action['from'] = "\${from}";
+							}
 
 							// append original subject
 							if ($action['origsubject'] == '1' && strpos($variables, 'set "subject"') === false) {
