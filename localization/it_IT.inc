@@ -1,5 +1,5 @@
 <?php
-/* Author: Michele Conte */
+/* Author: Alessio Cecchi */
 
 $labels = array();
 $labels['filters'] = 'Filtri';
@@ -126,6 +126,20 @@ $labels['copytoruleset'] = 'Copia il filtro in un altro set di regole';
 $labels['copyfromruleset'] = 'Copia i filtri da un set di regole esistente';
 $labels['time'] = 'Ora';
 $labels['weekday'] = 'Giorno della settimana';
+$labels['virustest'] = 'Probabilità Virus';
+$labels['novirus'] = 'nessun virus trovato';
+$labels['virusremoved'] = 'virus trovato e rimosso';
+$labels['viruscured'] = 'virus trovato e curato';
+$labels['possiblevirus'] = 'il messaggio potrebbe contenere un virus';
+$labels['definitevirus'] = 'il messaggio potrebbe essere certamente un virus';
+$labels['addheader'] = 'Aggiungi un header';
+$labels['removeheader'] = 'Rimuovi un header';
+$labels['headername'] = 'Nome header';
+$labels['headervalue'] = 'Contenuto header';
+$labels['headerappend'] = 'Accoda ad un header esistente';
+$labels['headerindex'] = 'Indice header';
+$labels['headerdelall'] = 'Tutte le occorrenze';
+$labels['last'] = 'ultimo';
 
 $messages = array();
 $messages['nosieverules'] = 'Nessun filtro trovato.';
@@ -181,5 +195,8 @@ $messages['filtercopied'] = 'Filtro copiato con successo';
 $messages['nosieverulesets'] = 'Nessun set di regole trovato.';
 $messages['baddateformat'] = 'Errore: Inserire la data nel formato YYYY-MM-DD';
 $messages['badtimeformat'] = 'Errore: Inserire l\'ora nel formato HH:MM:SS';
+$messages['missingfoldername'] = 'Errore: Per favore inserisci il nome di una cartella';
+$messages['eheadernoname'] = 'Errore: Per favore inserisci il nome di un header';
+$messages['eheadernoval'] = 'Errore: Per favore inserisci il contenuto di un header';
 
 ?>
