@@ -695,6 +695,33 @@ class sieverules extends rcube_plugin
 			$this->init_html();
 		}
 		else {
+			// check if POST var limits have been reached
+			if (ini_get("max_input_vars") || ini_get("suhosin.request.max_vars") || ini_get("suhosin.post.max_vars")) {
+				if (ini_get("suhosin.request.max_vars") || ini_get("suhosin.post.max_vars"))
+					$max_vars = ini_get("suhosin.request.max_vars") < ini_get("suhosin.post.max_vars") ? ini_get("suhosin.request.max_vars") : ini_get("suhosin.post.max_vars");
+				else
+					$max_vars = ini_get("max_input_vars");
+
+				if (count($_POST, COUNT_RECURSIVE) >= $max_vars) {
+					rcube::raise_error(array(
+						'code' => 500,
+						'type' => 'php',
+						'file' => __FILE__,
+						'line' => __LINE__,
+						'message' => "SieveRules plugin: max_input_vars, suhosin.request.max_vars or suhosin.post.max_vars limit reached."
+						), true, false);
+
+					$this->api->output->command('display_message', $this->gettext('filtersaveerror'), 'error');
+
+					// go to next step
+					$rcmail->overwrite_action('plugin.sieverules.edit');
+					$this->action = 'plugin.sieverules.edit';
+					$this->init_html();
+
+					return;
+				}
+			}
+
 			$name = trim(rcube_utils::get_input_value('_name', rcube_utils::INPUT_POST, true));
 			$iid = trim(rcube_utils::get_input_value('_iid', rcube_utils::INPUT_POST));
 			$join = trim(rcube_utils::get_input_value('_join', rcube_utils::INPUT_POST));
