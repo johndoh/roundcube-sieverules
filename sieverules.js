@@ -901,6 +901,9 @@ $(document).ready(function() {
 					rcmail.register_command('plugin.sieverules.add', function(id) {
 							if (rcmail.sieverules_examples) rcmail.sieverules_examples.clear_selection();
 							rcmail.sieverules_list.clear_selection();
+							rcmail.env.iid = null;
+							rcmail.enable_command('plugin.sieverules.delete', false);
+
 							var add_url = '';
 
 							var target = window;
