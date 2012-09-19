@@ -536,10 +536,8 @@ class sieverules extends rcube_plugin
 			$this->api->output->set_env('iid', $iid);
 			$example = false;
 
-			if (isset($this->script[$iid])) {
-				$this->api->output->add_script("if (parent.". JS_OBJECT_NAME .".sieverules_examples) parent.". JS_OBJECT_NAME .".sieverules_examples.clear_selection();");
-				$this->api->output->add_script("parent.". JS_OBJECT_NAME .".sieverules_list.highlight_row(".$iid.");");
-			}
+			if (isset($this->script[$iid]))
+				$this->api->output->add_script("parent.". JS_OBJECT_NAME .".sieverules_ready('".$iid."');");
 		}
 
 		if (sizeof($rcmail->config->get('sieverules_predefined_rules')) > 0) {
