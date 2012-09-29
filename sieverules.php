@@ -694,30 +694,55 @@ class sieverules extends rcube_plugin
 		}
 		else {
 			// check if POST var limits have been reached
-			if (ini_get("max_input_vars") || ini_get("suhosin.request.max_vars") || ini_get("suhosin.post.max_vars")) {
-				if (ini_get("suhosin.request.max_vars") || ini_get("suhosin.post.max_vars"))
-					$max_vars = ini_get("suhosin.request.max_vars") < ini_get("suhosin.post.max_vars") ? ini_get("suhosin.request.max_vars") : ini_get("suhosin.post.max_vars");
-				else
-					$max_vars = ini_get("max_input_vars");
+			// code by Aleksander Machniak
+			$max_post = max(array(
+				ini_get('max_input_vars'),
+				ini_get('suhosin.request.max_vars'),
+				ini_get('suhosin.post.max_vars'),
+			));
 
-				if (count($_POST, COUNT_RECURSIVE) >= $max_vars) {
-					rcube::raise_error(array(
-						'code' => 500,
-						'type' => 'php',
-						'file' => __FILE__,
-						'line' => __LINE__,
-						'message' => "SieveRules plugin: max_input_vars, suhosin.request.max_vars or suhosin.post.max_vars limit reached."
-						), true, false);
+			$max_depth = max(array(
+				ini_get('suhosin.request.max_array_depth'),
+				ini_get('suhosin.post.max_array_depth'),
+			));
 
-					$this->api->output->command('display_message', $this->gettext('filtersaveerror'), 'error');
+			// check request size limit
+			if ($max_post && count($_POST, COUNT_RECURSIVE) >= $max_post) {
+				rcube::raise_error(array(
+					'code' => 500,
+					'type' => 'php',
+					'file' => __FILE__,
+					'line' => __LINE__,
+					'message' => "SieveRules plugin: max_input_vars, suhosin.request.max_vars or suhosin.post.max_vars limit reached."
+					), true, false);
 
-					// go to next step
-					$rcmail->overwrite_action('plugin.sieverules.edit');
-					$this->action = 'plugin.sieverules.edit';
-					$this->init_html();
+				$this->api->output->command('display_message', $this->gettext('filtersaveerror'), 'error');
 
-					return;
-				}
+				// go to next step
+				$rcmail->overwrite_action('plugin.sieverules.edit');
+				$this->action = 'plugin.sieverules.edit';
+				$this->init_html();
+
+				return;
+			}
+			// check request depth limits
+			else if ($max_depth && count($_POST['_test']) > $max_depth) {
+				rcube::raise_error(array(
+					'code' => 500,
+					'type' => 'php',
+					'file' => __FILE__,
+					'line' => __LINE__,
+					'message' => "SieveRules plugin: suhosin.request.max_array_depth or suhosin.post.max_array_depth limit reached."
+					), true, false);
+
+				$this->api->output->command('display_message', $this->gettext('filtersaveerror'), 'error');
+
+				// go to next step
+				$rcmail->overwrite_action('plugin.sieverules.edit');
+				$this->action = 'plugin.sieverules.edit';
+				$this->init_html();
+
+				return;
 			}
 
 			$name = trim(rcube_utils::get_input_value('_name', rcube_utils::INPUT_POST, true));
