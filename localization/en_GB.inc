@@ -3,6 +3,7 @@
 
 $labels = array();
 $labels['filters'] = 'Filters';
+$labels['filtersname'] = 'Filters ($name)';
 $labels['managefilters'] = 'Manage message filters';
 $labels['filtername'] = 'Filter name';
 $labels['disablerule'] = 'Disable rule';
@@ -117,6 +118,8 @@ $labels['i;ascii-numeric'] = 'numeric match';
 $labels['selectruleset'] = 'Select ruleset';
 $labels['activeruleset'] = '%s (active)';
 $labels['activateruleset'] = 'Activate this ruleset';
+$labels['isactive'] = 'Active ruleset';
+$labels['isinactive'] = 'Inactive ruleset';
 $labels['newruleset'] = 'Create a new ruleset';
 $labels['delruleset'] = 'Delete this ruleset';
 $labels['renameruleset'] = 'Rename this ruleset';

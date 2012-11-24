@@ -3,7 +3,8 @@ Roundcube Webmail SieveRules
 
 2012 11 26
 ==========
- * Automatically activate first ruleset even when multi rulesets enabled
+ * show name and state of currently selected ruleset when multiple rulesets enabled
+ * automatically activate first ruleset even when multi rulesets enabled
 
 2012 06 23
 ==========
