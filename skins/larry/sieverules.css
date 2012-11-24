@@ -22,6 +22,29 @@
   overflow: auto;
 }
 
+#sieverules-list-filters thead td
+{
+  height: 15px;
+}
+
+#sieverules-list-filters thead td span
+{
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  right: 30px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+#sieverules-list-filters thead td img
+{
+  position: absolute;
+  top: 9px;
+  right: 8px;
+}
+
 #sieverules-list-examples
 {
   position: absolute;

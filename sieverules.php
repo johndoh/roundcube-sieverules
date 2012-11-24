@@ -223,7 +223,18 @@ class sieverules extends rcube_plugin
 		$this->api->output->add_gui_object('sieverules_list', 'sieverules-table');
 
 		$table = new html_table(array('id' => 'sieverules-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 2));
-		$table->add_header(array('colspan' => 2), $this->gettext('filters'));
+
+		if (rcube::get_instance()->config->get('sieverules_multiplerules', false)) {
+			if ($this->current_ruleset == $this->sieve->get_active())
+				$status = html::img(array('id' => 'rulesetstatus', 'src' => $attrib['activeicon'], 'alt' => $this->gettext('isactive'), 'title' => $this->gettext('isactive')));
+			else
+				$status = html::img(array('id' => 'rulesetstatus', 'src' => $attrib['inactiveicon'], 'alt' => $this->gettext('isinactive'), 'title' => $this->gettext('isinactive')));
+
+			$table->add_header(array('colspan' => '2'), html::span(array('title' => $this->current_ruleset), $this->gettext(array('name' => 'filtersname', 'vars' => array('name' => $this->current_ruleset)))) . $status);
+		}
+		else {
+			$table->add_header(array('colspan' => 2), $this->gettext('filters'));
+		}
 
 		if (sizeof($this->script) == 0) {
 			$table->add(array('colspan' => '2'), rcube_utils::rep_specialchars_output($this->gettext('nosieverules')));
