@@ -1,6 +1,10 @@
 Roundcube Webmail SieveRules
 ============================
 
+2012 11 26
+==========
+ * Automatically activate first ruleset even when multi rulesets enabled
+
 2012 06 23
 ==========
  * Add sieverules_load hook

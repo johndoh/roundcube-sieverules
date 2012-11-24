@@ -492,7 +492,8 @@ class sieverules extends rcube_plugin
 					), true, false);
 
 			$this->sieve->save();
-			if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
+			if (!($rcmail->config->get('sieverules_multiplerules', false) && sizeof($this->sieve->list) > 1))
+				$this->sieve->set_active($this->current_ruleset);
 
 			if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
 				$this->api->output->add_script("parent.". JS_OBJECT_NAME .".goto_url('plugin.sieverules');");
@@ -921,7 +922,7 @@ class sieverules extends rcube_plugin
 			if ($result === true)
 				$save = $this->sieve->save();
 
-			if ($save === true && $result === true && !$rcmail->config->get('sieverules_multiplerules', false))
+			if ($save === true && $result === true && !($rcmail->config->get('sieverules_multiplerules', false) && sizeof($this->sieve->list) > 1))
 				$save = $this->sieve->set_active($this->current_ruleset);
 
 			if ($save === true && $result === true) {
@@ -1021,7 +1022,7 @@ class sieverules extends rcube_plugin
 				$this->sieve->script->add_text(file_get_contents($rcmail->config->get('sieverules_default_file')));
 				$save = $this->sieve->save();
 
-				if ($save === true && !$rcmail->config->get('sieverules_multiplerules', false))
+				if ($save === true && !($rcmail->config->get('sieverules_multiplerules', false) && sizeof($this->sieve->list) > 1))
 					$save = $this->sieve->set_active($this->current_ruleset);
 
 				if ($save === true)
@@ -1061,7 +1062,8 @@ class sieverules extends rcube_plugin
 				}
 
 				$this->sieve->save();
-				if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
+				if (!($rcmail->config->get('sieverules_multiplerules', false) && sizeof($this->sieve->list) > 1))
+					$this->sieve->set_active($this->current_ruleset);
 
 				// update rule list
 				if ($this->sieve_error)
@@ -1072,7 +1074,8 @@ class sieverules extends rcube_plugin
 		}
 		elseif ($ruleset == '_none_') {
 			$this->sieve->save();
-			if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
+			if (!($rcmail->config->get('sieverules_multiplerules', false) && sizeof($this->sieve->list) > 1))
+				$this->sieve->set_active($this->current_ruleset);
 		}
 		elseif ($ruleset == '_copy_') {
 			$this->rename_ruleset(true);
@@ -1084,7 +1087,10 @@ class sieverules extends rcube_plugin
 			if ($import) {
 				$this->script = $this->sieve->script->as_array();
 				$this->sieve->save();
-				if (!$rcmail->config->get('sieverules_multiplerules', false)) $this->sieve->set_active($this->current_ruleset);
+
+				if (!($rcmail->config->get('sieverules_multiplerules', false) && sizeof($this->sieve->list) > 1))
+					$this->sieve->set_active($this->current_ruleset);
+
 				$this->api->output->command('display_message', $this->gettext('filterimported'), 'confirmation');
 			}
 			else {
