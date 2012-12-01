@@ -390,7 +390,7 @@ class rcube_sieve_script
 //							{
 //								mb_internal_encoding($action['charset']);
 //								$action['subject'] = mb_encode_mimeheader($action['subject'], $action['charset'], 'Q');
-//								mb_internal_encoding(RCMAIL_CHARSET);
+//								mb_internal_encoding(RCUBE_CHARSET);
 //							}
 
 							// detect original recipient
@@ -880,7 +880,7 @@ class rcube_sieve_script
 
 	private function _parse_charset($content)
 	{
-		$charset = RCMAIL_CHARSET;
+		$charset = RCUBE_CHARSET;
 		$content = trim($content);
 
 		if (preg_match('/^:mime\s+text:(.*)\.$/sm', $content, $matches)) {

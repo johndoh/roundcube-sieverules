@@ -171,7 +171,7 @@ class sieverules extends rcube_plugin
 		}
 		elseif ($this->action == 'plugin.sieverules.setup') {
 			$this->api->output->set_pagetitle($this->gettext('filters'));
-			$this->api->output->add_script(rcmail::JS_OBJECT_NAME .".add_onload('". rcmail::JS_OBJECT_NAME .".sieverules_load_setup()');");
+			$this->api->output->add_script(rcmail_output::JS_OBJECT_NAME .".add_onload('". rcmail_output::JS_OBJECT_NAME .".sieverules_load_setup()');");
 			$this->api->output->send('sieverules.sieverules');
 		}
 		elseif ($this->action == 'plugin.sieverules.advanced') {
@@ -308,7 +308,7 @@ class sieverules extends rcube_plugin
 
 	function gen_advswitch($attrib)
 	{
-		$input_adv = new html_checkbox(array('id' => 'adveditor', 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_adveditor(this);', 'value' => '1'));
+		$input_adv = new html_checkbox(array('id' => 'adveditor', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_adveditor(this);', 'value' => '1'));
 		$out = html::label('adveditor', rcmail::Q($this->gettext('adveditor'))) . $input_adv->show($this->action == 'plugin.sieverules.advanced' ? '1' : '');
 		return html::tag('div', array('id' => 'advancedmode'), $out);
 	}
@@ -362,7 +362,7 @@ class sieverules extends rcube_plugin
 		$table->add(null, $select_ruleset->show());
 
 		$buttons = html::tag('input', array('type' => 'hidden', 'id' => 'sieverulesrsdialog_action', 'value' => ''));
-		$buttons .= html::tag('input', array('type' => 'button', 'class' => 'button mainaction', 'value' => $this->gettext('save'), 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverulesdialog_submit();')) . '&nbsp;';
+		$buttons .= html::tag('input', array('type' => 'button', 'class' => 'button mainaction', 'value' => $this->gettext('save'), 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverulesdialog_submit();')) . '&nbsp;';
 
 		$out .= html::tag('h3', array('id' => 'sieverulesrsdialog_add'), rcmail::Q($this->gettext('newruleset')));
 		$out .= html::tag('h3', array('id' => 'sieverulesrsdialog_edit', 'style' => 'display: none;'), rcmail::Q($this->gettext('renameruleset')));
@@ -393,14 +393,14 @@ class sieverules extends rcube_plugin
 				if ($ruleset === $activeruleset)
 					$ruleset_text = str_replace('%s', $ruleset, $this->gettext('activeruleset'));
 
-				$href = html::a(array('href' => "#", 'class' => $class, 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_select_ruleset(\''. $ruleset .'\', \''. $action .'\');'), rcmail::Q($ruleset_text));
+				$href = html::a(array('href' => "#", 'class' => $class, 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_select_ruleset(\''. $ruleset .'\', \''. $action .'\');'), rcmail::Q($ruleset_text));
 				$lis .= html::tag('li', null, $href);
 			}
 
 			return $lis;
 		}
 		elseif ($attrib['type'] == 'select') {
-			$select_ruleset = new html_select(array('id' => 'rulelist', 'onchange' => rcmail::JS_OBJECT_NAME . '.sieverules_select_ruleset(this, \''. $action .'\');'));
+			$select_ruleset = new html_select(array('id' => 'rulelist', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_select_ruleset(this, \''. $action .'\');'));
 
 			if (sizeof($this->sieve->list) == 0) {
 				$select_ruleset->add(rcmail::Q($this->gettext('nosieverulesets')), '');
@@ -457,7 +457,7 @@ class sieverules extends rcube_plugin
 			$this->import($type, $ruleset, false);
 
 			if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
-				$this->api->output->add_script("parent.". rcmail::JS_OBJECT_NAME .".goto_url('plugin.sieverules');");
+				$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".goto_url('plugin.sieverules');");
 			}
 			else {
 				// go to sieverules page
@@ -469,7 +469,7 @@ class sieverules extends rcube_plugin
 			$this->import($type, '_default_', false);
 
 			if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
-				$this->api->output->add_script("parent.". rcmail::JS_OBJECT_NAME .".goto_url('plugin.sieverules');");
+				$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".goto_url('plugin.sieverules');");
 			}
 			else {
 				// go to sieverules page
@@ -502,7 +502,7 @@ class sieverules extends rcube_plugin
 				$this->sieve->set_active($this->current_ruleset);
 
 			if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
-				$this->api->output->add_script("parent.". rcmail::JS_OBJECT_NAME .".goto_url('plugin.sieverules');");
+				$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".goto_url('plugin.sieverules');");
 			}
 			else {
 				// go to sieverules page
@@ -544,7 +544,7 @@ class sieverules extends rcube_plugin
 			$example = false;
 
 			if (isset($this->script[$iid]))
-				$this->api->output->add_script("parent.". rcmail::JS_OBJECT_NAME .".sieverules_ready('".$iid."');");
+				$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_ready('".$iid."');");
 		}
 
 		if (sizeof($rcmail->config->get('sieverules_predefined_rules')) > 0) {
@@ -586,17 +586,17 @@ class sieverules extends rcube_plugin
 			$join_any = true;
 
 		$field_id = 'rcmfd_join_all';
-		$input_join = new html_radiobutton(array('name' => '_join', 'id' => $field_id, 'value' => 'allof', 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_rule_join_radio(\'allof\')'));
+		$input_join = new html_radiobutton(array('name' => '_join', 'id' => $field_id, 'value' => 'allof', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_rule_join_radio(\'allof\')'));
 		$join_type = $input_join->show($cur_script['join'] && !$join_any ? 'allof' : '');
 		$join_type .= "&nbsp;" . html::label($field_id, rcmail::Q($this->gettext('filterallof')));
 
 		$field_id = 'rcmfd_join_anyof';
-		$input_join = new html_radiobutton(array('name' => '_join', 'id' => $field_id, 'value' => 'anyof', 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_rule_join_radio(\'anyof\')'));
+		$input_join = new html_radiobutton(array('name' => '_join', 'id' => $field_id, 'value' => 'anyof', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_rule_join_radio(\'anyof\')'));
 		$join_type .= "&nbsp;" . $input_join->show($cur_script['join'] && !$join_any ? '' : 'anyof');
 		$join_type .= "&nbsp;" . html::label($field_id, rcmail::Q($this->gettext('filteranyof')));
 
 		$field_id = 'rcmfd_join_any';
-		$input_join = new html_radiobutton(array('name' => '_join', 'id' => $field_id, 'value' => 'any', 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_rule_join_radio(\'any\')'));
+		$input_join = new html_radiobutton(array('name' => '_join', 'id' => $field_id, 'value' => 'any', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_rule_join_radio(\'any\')'));
 		$join_type .= "&nbsp;" . $input_join->show($join_any ? 'any' : '');
 		$join_type .= "&nbsp;" . html::label($field_id, rcmail::Q($this->gettext('filterany')));
 
@@ -1041,11 +1041,11 @@ class sieverules extends rcube_plugin
 				$down_link = str_replace("'", "\'", $down_link);
 
 				if (!isset($this->script[$iid]) && sizeof($this->script) == 0)
-					$this->api->output->add_script("parent.". rcmail::JS_OBJECT_NAME .".sieverules_update_list('add-first', 'rcmrow". $iid ."', '". rcmail::Q($filter_name) ."', '". $down_link ."', '". $up_link ."');");
+					$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_update_list('add-first', 'rcmrow". $iid ."', '". rcmail::Q($filter_name) ."', '". $down_link ."', '". $up_link ."');");
 				elseif (!isset($this->script[$iid]))
-					$this->api->output->add_script("parent.". rcmail::JS_OBJECT_NAME .".sieverules_update_list('add', 'rcmrow". $iid ."', '". rcmail::Q($filter_name) ."', '". $down_link ."', '". $up_link ."');");
+					$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_update_list('add', 'rcmrow". $iid ."', '". rcmail::Q($filter_name) ."', '". $down_link ."', '". $up_link ."');");
 				else
-					$this->api->output->add_script("parent.". rcmail::JS_OBJECT_NAME .".sieverules_update_list('update', ". $iid .", '". rcmail::Q($filter_name) ."');");
+					$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_update_list('update', ". $iid .", '". rcmail::Q($filter_name) ."');");
 			}
 			else {
 				if ($result === SIEVE_ERROR_BAD_ACTION)
@@ -1083,7 +1083,7 @@ class sieverules extends rcube_plugin
 
 		if ($result === true) {
 			$this->api->output->command('display_message', $this->gettext('filterdeleted'), 'confirmation');
-			$this->api->output->add_script("parent.". rcmail::JS_OBJECT_NAME .".sieverules_update_list('delete', ". $ids .");");
+			$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_update_list('delete', ". $ids .");");
 		}
 		elseif ($result === SIEVE_ERROR_NOT_FOUND)
 			$this->api->output->command('display_message', $this->gettext('filtermissingerror'), 'error');
@@ -1097,7 +1097,7 @@ class sieverules extends rcube_plugin
 			$this->script = $this->sieve->script->as_array();
 
 		if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
-			$this->api->output->add_script("parent.". rcmail::JS_OBJECT_NAME .".show_contentframe(false);");
+			$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".show_contentframe(false);");
 		}
 		else {
 			// go to sieverules page
@@ -1563,7 +1563,7 @@ class sieverules extends rcube_plugin
 			$target_style = 'display: none;';
 		}
 
-		$select_header = new html_select(array('name' => "_selheader[]", 'onchange' => rcmail::JS_OBJECT_NAME . '.sieverules_header_select(this)'));
+		$select_header = new html_select(array('name' => "_selheader[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_header_select(this)'));
 		foreach($this->headers as $name => $val) {
 			if (($val == 'envelope' && in_array('envelope', $ext)) || $val != 'envelope')
 				$select_header->add(rcmail::Q($this->gettext($name)), rcmail::Q($val));
@@ -1590,21 +1590,21 @@ class sieverules extends rcube_plugin
 		$rules_table->add('selheader', $select_header->show($selheader) . $input_test->show());
 
 		$help_button = html::img(array('src' => $attrib['helpicon'], 'alt' => $this->gettext('sieveruleheaders'), 'border' => 0, 'style' => 'margin-left: 4px;'));
-		$help_button = html::a(array('name' => '_headerhlp', 'href' => "#", 'onclick' => 'return '. rcmail::JS_OBJECT_NAME .'.sieverules_xheaders(this);', 'title' => $this->gettext('sieveruleheaders'), 'style' => $header_style), $help_button);
+		$help_button = html::a(array('name' => '_headerhlp', 'href' => "#", 'onclick' => 'return '. rcmail_output::JS_OBJECT_NAME .'.sieverules_xheaders(this);', 'title' => $this->gettext('sieveruleheaders'), 'style' => $header_style), $help_button);
 
 		$input_header = new html_inputfield(array('name' => '_header[]', 'style' => $header_style, 'class' => 'short'));
-		$select_bodypart = new html_select(array('name' => '_bodypart[]', 'onchange' => rcmail::JS_OBJECT_NAME . '.sieverules_bodypart_select(this)', 'style' => $bodypart_style));
+		$select_bodypart = new html_select(array('name' => '_bodypart[]', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_bodypart_select(this)', 'style' => $bodypart_style));
 		$select_bodypart->add(rcmail::Q($this->gettext('auto')), rcmail::Q(''));
 		$select_bodypart->add(rcmail::Q($this->gettext('raw')), rcmail::Q('raw'));
 		$select_bodypart->add(rcmail::Q($this->gettext('text')), rcmail::Q('text'));
 		$select_bodypart->add(rcmail::Q($this->gettext('other')), rcmail::Q('content'));
-		$select_datepart = new html_select(array('name' => '_datepart[]', 'onchange' => rcmail::JS_OBJECT_NAME . '.sieverules_datepart_select(this)','style' => $datepart_style));
+		$select_datepart = new html_select(array('name' => '_datepart[]', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_datepart_select(this)','style' => $datepart_style));
 		$select_datepart->add(rcmail::Q($this->gettext('date')), rcmail::Q('date'));
 		$select_datepart->add(rcmail::Q($this->gettext('time')), rcmail::Q('time'));
 		$select_datepart->add(rcmail::Q($this->gettext('weekday')), rcmail::Q('weekday'));
 		$rules_table->add('header', $input_header->show($header) . $help_button . $select_bodypart->show($bodypart) . $select_datepart->show($datepart));
 
-		$select_op = new html_select(array('name' => "_operator[]", 'onchange' => rcmail::JS_OBJECT_NAME . '.sieverules_rule_op_select(this)', 'style' => $op_style));
+		$select_op = new html_select(array('name' => "_operator[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_rule_op_select(this)', 'style' => $op_style));
 		foreach($this->operators as $name => $val)
 			$select_op->add(rcmail::Q($this->gettext($name)), $val);
 
@@ -1691,7 +1691,7 @@ class sieverules extends rcube_plugin
 		$col_length = sizeof($other_headers) / 4;
 		$col_length = ceil($col_length);
 		foreach ($other_headers as $idx => $xheader) {
-			$input_xheader = new html_radiobutton(array('id' => $xheader . '_' . $rowid, 'name' => '_xheaders_' . $rowid . '[]', 'value' => $xheader, 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_set_xheader(this)', 'class' => 'radio'));
+			$input_xheader = new html_radiobutton(array('id' => $xheader . '_' . $rowid, 'name' => '_xheaders_' . $rowid . '[]', 'value' => $xheader, 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_set_xheader(this)', 'class' => 'radio'));
 			$xheader_show = $input_xheader->show($header) . "&nbsp;" . html::label($xheader . '_' . $rowid, rcmail::Q($xheader));
 
 			if ($idx < $col_length)
@@ -1716,7 +1716,7 @@ class sieverules extends rcube_plugin
 		$advanced_table->add(array('colspan' => 2, 'style' => 'white-space: normal;'), rcmail::Q($this->gettext('advancedoptions')));
 
 		$help_button = html::img(array('src' => $attrib['helpicon'], 'alt' => $this->gettext('contentpart'), 'border' => 0, 'style' => 'margin-left: 4px;'));
-		$help_button = html::a(array('href' => "#", 'onclick' => 'return '. rcmail::JS_OBJECT_NAME .'.sieverules_help(this, ' . $advanced_table->size() . ');', 'title' => $this->gettext('contentpart')), $help_button);
+		$help_button = html::a(array('href' => "#", 'onclick' => 'return '. rcmail_output::JS_OBJECT_NAME .'.sieverules_help(this, ' . $advanced_table->size() . ');', 'title' => $this->gettext('contentpart')), $help_button);
 
 		$field_id = 'rcmfd_advcontentpart_'. $rowid;
 		$advanced_table->set_row_attribs(array('style' => $advcontentpart_style));
@@ -1728,7 +1728,7 @@ class sieverules extends rcube_plugin
 		$advanced_table->add(array('colspan' => 2, 'class' => 'vacdaysexp'), $this->gettext('contentpartexp'));
 
 		$field_id = 'rcmfd_advoperator_'. $rowid;
-		$select_advop = new html_select(array('id' => $field_id, 'name' => "_advoperator[]", 'onchange' => rcmail::JS_OBJECT_NAME . '.sieverules_rule_advop_select(this)'));
+		$select_advop = new html_select(array('id' => $field_id, 'name' => "_advoperator[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_rule_advop_select(this)'));
 
 		if (in_array('regex', $ext)) {
 			$select_advop->add(rcmail::Q($this->gettext('filterregex')), 'regex');
@@ -1877,7 +1877,7 @@ class sieverules extends rcube_plugin
 		$subject = '';
 		$origsubject = '';
 		$msg = '';
-		$charset = RCMAIL_CHARSET;
+		$charset = RCUBE_CHARSET;
 		$flags = '';
 		$nfrom = '';
 		$nimpt = '';
@@ -1924,7 +1924,7 @@ class sieverules extends rcube_plugin
 				$this->force_vacto = false;
 
 			// check advanced enabled
-			if ((!empty($vacfrom) && $vacfrom != $vacfrom_default) || !empty($vacto) || !empty($handle) || $charset != RCMAIL_CHARSET || $this->force_vacto) {
+			if ((!empty($vacfrom) && $vacfrom != $vacfrom_default) || !empty($vacto) || !empty($handle) || $charset != RCUBE_CHARSET || $this->force_vacto) {
 				$vacadvstyle = '';
 				$vacadvstyle_from = ($this->show_vacfrom) ? '' : 'display: none;';
 				$vacadvstyle_handle = ($this->show_vachandle) ? '' : 'display: none;';
@@ -1969,7 +1969,7 @@ class sieverules extends rcube_plugin
 			$method = $action['type'];
 		}
 
-		$select_action = new html_select(array('name' => "_act[]", 'onchange' => rcmail::JS_OBJECT_NAME . '.sieverules_action_select(this)'));
+		$select_action = new html_select(array('name' => "_act[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_action_select(this)'));
 		foreach ($allowed_actions as $value => $text)
 			$select_action->add(rcmail::Q($text), $value);
 
@@ -1982,7 +1982,7 @@ class sieverules extends rcube_plugin
 		$user_identities = $rcmail->user->list_identities();
 		if (count($user_identities)) {
 			$field_id = 'rcmfd_sievevacfrom_'. $rowid;
-			$select_id = new html_select(array('id' => $field_id, 'name' => "_vacfrom[]", 'class' => 'short', 'onchange' => rcmail::JS_OBJECT_NAME . '.enable_sig(this);'));
+			$select_id = new html_select(array('id' => $field_id, 'name' => "_vacfrom[]", 'class' => 'short', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.enable_sig(this);'));
 
 			if ($this->show_vacfrom && in_array('variables', $ext))
 				$select_id->add(rcmail::Q($this->gettext('autodetect')), "auto");
@@ -2010,7 +2010,7 @@ class sieverules extends rcube_plugin
 					$curaddress = in_array($sql_arr['email'], $vacto_arr) ? $sql_arr['email'] : "";
 				}
 
-				$input_address = new html_checkbox(array('id' => $ffield_id, 'name' => '_vacto_check_' . $rowid . '[]', 'value' => $sql_arr['email'], 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_toggle_vac_to(this, '. $rowid .')', 'class' => 'checkbox'));
+				$input_address = new html_checkbox(array('id' => $ffield_id, 'name' => '_vacto_check_' . $rowid . '[]', 'value' => $sql_arr['email'], 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_toggle_vac_to(this, '. $rowid .')', 'class' => 'checkbox'));
 				$to_addresses .= $input_address->show($curaddress) . "&nbsp;" . html::label($ffield_id, rcmail::Q($sql_arr['email'])) . "<br />";
 			}
 		}
@@ -2028,7 +2028,7 @@ class sieverules extends rcube_plugin
 			$vacs_table->set_row_attribs(array('class' => 'advanced', 'style' => $vacadvstyle));
 			$vacs_table->add(array('style' => 'vertical-align: top;'), rcmail::Q($this->gettext('sieveto')));
 			$vacs_table->add(null, $to_addresses . $input_vacto->show());
-			$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
+			$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail_output::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
 			$vacs_table->add(array('style' => 'vertical-align: top;'), $help_button);
 
 			$vacs_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
@@ -2050,7 +2050,7 @@ class sieverules extends rcube_plugin
 			$vacs_table->add(null, html::label($field_id, rcmail::Q($this->gettext('sieveto'))));
 			$vacs_table->add(null, $input_vacto->show($vacto));
 
-			$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
+			$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail_output::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
 			$vacs_table->add(null, $help_button);
 			$vacs_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
 			$vacs_table->add(array('colspan' => 3, 'class' => 'vacdaysexp'), $this->gettext('vactoexp') . '<br /><br />' . $this->gettext('vactoexp_adv'));
@@ -2060,7 +2060,7 @@ class sieverules extends rcube_plugin
 		$input_day = new html_inputfield(array('id' => $field_id, 'name' => '_day[]', 'class' => 'short'));
 		$vacs_table->add(null, html::label($field_id, rcmail::Q($this->gettext('days'))));
 		$vacs_table->add(null, $input_day->show($days));
-		$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
+		$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail_output::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
 		$vacs_table->add(null, $help_button);
 
 		$vacs_table->set_row_attribs(array('style' => 'display: none;'));
@@ -2071,7 +2071,7 @@ class sieverules extends rcube_plugin
 		$vacs_table->set_row_attribs(array('class' => $vacadvclass_handle, 'style' => $vacadvstyle_handle));
 		$vacs_table->add(null, html::label($field_id, rcmail::Q($this->gettext('sievevachandle'))));
 		$vacs_table->add(null, $input_handle->show($handle));
-		$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
+		$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail_output::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
 		$vacs_table->add(null, $help_button);
 
 		$vacs_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
@@ -2084,7 +2084,7 @@ class sieverules extends rcube_plugin
 
 		if (in_array('variables', $ext)) {
 			$field_id = 'rcmfd_sievevacsubject_orig_'. $rowid;
-			$input_origsubject = new html_checkbox(array('id' => $field_id, 'value' => '1', 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_toggle_vac_osubj(this, '. $rowid .')', 'class' => 'checkbox'));
+			$input_origsubject = new html_checkbox(array('id' => $field_id, 'value' => '1', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_toggle_vac_osubj(this, '. $rowid .')', 'class' => 'checkbox'));
 			$input_vacosubj = new html_hiddenfield(array('id' => 'rcmfd_sievevactoh_'. $rowid, 'name' => '_orig_subject[]', 'value' => $origsubject));
 			$vacs_table->add(null, '&nbsp;');
 			$vacs_table->add(array('colspan' => 2), $input_origsubject->show($origsubject) . "&nbsp;" . html::label($field_id, rcmail::Q($this->gettext('sieveorigsubj'))) . $input_vacosubj->show());
@@ -2092,7 +2092,7 @@ class sieverules extends rcube_plugin
 
 		$field_id = 'rcmfd_sievevacmag_'. $rowid;
 		$input_msg = new html_textarea(array('id' => $field_id, 'name' => '_msg[]', 'rows' => '8', 'cols' => '40', 'class' => $htmlmsg == 1 ? 'mce_editor' : '', 'is_escaped' => $htmlmsg == 1 ? true : null));
-		$input_html = new html_checkbox(array('id' => 'rcmfd_sievevachtmlcb_'. $rowid, 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_toggle_vac_html(this, '. $rowid .', \'' . $field_id .'\');', 'value' => '1', 'class' => 'checkbox'));
+		$input_html = new html_checkbox(array('id' => 'rcmfd_sievevachtmlcb_'. $rowid, 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_toggle_vac_html(this, '. $rowid .', \'' . $field_id .'\');', 'value' => '1', 'class' => 'checkbox'));
 		$input_htmlhd = new html_hiddenfield(array('id' => 'rcmfd_sievevachtmlhd_'. $rowid, 'name' => '_htmlmsg[]', 'value' => $htmlmsg));
 		$vacs_table->add('msg', html::label($field_id, rcmail::Q($this->gettext('message'))));
 		$vacs_table->add(array('colspan' => 2), $input_msg->show($msg) . html::tag('div', in_array('htmleditor', $rcmail->config->get('dont_override')) ? array('style' => 'display: none;') : null, $input_html->show($htmlmsg) . "&nbsp;" . html::label('rcmfd_sievevachtml_' . $rowid, rcmail::Q($this->gettext('htmlmessage')))) . $input_htmlhd->show());
@@ -2102,7 +2102,7 @@ class sieverules extends rcube_plugin
 		$vacs_table->add(null, html::label($field_id, rcmail::Q($this->gettext('charset'))));
 		$vacs_table->add(array('colspan' => 2), $rcmail->output->charset_selector(array('id' => $field_id, 'name' => '_vaccharset[]', 'selected' => $charset)));
 
-		$input_advopts = new html_checkbox(array('id' => 'vadvopts' . $rowid, 'name' => '_vadv_opts[]', 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1', 'class' => 'checkbox'));
+		$input_advopts = new html_checkbox(array('id' => 'vadvopts' . $rowid, 'name' => '_vadv_opts[]', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1', 'class' => 'checkbox'));
 		$vacs_table->add(array('colspan' => '3', 'style' => 'text-align: right'), html::label('vadvopts' . $rowid, rcmail::Q($this->gettext('advancedoptions'))) . $input_advopts->show($vacshowadv));
 
 		$notify_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 3, 'style' => ($method == 'notify' || $method == 'enotify') ? '' : 'display: none;'));
@@ -2144,13 +2144,13 @@ class sieverules extends rcube_plugin
 		$notify_table->add(array('colspan' => 3, 'class' => 'vacdaysexp'), $this->gettext('nmethodexp'));
 
 		$field_id = 'rcmfd_nimpt_'. $rowid;
-		$input_importance = new html_radiobutton(array('id' => $field_id . '_none', 'name' => '_notify_radio_' . $rowid, 'value' => 'none', 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_notify_impt(this, '. $rowid .')', 'class' => 'radio'));
+		$input_importance = new html_radiobutton(array('id' => $field_id . '_none', 'name' => '_notify_radio_' . $rowid, 'value' => 'none', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_notify_impt(this, '. $rowid .')', 'class' => 'radio'));
 		$importance_show = $input_importance->show($nimpt) . "&nbsp;" . html::label($field_id . '_none', rcmail::Q($this->gettext('importancen')));
-		$input_importance = new html_radiobutton(array('id' => $field_id . '_1', 'name' => '_notify_radio_' . $rowid, 'value' => '1', 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_notify_impt(this, '. $rowid .')', 'class' => 'radio'));
+		$input_importance = new html_radiobutton(array('id' => $field_id . '_1', 'name' => '_notify_radio_' . $rowid, 'value' => '1', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_notify_impt(this, '. $rowid .')', 'class' => 'radio'));
 		$importance_show .= '&nbsp;&nbsp;' . $input_importance->show($nimpt) . "&nbsp;" . html::label($field_id . '_1', rcmail::Q($this->gettext('importance1')));
-		$input_importance = new html_radiobutton(array('id' => $field_id . '_2', 'name' => '_notify_radio_' . $rowid, 'value' => '2', 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_notify_impt(this, '. $rowid .')', 'class' => 'radio'));
+		$input_importance = new html_radiobutton(array('id' => $field_id . '_2', 'name' => '_notify_radio_' . $rowid, 'value' => '2', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_notify_impt(this, '. $rowid .')', 'class' => 'radio'));
 		$importance_show .= '&nbsp;&nbsp;' . $input_importance->show($nimpt) . "&nbsp;" . html::label($field_id . '_2', rcmail::Q($this->gettext('importance2')));
-		$input_importance = new html_radiobutton(array('id' => $field_id . '_3', 'name' => '_notify_radio_' . $rowid, 'value' => '3', 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_notify_impt(this, '. $rowid .')', 'class' => 'radio'));
+		$input_importance = new html_radiobutton(array('id' => $field_id . '_3', 'name' => '_notify_radio_' . $rowid, 'value' => '3', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_notify_impt(this, '. $rowid .')', 'class' => 'radio'));
 		$importance_show .= '&nbsp;&nbsp;' . $input_importance->show($nimpt) . "&nbsp;" . html::label($field_id . '_3', rcmail::Q($this->gettext('importance3')));
 		$input_importance = new html_hiddenfield(array('id' => 'rcmfd_sievenimpt_'. $rowid, 'name' => '_nimpt[]'));
 
@@ -2164,7 +2164,7 @@ class sieverules extends rcube_plugin
 		$notify_table->add(array('colspan' => 2), $input_msg->show($nmsg));
 
 		if (in_array('enotify', $ext)) {
-			$input_advopts = new html_checkbox(array('id' => 'nadvopts' . $rowid, 'name' => '_nadv_opts[]', 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1', 'class' => 'checkbox'));
+			$input_advopts = new html_checkbox(array('id' => 'nadvopts' . $rowid, 'name' => '_nadv_opts[]', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1', 'class' => 'checkbox'));
 			$notify_table->add(array('colspan' => '3', 'style' => 'text-align: right'), html::label('nadvopts' . $rowid, rcmail::Q($this->gettext('advancedoptions'))) . $input_advopts->show($noteshowadv));
 		}
 
@@ -2211,14 +2211,14 @@ class sieverules extends rcube_plugin
 			$headers_table->set_row_attribs(array('style' => 'display: none;'));
 
 		$field_id = 'rcmfd_eheadaddlast_'. $rowid;
-		$input_index = new html_checkbox(array('id' => $field_id, 'value' => 'last', 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_toggle_eheadlast(this);', 'name' => '_eheadaddlast[]', 'class' => 'checkbox'));
+		$input_index = new html_checkbox(array('id' => $field_id, 'value' => 'last', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_toggle_eheadlast(this);', 'name' => '_eheadaddlast[]', 'class' => 'checkbox'));
 		$headers_table->add(null, '&nbsp;');
 		$headers_table->add(null, $input_index->show($headerindex) . "&nbsp;" . html::label($field_id, rcmail::Q($this->gettext('headerappend'))));
 
 		if ($method == 'editheaderadd')
 			$headers_table->set_row_attribs(array('style' => 'display: none;'));
 
-		$input_advopts = new html_checkbox(array('id' => 'hadvopts' . $rowid, 'name' => '_hadv_opts[]', 'onclick' => rcmail::JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1', 'class' => 'checkbox'));
+		$input_advopts = new html_checkbox(array('id' => 'hadvopts' . $rowid, 'name' => '_hadv_opts[]', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1', 'class' => 'checkbox'));
 		$headers_table->add(array('colspan' => '3', 'style' => 'text-align: right'), html::label('nadvopts' . $rowid, rcmail::Q($this->gettext('advancedoptions'))) . $input_advopts->show($eheadshowadv));
 
 		// get mailbox list
@@ -2249,7 +2249,7 @@ class sieverules extends rcube_plugin
 				array_push($a_mailboxes, array('id' => '@@newfolder', 'name' => $this->gettext('createfolder'), 'virtual' => '', 'folders' => array()));
 		}
 
-		$input_folderlist = new html_select(array('name' => '_folder[]', 'onchange' => rcmail::JS_OBJECT_NAME . '.sieverules_select_folder(this);', 'style' => ($method == 'fileinto' || $method == 'fileinto_copy') ? '' : 'display: none;'));
+		$input_folderlist = new html_select(array('name' => '_folder[]', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_select_folder(this);', 'style' => ($method == 'fileinto' || $method == 'fileinto_copy') ? '' : 'display: none;'));
 		$rcmail->render_folder_tree_select($a_mailboxes, $mbox_name, 100, $input_folderlist, false);
 
 		$show_customfolder = 'display: none;';
@@ -2310,7 +2310,7 @@ class sieverules extends rcube_plugin
 		if ($sql_arr = $rcmail->user->get_identity($id)) {
 			$out = $sql_arr;
 			$out['mailto'] = $sql_arr['email'];
-			$out['string'] = format_email_recipient($sql_arr['email'], rcube_charset::convert($sql_arr['name'], RCMAIL_CHARSET, $this->api->output->get_charset()));
+			$out['string'] = format_email_recipient($sql_arr['email'], rcube_charset::convert($sql_arr['name'], RCUBE_CHARSET, $this->api->output->get_charset()));
 
 			if ($rcmail->config->get('sieverules_from_format', 0) == 1) {
 				$out['disp_string'] = $out['string'];
