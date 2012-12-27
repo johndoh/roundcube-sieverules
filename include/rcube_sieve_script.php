@@ -438,7 +438,7 @@ class rcube_sieve_script
 								$MAIL_MIME->setHTMLBody($action['msg']);
 
 								// add a plain text version of the e-mail as an alternative part.
-								$h2t = new html2text($action['msg'], false, true, 0);
+								$h2t = new rcube_html2text($action['msg'], false, true, 0);
 								$plainTextPart = $h2t->get_text();
 								if (!$plainTextPart) {
 									// empty message body breaks attachment handling in drafts

@@ -645,7 +645,7 @@ class sieverules extends rcube_plugin
 					$a_signatures[$identity_id]['text'] = $sql_arr['signature'];
 
 					if ($sql_arr['html_signature'] == 1) {
-						$h2t = new html2text($a_signatures[$identity_id]['text'], false, false);
+						$h2t = new rcube_html2text($a_signatures[$identity_id]['text'], false, false);
 						$a_signatures[$identity_id]['text'] = trim($h2t->get_text());
 					}
 				}
@@ -1910,7 +1910,7 @@ class sieverules extends rcube_plugin
 			$charset = $action['charset'];
 
 			if ($htmlmsg == '1' && $rcmail->config->get('htmleditor') == '0') {
-				$h2t = new html2text($msg, false, true, 0);
+				$h2t = new rcube_html2text($msg, false, true, 0);
 				$msg = $h2t->get_text();
 				$htmlmsg = '';
 			}
