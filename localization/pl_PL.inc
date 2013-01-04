@@ -3,6 +3,7 @@
 
 $labels = array();
 $labels['filters'] = 'Filtry';
+$labels['filtersname'] = 'Filtry ($name)';
 $labels['managefilters'] = 'Zarządzaj filtrami';
 $labels['filtername'] = 'Nazwa reguły:';
 $labels['disablerule'] = 'Wyłącz regułę';
@@ -117,6 +118,8 @@ $labels['i;ascii-numeric'] = 'numeryczne dopasowanie';
 $labels['selectruleset'] = 'Zaznacz zestaw reguł';
 $labels['activeruleset'] = '%s (aktywna)';
 $labels['activateruleset'] = 'Aktywuj zestaw reguł';
+$labels['isactive'] = 'Aktywny zestaw reguł';
+$labels['isinactive'] = 'Niekatywny zestaw reguł';
 $labels['newruleset'] = 'Utwórz nowy zestaw reguł';
 $labels['delruleset'] = 'Usuń ten zestaw reguł';
 $labels['renameruleset'] = 'Zmień nazwę tego zestawu reguł';
@@ -132,6 +135,14 @@ $labels['virusremoved'] = 'wirus znaleziony i usunięty';
 $labels['viruscured'] = 'wirus znaleziony i zneutralizowany';
 $labels['possiblevirus'] = 'wiadomość może zawierać wirusa';
 $labels['definitevirus'] = 'wiadomość może zawierać groźnego wirusa';
+$labels['addheader'] = 'Dodaj nagłówek';
+$labels['removeheader'] = 'Usuń nagłówek';
+$labels['headername'] = 'Nazwa nagłówka';
+$labels['headervalue'] = 'Wartość nagłówka';
+$labels['headerappend'] = 'Dodaj do istniejącego nagłówka wiadomości';
+$labels['headerindex'] = 'Indeks nagłówka';
+$labels['headerdelall'] = 'wszystkie zdarzenia';
+$labels['last'] = 'ostatni';
 
 $messages = array();
 $messages['nosieverules'] = 'Nie znaleziono filtrów.';
@@ -188,5 +199,7 @@ $messages['nosieverulesets'] = 'Nie znaleziono zestawu filtrów.';
 $messages['baddateformat'] = 'Błąd: Podaj datę w formacie YYYY-MM-DD';
 $messages['badtimeformat'] = 'Błąd: Podaj czas w formacie HH:MM:SS';
 $messages['missingfoldername'] = 'Błąd: Podaj nazwę folderu';
+$messages['eheadernoname'] = 'Błąd: Podaj nazwę nagłówka';
+$messages['eheadernoval'] = 'Błąd: Podaj wartość nagłówka';
 
 ?>
