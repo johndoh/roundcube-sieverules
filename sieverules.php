@@ -2249,7 +2249,7 @@ class sieverules extends rcube_plugin
 				array_push($a_mailboxes, array('id' => '@@newfolder', 'name' => $this->gettext('createfolder'), 'virtual' => '', 'folders' => array()));
 		}
 
-		$input_folderlist = new html_select(array('name' => '_folder[]', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_select_folder(this);', 'style' => ($method == 'fileinto' || $method == 'fileinto_copy') ? '' : 'display: none;'));
+		$input_folderlist = new html_select(array('name' => '_folder[]', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_select_folder(this);', 'style' => ($method == 'fileinto' || $method == 'fileinto_copy') ? '' : 'display: none;', 'is_escaped' => true));
 		$rcmail->render_folder_tree_select($a_mailboxes, $mbox_name, 100, $input_folderlist, false);
 
 		$show_customfolder = 'display: none;';
