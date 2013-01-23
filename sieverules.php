@@ -1834,10 +1834,10 @@ class sieverules extends rcube_plugin
 			$allowed_actions['reject'] =  $this->gettext('messagereject');
 		elseif (in_array('ereject', $ext) && ($config_actions['reject'] || $action['type'] == 'ereject'))
 			$allowed_actions['ereject'] = $this->gettext('messagereject');
-		if (in_array('imapflags', $ext) && ($config_actions['imapflags'] || $action['type'] == 'imapflags'))
-			$allowed_actions['imapflags'] = $this->gettext('messageimapflags');
-		elseif (in_array('imap4flags', $ext) && ($config_actions['imapflags'] || $action['type'] == 'imap4flags'))
+		if (in_array('imap4flags', $ext) && ($config_actions['imapflags'] || $action['type'] == 'imap4flags'))
 			$allowed_actions['imap4flags'] = $this->gettext('messageimapflags');
+		elseif (in_array('imapflags', $ext) && ($config_actions['imapflags'] || $action['type'] == 'imapflags'))
+			$allowed_actions['imapflags'] = $this->gettext('messageimapflags');
 		if (in_array('notify', $ext) && ($config_actions['notify'] || $action['type'] == 'notify'))
 			$allowed_actions['notify'] = $this->gettext('messagenotify');
 		elseif (in_array('enotify', $ext) && ($config_actions['notify'] || $action['type'] == 'enotify'))
