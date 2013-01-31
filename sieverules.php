@@ -153,11 +153,7 @@ class sieverules extends rcube_plugin
 		if (sizeof($this->examples) > 0)
 			$this->api->output->set_env('examples', 'true');
 
-		if ($this->action == 'plugin.sieverules.add') {
-			$this->api->output->set_pagetitle($this->gettext('newfilter'));
-			$this->api->output->send('sieverules.editsieverule');
-		}
-		elseif ($this->action == 'plugin.sieverules.edit') {
+		if ($this->action == 'plugin.sieverules.add' || $this->action == 'plugin.sieverules.edit') {
 			$rcmail->html_editor('sieverules');
 			$this->api->output->add_script(sprintf("window.rcmail_editor_settings = %s",
 				json_encode(array(
@@ -166,7 +162,7 @@ class sieverules extends rcube_plugin
 				'theme_advanced_buttons2' => 'link,unlink,code,forecolor,fontselect,fontsizeselect',
 			))), 'head');
 
-			$this->api->output->set_pagetitle($this->gettext('edititem'));
+			$this->api->output->set_pagetitle($this->action == 'plugin.sieverules.add' ? $this->gettext('newfilter') : $this->gettext('edititem'));
 			$this->api->output->send('sieverules.editsieverule');
 		}
 		elseif ($this->action == 'plugin.sieverules.setup') {
