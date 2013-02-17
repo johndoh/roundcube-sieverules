@@ -908,7 +908,7 @@ class sieverules extends rcube_plugin
 				switch ($type) {
 					case 'fileinto':
 					case 'fileinto_copy':
-						$folder = $this->_strip_val($folders[$idx]);
+						$folder = $this->_strip_val($folders[$idx], false, false);
 						$rcmail = rcube::get_instance();
 						$rcmail->storage_init();
 						$script['actions'][$i]['create'] = false;
@@ -2288,9 +2288,12 @@ class sieverules extends rcube_plugin
 		return false;
 	}
 
-	private function _strip_val($str)
+	private function _strip_val($str, $allow_html = false, $trim = true)
 	{
-		return trim(htmlspecialchars_decode($str));
+		$str = !$allow_html ? htmlspecialchars_decode($str) : $str;
+		$str = $trim ? trim($str) : $str;
+
+		return $str;
 	}
 
 	private function _mbox_encode($text, $encoding)
