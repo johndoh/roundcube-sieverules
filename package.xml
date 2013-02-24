@@ -13,8 +13,8 @@
 		<email>roundcube@tehinterweb.co.uk</email>
 		<active>yes</active>
 	</lead>
-	<date>2012-11-24</date>
-	<time>11:43:25</time>
+	<date>2013-02-24</date>
+	<time>10:16:53</time>
 	<version>
 		<release>1.18</release>
 		<api>1.18</api>
@@ -37,7 +37,7 @@
 			</file>
 			<file name="config.inc.php.dist" role="data"/>
 			<file name="CHANGELOG" role="data"/>
-			<file name="README" role="data"/>
+			<file name="README.md" role="data"/>
 			<file name="importFilters/avelsieve.php" role="php"/>
 			<file name="importFilters/ingo.php" role="php"/>
 			<file name="include/rcube_sieve.php" role="php"/>
