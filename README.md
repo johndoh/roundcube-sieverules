@@ -205,11 +205,9 @@ Default values for header, operator and flag drop downs
 -------------------------------------------------------
 The default values for these drop downs are set in sieverules.php but they can
 be overridden by setting the array in the config for
-```php
-$rcmail_config['sieverules_default_headers'],
-$rcmail_config['sieverules_default_operators'] or
-$rcmail_config['sieverules_default_flags'].
-```
+```php $rcmail_config['sieverules_default_headers']```,
+```php $rcmail_config['sieverules_default_operators']``` or
+```php $rcmail_config['sieverules_default_flags']```.
 
 sieverules_connect hook
 -----------------------
