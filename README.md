@@ -204,10 +204,18 @@ Webmail SieveRules Plugin ##");``` in your config.
 Default values for header, operator and flag drop downs
 -------------------------------------------------------
 The default values for these drop downs are set in sieverules.php but they can
-be overridden by setting the array in the config for
-```php $rcmail_config['sieverules_default_headers']```,
-```php $rcmail_config['sieverules_default_operators']``` or
-```php $rcmail_config['sieverules_default_flags']```.
+be overridden by setting the array in the config for:
+
+```php
+// Override default headers list
+$rcmail_config['sieverules_default_headers'] = Array(...);
+
+// Override default operators list
+$rcmail_config['sieverules_default_operators'] = Array(...);
+
+// Override default flags list
+$rcmail_config['sieverules_default_flags'] = Array(...);
+```
 
 sieverules_connect hook
 -----------------------
