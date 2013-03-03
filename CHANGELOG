@@ -1,6 +1,8 @@
 Roundcube Webmail SieveRules
 ============================
 
+Version 1.18 (2013-03-03, rc-0.9)
+=================================================
  * show name and state of currently selected ruleset when multiple rulesets enabled
  * automatically activate first ruleset even when multiple rulesets enabled
  * add option to use "friendly" names in :from params
