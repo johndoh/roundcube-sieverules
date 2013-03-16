@@ -21,6 +21,7 @@ reject/ereject
 relational
 subaddress
 vacation
+vacation-seconds
 body
 copy
 spamtest

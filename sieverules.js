@@ -581,7 +581,7 @@ rcube_webmail.prototype.sieverules_action_select = function(sel) {
 	document.getElementsByName('_redirect[]')[idx].style.display = 'none';
 	document.getElementsByName('_reject[]')[idx].style.display = 'none';
 	document.getElementsByName('_imapflags[]')[idx].style.display = 'none';
-	document.getElementsByName('_day[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+	document.getElementsByName('_period[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
 	document.getElementsByName('_nmethod[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
 	document.getElementsByName('_eheadname[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
 
@@ -590,7 +590,7 @@ rcube_webmail.prototype.sieverules_action_select = function(sel) {
 	else if (obj.value == 'reject' || obj.value == 'ereject')
 		document.getElementsByName('_reject[]')[idx].style.display = '';
 	else if (obj.value == 'vacation') {
-		document.getElementsByName('_day[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
+		document.getElementsByName('_period[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
 
 		if (rcmail.env.sieverules_htmleditor == 1) {
 			rowid = document.getElementsByName('_msg[]')[idx].id.replace('rcmfd_sievevacmag_', '');
@@ -690,6 +690,11 @@ rcube_webmail.prototype.sieverules_toggle_vac_html = function(obj, rowid, txtid)
 rcube_webmail.prototype.sieverules_notify_impt = function(sel, id) {
 	var obj = rcube_find_object('rcmfd_sievenimpt_' + id);
 	obj.value = sel.value == 'none' ? '' : sel.value;
+}
+
+rcube_webmail.prototype.sieverules_period_type = function(sel, id) {
+	var obj = rcube_find_object('rcmfd_sievevacperiodtype_' + id);
+	obj.value = sel.value;
 }
 
 rcmail.sieverules_help = function(sel, row) {
@@ -1162,7 +1167,7 @@ $(document).ready(function() {
 					var rejects = document.getElementsByName('_reject[]');
 					var senders = document.getElementsByName('_vacfrom[]');
 					var aliases = document.getElementsByName('_vacto[]');
-					var days = document.getElementsByName('_day[]');
+					var periods = document.getElementsByName('_period[]');
 					var subjects = document.getElementsByName('_subject[]');
 					var msgs = document.getElementsByName('_msg[]');
 					var nmethods = document.getElementsByName('_nmethod[]');
@@ -1297,15 +1302,15 @@ $(document).ready(function() {
 								return false;
 							}
 
-							//if (days[i].value == '') {
-							//	alert(rcmail.gettext('vacnodays','sieverules'));
-							//	days[i].focus();
+							//if (periods[i].value == '') {
+							//	alert(rcmail.gettext('vacnoperiod','sieverules'));
+							//	periods[i].focus();
 							//	return false;
 							//}
 
-							if (days[i].value != '' && (!size_test.test(days[i].value) || days[i].value < 1)) {
-								alert(rcmail.gettext('vacdayswrongformat','sieverules'));
-								days[i].focus();
+							if (periods[i].value != '' && (!size_test.test(periods[i].value) || periods[i].value < 1)) {
+								alert(rcmail.gettext('vacperiodwrongformat','sieverules'));
+								periods[i].focus();
 								return false;
 							}
 

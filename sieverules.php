@@ -515,8 +515,8 @@ class sieverules extends rcube_plugin
 		$this->api->output->add_label(
 			'sieverules.norulename', 'sieverules.ruleexists', 'sieverules.noheader',
 			'sieverules.headerbadchars', 'sieverules.noheadervalue', 'sieverules.sizewrongformat',
-			'sieverules.noredirect', 'sieverules.redirectaddresserror', 'sieverules.noreject', 'sieverules.vacnodays',
-			'sieverules.vacdayswrongformat', 'sieverules.vacnomsg', 'sieverules.notifynomethod', 'sieverules.missingfoldername',
+			'sieverules.noredirect', 'sieverules.redirectaddresserror', 'sieverules.noreject', 'sieverules.vacnoperiod',
+			'sieverules.vacperiodwrongformat', 'sieverules.vacnomsg', 'sieverules.notifynomethod', 'sieverules.missingfoldername',
 			'sieverules.notifynomsg', 'sieverules.ruledeleteconfirm',
 			'sieverules.actiondeleteconfirm', 'sieverules.notifyinvalidmethod', 'sieverules.nobodycontentpart',
 			'sieverules.badoperator','sieverules.baddateformat','sieverules.badtimeformat','sieverules.vactoexp_err','editorwarning',
@@ -772,7 +772,8 @@ class sieverules extends rcube_plugin
 			$rejects = rcube_utils::get_input_value('_reject', rcube_utils::INPUT_POST);
 			$vacfroms = rcube_utils::get_input_value('_vacfrom', rcube_utils::INPUT_POST);
 			$vactos = rcube_utils::get_input_value('_vacto', rcube_utils::INPUT_POST);
-			$days = rcube_utils::get_input_value('_day', rcube_utils::INPUT_POST);
+			$periods = rcube_utils::get_input_value('_period', rcube_utils::INPUT_POST);
+			$periodtypes = rcube_utils::get_input_value('_periodtype', rcube_utils::INPUT_POST);
 			$handles = rcube_utils::get_input_value('_handle', rcube_utils::INPUT_POST);
 			$subjects = rcube_utils::get_input_value('_subject', rcube_utils::INPUT_POST, true);
 			$origsubjects = rcube_utils::get_input_value('_orig_subject', rcube_utils::INPUT_POST, true);
@@ -934,7 +935,8 @@ class sieverules extends rcube_plugin
 					case 'vacation':
 						$from = $this->_strip_val($vacfroms[$idx]);
 						$to = $this->_strip_val($vactos[$idx]);
-						$day = $this->_strip_val($days[$idx]);
+						$period = $this->_strip_val($periods[$idx]);
+						$periodtype = $this->_strip_val($periodtypes[$idx]);
 						$handle = $this->_strip_val($handles[$idx]);
 						$subject = $this->_strip_val($subjects[$idx]);
 						$origsubject = $this->_strip_val($origsubjects[$idx]);
@@ -953,7 +955,11 @@ class sieverules extends rcube_plugin
 							}
 						}
 
-						$script['actions'][$i]['days'] = $day;
+						if ($periodtype == 'seconds')
+							$script['actions'][$i]['seconds'] = $period;
+						else
+							$script['actions'][$i]['days'] = $period;
+
 						$script['actions'][$i]['subject'] = $subject;
 						$script['actions'][$i]['origsubject'] = $origsubject;
 						$script['actions'][$i]['from'] = $from;
@@ -1721,7 +1727,7 @@ class sieverules extends rcube_plugin
 		$advanced_table->add(array('style' => 'white-space: normal;'), $input_advcontentpart->show($advcontentpart) . $help_button);
 
 		$advanced_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
-		$advanced_table->add(array('colspan' => 2, 'class' => 'vacdaysexp'), $this->gettext('contentpartexp'));
+		$advanced_table->add(array('colspan' => 2, 'class' => 'helpmsg'), $this->gettext('contentpartexp'));
 
 		$field_id = 'rcmfd_advoperator_'. $rowid;
 		$select_advop = new html_select(array('id' => $field_id, 'name' => "_advoperator[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_rule_advop_select(this)'));
@@ -1868,7 +1874,8 @@ class sieverules extends rcube_plugin
 
 		$vacto = null;
 		$address = '';
-		$days = '';
+		$period = '';
+		$periodtype = '';
 		$handle = '';
 		$subject = '';
 		$origsubject = '';
@@ -1894,7 +1901,16 @@ class sieverules extends rcube_plugin
 		}
 		elseif ($action['type'] == 'vacation') {
 			$method = 'vacation';
-			$days = $action['days'];
+
+			if (isset($action['seconds'])) {
+				$period = $action['seconds'];
+				$periodtype = 'seconds';
+			}
+			else {
+				$period = $action['days'];
+				$periodtype = 'days';
+			}
+
 			$vacfrom_default = $vacfrom;
 			$vacfrom = $action['from'];
 			$vacto = $action['addresses'];
@@ -1920,7 +1936,7 @@ class sieverules extends rcube_plugin
 				$this->force_vacto = false;
 
 			// check advanced enabled
-			if ((!empty($vacfrom) && $vacfrom != $vacfrom_default) || !empty($vacto) || !empty($handle) || !empty($days) || $charset != RCUBE_CHARSET || $this->force_vacto) {
+			if ((!empty($vacfrom) && $vacfrom != $vacfrom_default) || !empty($vacto) || !empty($handle) || !empty($period) || $charset != RCUBE_CHARSET || $this->force_vacto) {
 				$vacadvstyle = '';
 				$vacadvstyle_from = ($this->show_vacfrom) ? '' : 'display: none;';
 				$vacadvstyle_handle = ($this->show_vachandle) ? '' : 'display: none;';
@@ -2028,7 +2044,7 @@ class sieverules extends rcube_plugin
 			$vacs_table->add(array('style' => 'vertical-align: top;'), $help_button);
 
 			$vacs_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
-			$vacs_table->add(array('colspan' => 3, 'class' => 'vacdaysexp'), $this->gettext('vactoexp'));
+			$vacs_table->add(array('colspan' => 3, 'class' => 'helpmsg'), $this->gettext('vactoexp'));
 		}
 		else {
 			$field_id = 'rcmfd_sievevacfrom_'. $rowid;
@@ -2049,19 +2065,31 @@ class sieverules extends rcube_plugin
 			$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail_output::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
 			$vacs_table->add(null, $help_button);
 			$vacs_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
-			$vacs_table->add(array('colspan' => 3, 'class' => 'vacdaysexp'), $this->gettext('vactoexp') . '<br /><br />' . $this->gettext('vactoexp_adv'));
+			$vacs_table->add(array('colspan' => 3, 'class' => 'helpmsg'), $this->gettext('vactoexp') . '<br /><br />' . $this->gettext('vactoexp_adv'));
 		}
 
-		$field_id = 'rcmfd_sievevacdays_'. $rowid;
-		$input_day = new html_inputfield(array('id' => $field_id, 'name' => '_day[]', 'class' => 'short'));
+		$field_id = 'rcmfd_sievevacperiod_'. $rowid;
+		$input_period = new html_inputfield(array('id' => $field_id, 'name' => '_period[]', 'class' => 'short'));
 		$vacs_table->set_row_attribs(array('class' => 'advanced', 'style' => $vacadvstyle));
-		$vacs_table->add(null, html::label($field_id, rcmail::Q($this->gettext('days'))));
-		$vacs_table->add(null, $input_day->show($days));
-		$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail_output::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
+		$vacs_table->add(null, html::label($field_id, rcmail::Q($this->gettext('period'))));
+		$vacs_table->add(null, $input_period->show($period));
+		$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail_output::JS_OBJECT_NAME . '.sieverules_help(this, ' . (in_array('vacation-seconds', $ext) ? $vacs_table->size() + 1 : $vacs_table->size()) . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
 		$vacs_table->add(null, $help_button);
 
+		if (in_array('vacation-seconds', $ext)) {
+			$input_periodtype = new html_radiobutton(array('id' => $field_id . '_days', 'name' => '_period_radio_' . $rowid, 'value' => 'days', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_period_type(this, '. $rowid .')', 'class' => 'radio'));
+			$period_type_show = $input_periodtype->show($periodtype) . "&nbsp;" . html::label($field_id . '_days', rcmail::Q($this->gettext('days')));
+			$input_periodtype = new html_radiobutton(array('id' => $field_id . '_seconds', 'name' => '_period_radio_' . $rowid, 'value' => 'seconds', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_period_type(this, '. $rowid .')', 'class' => 'radio'));
+			$period_type_show .= '&nbsp;&nbsp;' . $input_periodtype->show($periodtype) . "&nbsp;" . html::label($field_id . '_seconds', rcmail::Q($this->gettext('seconds')));
+			$input_periodtype = new html_hiddenfield(array('id' => 'rcmfd_sievevacperiodtype_'. $rowid, 'name' => '_periodtype[]'));
+
+			$vacs_table->add(null, '&nbsp;');
+			$vacs_table->add(null, $period_type_show . $input_periodtype->show($periodtype));
+			$vacs_table->add(null, '&nbsp;');
+		}
+
 		$vacs_table->set_row_attribs(array('style' => 'display: none;'));
-		$vacs_table->add(array('colspan' => 3, 'class' => 'vacdaysexp'), $this->gettext('vacdaysexp'));
+		$vacs_table->add(array('colspan' => 3, 'class' => 'helpmsg'), $this->gettext('vacperiodexp'));
 
 		$field_id = 'rcmfd_sievevachandle_'. $rowid;
 		$input_handle = new html_inputfield(array('id' => $field_id, 'name' => '_handle[]', 'class' => 'short'));
@@ -2072,7 +2100,7 @@ class sieverules extends rcube_plugin
 		$vacs_table->add(null, $help_button);
 
 		$vacs_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
-		$vacs_table->add(array('colspan' => 3, 'class' => 'vacdaysexp'), $this->gettext('vachandleexp'));
+		$vacs_table->add(array('colspan' => 3, 'class' => 'helpmsg'), $this->gettext('vachandleexp'));
 
 		$field_id = 'rcmfd_sievevacsubject_'. $rowid;
 		$input_subject = new html_inputfield(array('id' => $field_id, 'name' => '_subject[]'));
@@ -2138,7 +2166,7 @@ class sieverules extends rcube_plugin
 		$notify_table->add(array('colspan' => 2), $input_method->show($noptions));
 
 		$notify_table->set_row_attribs(array('style' => 'display: none;'));
-		$notify_table->add(array('colspan' => 3, 'class' => 'vacdaysexp'), $this->gettext('nmethodexp'));
+		$notify_table->add(array('colspan' => 3, 'class' => 'helpmsg'), $this->gettext('nmethodexp'));
 
 		$field_id = 'rcmfd_nimpt_'. $rowid;
 		$input_importance = new html_radiobutton(array('id' => $field_id . '_none', 'name' => '_notify_radio_' . $rowid, 'value' => 'none', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_notify_impt(this, '. $rowid .')', 'class' => 'radio'));

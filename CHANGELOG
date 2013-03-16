@@ -1,6 +1,8 @@
 Roundcube Webmail SieveRules
 ============================
 
+ * Add support for vacation-seconds extension
+
 Version 1.18 (2013-03-16, rc-0.9)
 =================================================
  * Make vacation days parameter optional + move to advanced options

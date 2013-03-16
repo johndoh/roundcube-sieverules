@@ -45,6 +45,7 @@ class rcube_sieve_script
 						'reject',
 						'ereject',
 						'vacation',
+						'vacation-seconds',
 						'imapflags',
 						'imap4flags',
 						'notify',
@@ -423,7 +424,15 @@ class rcube_sieve_script
 							}
 
 							$actions .= RCUBE_SIEVE_INDENT . "vacation" . RCUBE_SIEVE_NEWLINE;
-							if (!empty($action['days'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":days ". $action['days'] . RCUBE_SIEVE_NEWLINE;
+
+							if (!empty($action['seconds'])) {
+								array_push($exts, 'vacation-seconds');
+								$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":seconds ". $action['seconds'] . RCUBE_SIEVE_NEWLINE;
+							}
+							elseif (!empty($action['days'])) {
+								$actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":days ". $action['days'] . RCUBE_SIEVE_NEWLINE;
+							}
+
 							if (!empty($action['addresses'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":addresses [\"". str_replace(",", "\",\"", $this->_escape_string($action['addresses'])) ."\"]" . RCUBE_SIEVE_NEWLINE;
 							if (!empty($action['subject'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":subject \"". $action['subject'] ."\"" . RCUBE_SIEVE_NEWLINE;
 							if (!empty($action['handle'])) $actions .= RCUBE_SIEVE_INDENT . RCUBE_SIEVE_INDENT . ":handle \"". $this->_escape_string($action['handle']) ."\"" . RCUBE_SIEVE_NEWLINE;
@@ -628,8 +637,8 @@ class rcube_sieve_script
 		$patterns[] = '^\s*ereject\s+text:(.*)\n\.\n;';
 		$patterns[] = '^\s*reject\s+(.*?[^\\\]);';
 		$patterns[] = '^\s*ereject\s+(.*?[^\\\]);';
-		$patterns[] = '^\s*vacation\s+(:days\s+([0-9]+)\s+)?(:addresses\s+\[(.*?[^\\\])\]\s+)?(:subject\s+(".*?[^"\\\]")\s+)?(:handle\s+(".*?[^"\\\]")\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:mime\s+)?text:(.*)\n\.\n;';
-		$patterns[] = '^\s*vacation\s+(:days\s+([0-9]+)\s+)?(:addresses\s+\[(.*?[^\\\])\]\s+)?(:subject\s+(".*?[^"\\\]")\s+)?(:handle\s+(".*?[^"\\\]")\s+)?(:from\s+(".*?[^"\\\]")\s+)?(.*?[^\\\]);';
+		$patterns[] = '^\s*vacation\s+(:(days|seconds)\s+([0-9]+)\s+)?(:addresses\s+\[(.*?[^\\\])\]\s+)?(:subject\s+(".*?[^"\\\]")\s+)?(:handle\s+(".*?[^"\\\]")\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:mime\s+)?text:(.*)\n\.\n;';
+		$patterns[] = '^\s*vacation\s+(:(days|seconds)\s+([0-9]+)\s+)?(:addresses\s+\[(.*?[^\\\])\]\s+)?(:subject\s+(".*?[^"\\\]")\s+)?(:handle\s+(".*?[^"\\\]")\s+)?(:from\s+(".*?[^"\\\]")\s+)?(.*?[^\\\]);';
 		$patterns[] = '^\s*notify\s+:method\s+(".*?[^"\\\]")\s+(:options\s+\[(.*?[^\\\])\]\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:importance\s+(".*?[^"\\\]")\s+)?:message\s+(".*?[^"\\\]");';
 		$patterns[] = '^\s*notify\s+(:options\s+\[(.*?[^\\\])\]\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:importance\s+(".*?[^"\\\]")\s+)?:message\s+(".*?[^"\\\]")\s+(.*);';
 		$patterns[] = '^\s*addheader\s+(:(last))?\s*(".*?[^"\\\]")\s+(".*?[^"\\\]");';
@@ -666,41 +675,41 @@ class rcube_sieve_script
 					else
 						$result[] = array('type' => 'imapflags', 'target' => $this->_parse_string($m[sizeof($m)-1]));
 				}
-				elseif (preg_match('/^vacation\s+(:days\s+([0-9]+)\s+)?(:addresses\s+\[(.*?[^\\\])\]\s+)?(:subject\s+(".*?[^"\\\]")\s+)?(:handle\s+(".*?[^"\\\]")\s+)?(:from\s+(".*?[^"\\\]")\s+)?(.*);$/sm', $content, $matches)) {
+				elseif (preg_match('/^vacation\s+(:(days|seconds)\s+([0-9]+)\s+)?(:addresses\s+\[(.*?[^\\\])\]\s+)?(:subject\s+(".*?[^"\\\]")\s+)?(:handle\s+(".*?[^"\\\]")\s+)?(:from\s+(".*?[^"\\\]")\s+)?(.*);$/sm', $content, $matches)) {
 					$origsubject = "";
-					if (substr($matches[6], -13, 12) == ": \${subject}") {
-						$matches[6] = trim(substr($matches[6], 0, -13)) . "\"";
+					if (substr($matches[7], -13, 12) == ": \${subject}") {
+						$matches[7] = trim(substr($matches[7], 0, -13)) . "\"";
 						$origsubject = "1";
 					}
 
-					if ($matches[10] == "\"\${from}\"")
-						$matches[10] = "\"auto\"";
+					if ($matches[11] == "\"\${from}\"")
+						$matches[11] = "\"auto\"";
 
-//					if (function_exists("mb_decode_mimeheader")) $matches[5] = mb_decode_mimeheader($matches[5]);
+//					if (function_exists("mb_decode_mimeheader")) $matches[7] = mb_decode_mimeheader($matches[7]);
 
-					if (strpos($matches[11], 'Content-Type: multipart/alternative') !== false) {
+					if (strpos($matches[12], 'Content-Type: multipart/alternative') !== false) {
 						$htmlmsg = true;
 
-						preg_match('/Content-Type: text\/html; charset=([^\r\n]+).*<body>(.+)<\/body>/sm', $matches[11], $htmlparts);
+						preg_match('/Content-Type: text\/html; charset=([^\r\n]+).*<body>(.+)<\/body>/sm', $matches[12], $htmlparts);
 						$msg = quoted_printable_decode($htmlparts[2]);
 						$charset = $htmlparts[1];
 					}
 					else {
 						$htmlmsg = false;
-						$msg = $this->_parse_string($matches[11]);
-						$charset = $this->_parse_charset($matches[11]);
+						$msg = $this->_parse_string($matches[12]);
+						$charset = $this->_parse_charset($matches[12]);
 					}
 
 					// unescape lines which start is a .
 					$msg = preg_replace('/(^|\r?\n)\.\./', "$1.", $msg);
 
 					$result[] = array('type' => 'vacation',
-									'days' => $matches[2],
-									'subject' => $this->_parse_string($matches[6]),
+									$matches[2] => $matches[3],
+									'subject' => $this->_parse_string($matches[7]),
 									'origsubject' => $origsubject,
-									'from' => $this->_parse_string($matches[10]),
-									'addresses' => $this->_parse_string(str_replace("\",\"", ",", $matches[4])),
-									'handle' => $this->_parse_string($matches[8]),
+									'from' => $this->_parse_string($matches[11]),
+									'addresses' => $this->_parse_string(str_replace("\",\"", ",", $matches[5])),
+									'handle' => $this->_parse_string($matches[9]),
 									'msg' => $msg,
 									'htmlmsg' => $htmlmsg,
 									'charset' => $charset);
