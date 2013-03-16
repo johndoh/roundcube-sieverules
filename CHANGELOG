@@ -1,12 +1,13 @@
 Roundcube Webmail SieveRules
 ============================
 
-Version 1.18 (2013-03-03, rc-0.9)
+Version 1.18 (2013-03-16, rc-0.9)
 =================================================
- * show name and state of currently selected ruleset when multiple rulesets enabled
- * automatically activate first ruleset even when multiple rulesets enabled
- * add option to use "friendly" names in :from params
- * rename default skin to classic (c40419bdfe)
+ * Make vacation days parameter optional + move to advanced options
+ * Show name and state of currently selected ruleset when multiple rulesets enabled
+ * Automatically activate first ruleset even when multiple rulesets enabled
+ * Add option to use "friendly" names in :from params
+ * Rename default skin to classic (c40419bdfe)
  * rcube_ui > rcube_utils (r6091)
  * Update for Roundcube framework
  * Add advanced options for editheader extension to UI

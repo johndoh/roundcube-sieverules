@@ -1920,7 +1920,7 @@ class sieverules extends rcube_plugin
 				$this->force_vacto = false;
 
 			// check advanced enabled
-			if ((!empty($vacfrom) && $vacfrom != $vacfrom_default) || !empty($vacto) || !empty($handle) || $charset != RCUBE_CHARSET || $this->force_vacto) {
+			if ((!empty($vacfrom) && $vacfrom != $vacfrom_default) || !empty($vacto) || !empty($handle) || !empty($days) || $charset != RCUBE_CHARSET || $this->force_vacto) {
 				$vacadvstyle = '';
 				$vacadvstyle_from = ($this->show_vacfrom) ? '' : 'display: none;';
 				$vacadvstyle_handle = ($this->show_vachandle) ? '' : 'display: none;';
@@ -2054,6 +2054,7 @@ class sieverules extends rcube_plugin
 
 		$field_id = 'rcmfd_sievevacdays_'. $rowid;
 		$input_day = new html_inputfield(array('id' => $field_id, 'name' => '_day[]', 'class' => 'short'));
+		$vacs_table->set_row_attribs(array('class' => 'advanced', 'style' => $vacadvstyle));
 		$vacs_table->add(null, html::label($field_id, rcmail::Q($this->gettext('days'))));
 		$vacs_table->add(null, $input_day->show($days));
 		$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail_output::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);

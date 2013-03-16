@@ -1297,13 +1297,13 @@ $(document).ready(function() {
 								return false;
 							}
 
-							if (days[i].value == '') {
-								alert(rcmail.gettext('vacnodays','sieverules'));
-								days[i].focus();
-								return false;
-							}
+							//if (days[i].value == '') {
+							//	alert(rcmail.gettext('vacnodays','sieverules'));
+							//	days[i].focus();
+							//	return false;
+							//}
 
-							if (!size_test.test(days[i].value) || days[i].value < 1) {
+							if (days[i].value != '' && (!size_test.test(days[i].value) || days[i].value < 1)) {
 								alert(rcmail.gettext('vacdayswrongformat','sieverules'));
 								days[i].focus();
 								return false;
