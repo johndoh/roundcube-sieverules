@@ -1292,9 +1292,11 @@ class sieverules extends rcube_plugin
 		$rcmail = rcube::get_instance();
 
 		if (!$this->sieve) {
-			include('lib/Net/Sieve.php');
-			include('include/rcube_sieve.php');
-			include('include/rcube_sieve_script.php');
+        	// Add include path for internal classes
+        	$include_path = $this->home . '/lib' . PATH_SEPARATOR;
+        	$include_path .= ini_get('include_path');
+        	set_include_path($include_path);
+
 			$rcmail = rcube::get_instance();
 
 			// try to connect to managesieve server and to fetch the script
