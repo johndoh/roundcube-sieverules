@@ -542,6 +542,7 @@ class sieverules extends rcube_plugin
 		$buttons = '';
 
 		if ($rcmail->config->get('sieverules_default_file', false) && is_readable($rcmail->config->get('sieverules_default_file'))) {
+			// show import options
 			$text .= "<br /><br />" . $this->gettext('importdefault');
 			$buttons .= $this->api->output->button(array('command' => 'plugin.sieverules.import', 'prop' => '_import=_default_', 'type' => 'input', 'class' => 'button', 'label' => 'sieverules.usedefaultfilter'));
 		}
@@ -558,6 +559,7 @@ class sieverules extends rcube_plugin
 		$type = '';
 		$ruleset = '';
 		if (sizeof($this->sieve->list) > 0) {
+			// show existing (non-supported?) ruleset
 			if ($result = $this->sieve->check_import()) {
 				list($type, $name, $ruleset) = $result;
 				$text .= "<br /><br />" . str_replace('%s', $name, $this->gettext('importother'));
@@ -573,6 +575,7 @@ class sieverules extends rcube_plugin
 		}
 
 		if ($rcmail->config->get('sieverules_auto_load_default') && !$rcmail->config->get('sieverules_multiplerules', false) && $type != '' && $ruleset != '' && $ruleset == $this->sieve->get_active()) {
+			// no ruleset found, automatically import active ruleset
 			$this->import($type, $ruleset, false);
 
 			if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
@@ -585,6 +588,7 @@ class sieverules extends rcube_plugin
 			}
 		}
 		else if ($rcmail->config->get('sieverules_auto_load_default') && is_readable($rcmail->config->get('sieverules_default_file')) && strlen($text) > 0 && strlen($buttons) > 0 && $type == '' && $ruleset == '') {
+			// no ruleset found, automatically import default ruleset
 			$this->import($type, '_default_', false);
 
 			if (isset($_GET['_framed']) || isset($_POST['_framed'])) {
@@ -597,6 +601,7 @@ class sieverules extends rcube_plugin
 			}
 		}
 		else if (strlen($text) > 0 && strlen($buttons) > 0) {
+			// no existing rulesets, nothing to import
 			$out = "<br />". $this->gettext('noexistingfilters') . $text . "<br /><br /><br />\n";
 			$out .= $buttons;
 			$out .= "&nbsp;&nbsp;" . $this->api->output->button(array('command' => 'plugin.sieverules.import', 'prop' => '_import=_none_', 'type' => 'input', 'class' => 'button', 'label' => 'cancel'));
@@ -664,6 +669,7 @@ class sieverules extends rcube_plugin
 		if ($iid == '')
 			$iid = sizeof($this->script);
 
+		// get current script
 		if (substr($iid, 0, 2) == 'ex') {
 			$cur_script = $this->examples[substr($iid, 2)];
 			$this->api->output->set_env('eid', $iid);
@@ -680,6 +686,7 @@ class sieverules extends rcube_plugin
 				$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_ready('".$iid."');");
 		}
 
+		//  build predefined rules and add to UI
 		if (sizeof($rcmail->config->get('sieverules_predefined_rules')) > 0) {
 			$predefined = array();
 			foreach($rcmail->config->get('sieverules_predefined_rules') as $idx => $data)
@@ -715,6 +722,7 @@ class sieverules extends rcube_plugin
 
 		$out .= "<br /><br />";
 
+		// add rule join type to UI
 		if (sizeof($cur_script['tests']) == 1 && $cur_script['tests'][0]['type'] == 'true' && !$cur_script['tests'][0]['not'])
 			$join_any = true;
 
@@ -736,6 +744,7 @@ class sieverules extends rcube_plugin
 		$rules_table = new html_table(array('id' => 'rules-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 5));
 		$rules_table = $this->_rule_row($ext, $rules_table, null, $rcmail->config->get('sieverules_predefined_rules'), $attrib);
 
+		// add rules to UI
 		if (!$join_any) {
 			if (!isset($cur_script))
 				$rules_table = $this->_rule_row($ext, $rules_table, array(), $rcmail->config->get('sieverules_predefined_rules'), $attrib);
@@ -754,6 +763,7 @@ class sieverules extends rcube_plugin
 		$actions_table = new html_table(array('id' => 'actions-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 3));
 		$actions_table = $this->_action_row($ext, $actions_table, 'rowid', null, $attrib, $example);
 
+		// add actions to UI
 		if (!isset($cur_script))
 			$actions_table = $this->_action_row($ext, $actions_table, 0, array(), $attrib, $example);
 		else foreach ($cur_script['actions'] as $idx => $actions)
@@ -884,6 +894,7 @@ class sieverules extends rcube_plugin
 				return;
 			}
 
+			// get input from form
 			$name = trim(rcube_utils::get_input_value('_name', rcube_utils::INPUT_POST, true));
 			$iid = trim(rcube_utils::get_input_value('_iid', rcube_utils::INPUT_POST));
 			$join = trim(rcube_utils::get_input_value('_join', rcube_utils::INPUT_POST));
@@ -949,6 +960,7 @@ class sieverules extends rcube_plugin
 				if ($idx == 0)
 					continue;
 
+				// parse form input
 				$header = $this->_strip_val($headers[$idx]);
 				$op = $this->_strip_val($ops[$idx]);
 				$bodypart = $this->_strip_val($bodyparts[$idx]);
@@ -1043,6 +1055,7 @@ class sieverules extends rcube_plugin
 
 				$script['actions'][$i]['type'] = $type;
 
+				// parse form input
 				switch ($type) {
 					case 'fileinto':
 					case 'fileinto_copy':
@@ -1161,6 +1174,7 @@ class sieverules extends rcube_plugin
 			if ($result === true)
 				$save = $this->sieve->save();
 
+			// always set ruleset active if its the only one
 			if ($save === true && $result === true && !($rcmail->config->get('sieverules_multiplerules', false) && sizeof($this->sieve->list) > 1))
 				$save = $this->sieve->set_active($this->current_ruleset);
 
@@ -1179,6 +1193,7 @@ class sieverules extends rcube_plugin
 				$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'down_arrow', 'title' => 'sieverules.movedown', 'content' => ' '));
 				$down_link = str_replace("'", "\'", $down_link);
 
+				// update rule list in UI
 				if (!isset($this->script[$iid]) && sizeof($this->script) == 0)
 					$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_update_list('add-first', 'rcmrow". $iid ."', '". rcmail::Q($filter_name) ."', '". $down_link ."', '". $up_link ."');");
 				elseif (!isset($this->script[$iid]))
@@ -1195,7 +1210,7 @@ class sieverules extends rcube_plugin
 					$this->api->output->command('display_message', $save !== false ? $save : $this->gettext('filtersaveerror'), 'error');
 			}
 
-			// update rule list
+			// update rule list in script
 			if ($this->sieve_error)
 				$this->script = array();
 			else
@@ -1257,6 +1272,7 @@ class sieverules extends rcube_plugin
 		}
 
 		if ($ruleset == '_default_') {
+			// import default rule file (defined in config)
 			if ($rcmail->config->get('sieverules_default_file', false) && is_readable($rcmail->config->get('sieverules_default_file'))) {
 				$this->sieve->script->add_text(file_get_contents($rcmail->config->get('sieverules_default_file')));
 				$save = $this->sieve->save();
@@ -1286,6 +1302,7 @@ class sieverules extends rcube_plugin
 			}
 		}
 		elseif ($ruleset == '_example_') {
+			// import example rule file (defined in config)
 			if (rcube_utils::get_input_value('_eids', rcube_utils::INPUT_GET)) {
 				$pos = rcube_utils::get_input_value('_pos', rcube_utils::INPUT_GET);
 				$eids = explode(",", rcube_utils::get_input_value('_eids', rcube_utils::INPUT_GET));
@@ -1312,15 +1329,18 @@ class sieverules extends rcube_plugin
 			}
 		}
 		elseif ($ruleset == '_none_') {
+			// do not import anything
 			$this->sieve->save();
 			if (!($rcmail->config->get('sieverules_multiplerules', false) && sizeof($this->sieve->list) > 1))
 				$this->sieve->set_active($this->current_ruleset);
 		}
 		elseif ($ruleset == '_copy_') {
+			// copy existing ruleset
 			$this->rename_ruleset(true);
 			return;
 		}
 		elseif ($type != '' && $ruleset != '') {
+			// attempt to import with import filter
 			$import = $this->sieve->do_import($type, $ruleset);
 
 			if ($import) {
@@ -1516,6 +1536,7 @@ class sieverules extends rcube_plugin
 		if (!isset($rule))
 			$rules_table->set_row_attribs(array('style' => 'display: none;'));
 
+		// set default field display
 		$display['header'] = 'visibility: hidden;';
 		$display['op'] = '';
 		$display['sizeop'] = 'display: none;';
@@ -1532,6 +1553,7 @@ class sieverules extends rcube_plugin
 		$display['advweekdays'] = 'display: none;';
 		$display['advtarget'] = '';
 
+		// set default values
 		$defaults['test'] = 'header';
 		$defaults['selheader'] = 'Subject';
 		$defaults['header'] = 'Subject';
@@ -1555,6 +1577,7 @@ class sieverules extends rcube_plugin
 			}
 		}
 
+		// apply current rule values
 		if ($predefined > -1) {
 			$display['op'] = 'display: none;';
 			$display['target'] = 'display: none;';
@@ -1701,6 +1724,7 @@ class sieverules extends rcube_plugin
 			$display['target'] = 'display: none;';
 		}
 
+		// header select box
 		$select_header = new html_select(array('name' => "_selheader[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_header_select(this)'));
 		foreach($this->headers as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
@@ -1716,76 +1740,92 @@ class sieverules extends rcube_plugin
 		$help_button = html::img(array('src' => $attrib['helpicon'], 'alt' => $this->gettext('sieveruleheaders'), 'border' => 0, 'style' => 'margin-left: 4px;'));
 		$help_button = html::a(array('name' => '_headerhlp', 'href' => "#", 'onclick' => 'return '. rcmail_output::JS_OBJECT_NAME .'.sieverules_xheaders(this);', 'title' => $this->gettext('sieveruleheaders'), 'style' => $display['header']), $help_button);
 
+		// header input box
 		$input_header = new html_inputfield(array('name' => '_header[]', 'style' => $display['header'], 'class' => 'short'));
 
+		// bodypart select box
 		$select_bodypart = new html_select(array('name' => '_bodypart[]', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_bodypart_select(this)', 'style' => $display['bodypart']));
 		foreach($this->bodyparts as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
 				$select_bodypart->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
+		// datepart select box
 		$select_datepart = new html_select(array('name' => '_datepart[]', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_datepart_select(this)','style' => $display['datepart']));
 		foreach($this->dateparts as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
 				$select_datepart->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
+		// add header elements to UI
 		$rules_table->add('header', $input_header->show($defaults['header']) . $help_button . $select_bodypart->show($defaults['bodypart']) . $select_datepart->show($defaults['datepart']));
 
+		// header operators select box
 		$select_op = new html_select(array('name' => "_operator[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_rule_op_select(this)', 'style' => $display['op']));
 		foreach($this->operators as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
 				$select_op->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
+		// size operators select box
 		$select_size_op = new html_select(array('name' => "_size_operator[]", 'style' => $display['sizeop']));
 		foreach($this->sizeoperators as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
 				$select_size_op->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
+		// date operators select box
 		$select_date_op = new html_select(array('name' => "_date_operator[]", 'style' => $display['dateop']));
 		foreach($this->dateoperators as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
 				$select_date_op->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
+		// spamtext operators select box
 		$select_spamtest_op = new html_select(array('name' => "_spamtest_operator[]", 'style' => $display['spamtestop']));
 		foreach($this->spamoperators as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
 				$select_spamtest_op->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
+		// add operator inputs to UI
 		$rules_table->add('op', $select_op->show(($showadvanced ? 'advoptions' : $defaults['op'])) . $select_size_op->show($defaults['sizeop']) . $select_date_op->show($defaults['dateop']) . $select_spamtest_op->show($defaults['spamtestop']));
 
+		// target input box
 		$input_target = new html_inputfield(array('name' => '_target[]', 'style' => $display['target'], 'class' => $defaults['targetsize']));
 
+		// size units select box
 		$select_units = new html_select(array('name' => "_units[]", 'style' => $display['units'], 'class' => 'short'));
 		foreach($this->sizeunits as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
 				$select_units->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
+		// spam probability select box
 		$select_spam_probability = new html_select(array('name' => "_spam_probability[]", 'style' => $display['spamprob'], 'class' => 'long'));
 		foreach($this->spamprobability as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
 				$select_spam_probability->add(rcmail::Q((strpos($option['text'], '%') > 0 ? $option['text'] : $this->gettext($option['text']))), rcmail::Q($option['value']));
 		}
 
+		// virus probability select box
 		$select_virus_probability = new html_select(array('name' => "_virus_probability[]", 'style' => $display['virusprob'], 'class' => 'long'));
 		foreach($this->virusprobability as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
 				$select_virus_probability->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
+		// weekday select box
 		$select_weekdays = new html_select(array('name' => "_weekday[]", 'style' => $display['weekdays'], 'class' => 'long'));
 		foreach($this->weekdays as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
 				$select_weekdays->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
+		// add target/value and unit inputs to UI
 		$rules_table->add('target', $select_weekdays->show($defaults['target']) . $select_spam_probability->show($defaults['spamprobability']) . $select_virus_probability->show($defaults['virusprobability']) . $input_target->show($defaults['target']) . "&nbsp;" . $select_units->show($defaults['units']));
 
+		// add add/delete buttons to UI
 		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_rule', 'type' => 'link', 'class' => 'add', 'title' => 'sieverules.addsieverule', 'content' => ' '));
 		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_rule', 'type' => 'link', 'class' => 'delete', 'classact' => 'delete_act', 'title' => 'sieverules.deletesieverule', 'content' => ' '));
 		$rules_table->add('control', $delete_button . $add_button);
@@ -1795,6 +1835,7 @@ class sieverules extends rcube_plugin
 		else
 			$rowid = 'rowid';
 
+		// create "other headers" table
 		$headers_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 4));
 		$headers_table->add(array('colspan' => 4, 'style' => 'white-space: normal;'), rcmail::Q($this->gettext('sieveheadershlp')));
 
@@ -1825,24 +1866,30 @@ class sieverules extends rcube_plugin
 		$headers_table->add(array('style' => 'vertical-align: top; width: 25%;'), $col3);
 		$headers_table->add(array('style' => 'vertical-align: top; width: 25%;'), $col4);
 
+		// add "other headers" table to UI
 		$rules_table->set_row_attribs(array('style' => 'display: none;'));
 		$rules_table->add(array('colspan' => 5), $headers_table->show());
 
+		// create advanced options table
 		$advanced_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 2));
 		$advanced_table->add(array('colspan' => 2, 'style' => 'white-space: normal;'), rcmail::Q($this->gettext('advancedoptions')));
 
 		$help_button = html::img(array('src' => $attrib['helpicon'], 'alt' => $this->gettext('contentpart'), 'border' => 0, 'style' => 'margin-left: 4px;'));
 		$help_button = html::a(array('href' => "#", 'onclick' => 'return '. rcmail_output::JS_OBJECT_NAME .'.sieverules_help(this, ' . $advanced_table->size() . ');', 'title' => $this->gettext('contentpart')), $help_button);
 
+		// input for body test content part
 		$field_id = 'rcmfd_advcontentpart_'. $rowid;
 		$advanced_table->set_row_attribs(array('style' => $display['advcontentpart']));
 		$input_advcontentpart = new html_inputfield(array('id' => $field_id, 'name' => '_body_contentpart[]', 'class' => 'short'));
+		// add to advanced UI
 		$advanced_table->add(array('style' => 'white-space: normal;', 'class' => 'selheader'), html::label($field_id, rcmail::Q($this->gettext('bodycontentpart'))));
 		$advanced_table->add(array('style' => 'white-space: normal;'), $input_advcontentpart->show($defaults['advcontentpart']) . $help_button);
 
+		// add help message for content part input to advanced UI
 		$advanced_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
 		$advanced_table->add(array('colspan' => 2, 'class' => 'helpmsg'), $this->gettext('contentpartexp'));
 
+		// advanced operator select box
 		$field_id = 'rcmfd_advoperator_'. $rowid;
 		$select_advop = new html_select(array('id' => $field_id, 'name' => "_advoperator[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_rule_advop_select(this)'));
 		foreach($this->advoperators as $option) {
@@ -1850,9 +1897,11 @@ class sieverules extends rcube_plugin
 				$select_advop->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
+		// add to advanced UI
 		$advanced_table->add(array('style' => 'white-space: normal;', 'class' => 'selheader'), html::label($field_id, rcmail::Q($this->gettext('operator'))));
 		$advanced_table->add(array('style' => 'white-space: normal;'), $select_advop->show($defaults['op']));
 
+		// comparator select box
 		$field_id = 'rcmfd_comparator_'. $rowid;
 		$select_comparator = new html_select(array('id' => $field_id, 'name' => "_comparator[]") + (substr($defaults['op'], 0, 5) == 'count' || substr($defaults['op'], 0, 5) == 'value' ? array('disabled' => 'disabled') : array()));
 		foreach($this->comparators as $option) {
@@ -1860,23 +1909,29 @@ class sieverules extends rcube_plugin
 				$select_comparator->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
+		// add to advanced UI
 		$advanced_table->add(array('style' => 'white-space: normal;', 'class' => 'selheader'), html::label($field_id, rcmail::Q($this->gettext('comparator'))));
 		$advanced_table->add(array('style' => 'white-space: normal;'), $select_comparator->show($rule['comparator']));
 
+		// advanced weekday select box
 		$select_advweekdays = new html_select(array('name' => "_advweekday[]", 'style' => $display['advweekdays']));
 		foreach($this->weekdays as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
 				$select_advweekdays->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
+		// advanced target input box
 		$field_id = 'rcmfd_advtarget_'. $rowid;
 		$input_advtarget = new html_inputfield(array('id' => $field_id, 'name' => '_advtarget[]', 'style' => $display['advtarget']));
+
+		// add to advanced target and weekday select to advanced UI
 		$advanced_table->add(array('style' => 'white-space: normal;', 'class' => 'selheader'), html::label($field_id, rcmail::Q($this->gettext('teststring'))));
 		$advanced_table->add(array('style' => 'white-space: normal;'), $input_advtarget->show($defaults['target']) . $select_advweekdays->show($defaults['target']));
 
 		if (!($showadvanced && $predefined == -1))
 			$rules_table->set_row_attribs(array('style' => 'display: none;'));
 
+		// add advanced UI to main UI
 		$rules_table->add(array('colspan' => 5), $advanced_table->show());
 
 		return $rules_table;
@@ -1892,6 +1947,7 @@ class sieverules extends rcube_plugin
 
 		$help_icon = html::img(array('src' => $attrib['helpicon'], 'alt' => $this->gettext('messagehelp'), 'border' => 0));
 
+		// set default field display
 		$display['vacadv'] = ($action['type'] != 'vacation' && $this->force_vacto) ? '' : 'display: none;';
 		$display['vacfrom'] = ($this->show_vacfrom) ? $display['vacadv'] : 'display: none;';
 		$display['vachandle'] = ($this->show_vachandle) ? $display['vacadv'] : 'display: none;';
@@ -1934,7 +1990,7 @@ class sieverules extends rcube_plugin
 		if ($config_actions['stop'] || $action['type'] == 'stop')
 			$allowed_actions['stop'] = $this->gettext('messagestop');
 
-		// set the default action
+		// set the default values
 		reset($allowed_actions);
 		$defaults['method'] = key($allowed_actions);
 
@@ -1963,6 +2019,7 @@ class sieverules extends rcube_plugin
 		$defaults['noptions'] = '';
 		$defaults['nmsg'] = '';
 
+		// apply current action values
 		if ($action['type'] == 'fileinto' || $action['type'] == 'fileinto_copy') {
 			$defaults['method'] = $action['type'];
 			$defaults['folder'] = $rcmail->config->get('sieverules_include_imap_root', true) ? $action['target'] : $rcmail->storage->mod_folder($action['target'], 'IN');
@@ -2051,12 +2108,15 @@ class sieverules extends rcube_plugin
 			$defaults['method'] = $action['type'];
 		}
 
+		// action type select box
 		$select_action = new html_select(array('name' => "_act[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_action_select(this)'));
 		foreach ($allowed_actions as $value => $text)
 			$select_action->add(rcmail::Q($text), $value);
 
+		// add action type to UI
 		$actions_table->add('action', $select_action->show($defaults['method']));
 
+		// begin vacation action
 		$vacs_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 3, 'style' => ($defaults['method'] == 'vacation') ? '' : 'display: none;'));
 
 		$to_addresses = "";
@@ -2200,6 +2260,7 @@ class sieverules extends rcube_plugin
 		$input_advopts = new html_checkbox(array('id' => 'vadvopts' . $rowid, 'name' => '_vadv_opts[]', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1', 'class' => 'checkbox'));
 		$vacs_table->add(array('colspan' => '3', 'style' => 'text-align: right'), html::label('vadvopts' . $rowid, rcmail::Q($this->gettext('advancedoptions'))) . $input_advopts->show(($display['vacadv'] == '' ? 1 : 0)));
 
+		// begin notify action
 		$notify_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 3, 'style' => ($defaults['method'] == 'notify' || $defaults['method'] == 'enotify') ? '' : 'display: none;'));
 
 		$user_identities = $rcmail->user->list_identities();
@@ -2263,6 +2324,7 @@ class sieverules extends rcube_plugin
 			$notify_table->add(array('colspan' => '3', 'style' => 'text-align: right'), html::label('nadvopts' . $rowid, rcmail::Q($this->gettext('advancedoptions'))) . $input_advopts->show(($display['noteadv'] == '' ? 1 : 0)));
 		}
 
+		// begin editheader action
 		$headers_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 2, 'style' => ($defaults['method'] == 'editheaderadd' || $defaults['method'] == 'editheaderrem') ? '' : 'display: none;'));
 
 		$field_id = 'rcmfd_eheadname_'. $rowid;
@@ -2316,6 +2378,7 @@ class sieverules extends rcube_plugin
 		$input_advopts = new html_checkbox(array('id' => 'hadvopts' . $rowid, 'name' => '_hadv_opts[]', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_show_adv(this);', 'value' => '1', 'class' => 'checkbox'));
 		$headers_table->add(array('colspan' => '3', 'style' => 'text-align: right'), html::label('nadvopts' . $rowid, rcmail::Q($this->gettext('advancedoptions'))) . $input_advopts->show(($display['eheadadv'] == '' ? 1 : 0)));
 
+		// begin fileinto action
 		// get mailbox list
 		$mbox_name = $rcmail->storage->get_folder();
 
@@ -2357,14 +2420,21 @@ class sieverules extends rcube_plugin
 		$input_customfolder = new html_inputfield(array('name' => '_customfolder[]'));
 		$otherfolders = html::span(array('id' => 'customfolder_rowid', 'style' => $show_customfolder), '<br />' . $input_customfolder->show($customfolder));
 
+		// begin redirect action
 		$input_address = new html_inputfield(array('name' => '_redirect[]', 'style' => ($defaults['method'] == 'redirect' || $defaults['method'] == 'redirect_copy') ? '' : 'display: none;'));
+
+		// begin reject action
 		$input_reject = new html_textarea(array('name' => '_reject[]', 'rows' => '5', 'cols' => '40', 'style' => ($defaults['method'] == 'reject' || $defaults['method'] == 'ereject') ? '' : 'display: none;'));
+
+		// begin imapflags action
 		$input_imapflags = new html_select(array('name' => '_imapflags[]', 'style' => ($defaults['method'] == 'imapflags' || $defaults['method'] == 'imap4flags') ? '' : 'display: none;'));
 		foreach($this->flags as $name => $val)
 			$input_imapflags->add(rcmail::Q($this->gettext($name)), rcmail::Q($val));
 
+		// add actions to UI
 		$actions_table->add('folder', $input_folderlist->show($defaults['folder']) . $otherfolders . $input_address->show($defaults['address']) . $vacs_table->show() . $notify_table->show() . $input_imapflags->show($defaults['flags']) . $input_reject->show($defaults['reject']) . $headers_table->show());
 
+		// add add/delete buttons to UI (if enabled)
 		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_action', 'type' => 'link', 'class' => 'add', 'title' => 'sieverules.addsieveact', 'content' => ' '));
 		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_action', 'type' => 'link', 'class' => 'delete', 'classact' => 'delete_act', 'title' => 'sieverules.deletesieveact', 'content' => ' '));
 
