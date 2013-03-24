@@ -178,6 +178,7 @@ class sieverules extends rcube_plugin
 		// load required plugin
 		$this->require_plugin('jqueryui');
 
+		// set options from config file
 		if ($rcmail->config->get('sieverules_multiplerules') && rcube_utils::get_input_value('_ruleset', rcube_utils::INPUT_GET, true))
 			$this->current_ruleset = rcube_utils::get_input_value('_ruleset', rcube_utils::INPUT_GET, true);
 		elseif ($rcmail->config->get('sieverules_multiplerules') && $_SESSION['sieverules_current_ruleset'])
@@ -187,10 +188,19 @@ class sieverules extends rcube_plugin
 		else
 			$this->current_ruleset = $rcmail->config->get('sieverules_ruleset_name');
 
+		// always include all identities when creating vacation messages
+		$this->force_vacto = $rcmail->config->get('sieverules_force_vacto', $this->force_vacto);
+
+		// include the 'from' option when creating vacation messages
+		$this->show_vacfrom = $rcmail->config->get('sieverules_show_vacfrom', $this->show_vacfrom);
+
+		// include the 'handle' option when creating vacation messages
+		$this->show_vachandle = $rcmail->config->get('sieverules_show_vachandle', $this->show_vachandle);
+
 		// override default dropdown values
 		foreach (array('headers', 'bodyparts', 'dateparts', 'operators', 'sizeoperators', 'dateoperators', 'spamoperators', 'sizeunits', 'spamprobability', 'virusprobability', 'advoperators', 'comparators', 'flags') as $default) {
 			if ($override = $rcmail->config->get('sieverules_default_' . $default)) {
-				// check for old format default arrays
+				// check for old format default arrays, skip them and put a warning in the logs
 				if (is_array($override[0]) == is_array($this->{$default}[0]))
 					$this->{$default} = $override;
 				else
@@ -204,6 +214,7 @@ class sieverules extends rcube_plugin
 		$this->include_stylesheet($this->local_skin_path() . '/tabstyles.css');
 		$this->include_script('sieverules.js');
 
+		// register internal plugin actions
 		$this->register_action('plugin.sieverules', array($this, 'init_html'));
 		$this->register_action('plugin.sieverules.add', array($this, 'init_html'));
 		$this->register_action('plugin.sieverules.edit', array($this, 'init_html'));
@@ -222,27 +233,18 @@ class sieverules extends rcube_plugin
 
 	function init_html()
 	{
+		// create SieveRules UI
 		$rcmail = rcube::get_instance();
-
-		// always include all identities when creating vacation messages
-		if ($rcmail->config->get('sieverules_force_vacto'))
-			$this->force_vacto = $rcmail->config->get('sieverules_force_vacto');
-
-		// include the 'from' option when creating vacation messages
-		if ($rcmail->config->get('sieverules_show_vacfrom'))
-			$this->show_vacfrom = $rcmail->config->get('sieverules_show_vacfrom');
-
-		// include the 'handle' option when creating vacation messages
-		if ($rcmail->config->get('sieverules_show_vachandle'))
-			$this->show_vachandle = $rcmail->config->get('sieverules_show_vachandle');
-
 		$this->_startup();
 
 		if ($rcmail->config->get('sieverules_multiplerules') && $this->current_ruleset === false) {
+			// multiple rulesets enabled and no ruleset specified
 			if ($ruleset = $this->sieve->get_active()) {
+				// active ruleset exists on server use it.
 				$this->current_ruleset = $this->sieve->get_active();
 			}
 			else {
+				// no active ruleset exists, create one with default name and reinitialise
 				$this->current_ruleset = $rcmail->config->get('sieverules_ruleset_name');
 				$this->_startup();
 				$rcmail->overwrite_action('plugin.sieverules.setup');
@@ -250,15 +252,19 @@ class sieverules extends rcube_plugin
 			}
 		}
 
+		// if multiple rulesets enabled save the name of the active one for later, save looking it up again
 		if ($rcmail->config->get('sieverules_multiplerules'))
 			$_SESSION['sieverules_current_ruleset'] = $this->current_ruleset;
 
 		$this->api->output->set_env('ruleset', $this->current_ruleset);
+
 		if ($rcmail->config->get('sieverules_adveditor') == 2 && rcube_utils::get_input_value('_override', rcube_utils::INPUT_GET) != '1' && $this->action == 'plugin.sieverules') {
+			// force UI to advanced mode, see gen_advanced()
 			$rcmail->overwrite_action('plugin.sieverules.advanced');
 			$this->action = 'plugin.sieverules.advanced';
 		}
 
+		// add handlers for the various UI elements
 		$this->api->output->add_handlers(array(
 			'sieveruleslist' => array($this, 'gen_list'),
 			'sieverulesexamplelist' => array($this, 'gen_examples'),
@@ -277,6 +283,7 @@ class sieverules extends rcube_plugin
 			$this->api->output->set_env('examples', 'true');
 
 		if ($this->action == 'plugin.sieverules.add' || $this->action == 'plugin.sieverules.edit') {
+			// show add/edit rule UI
 			$rcmail->html_editor('sieverules');
 			$this->api->output->add_script(sprintf("window.rcmail_editor_settings = %s",
 				json_encode(array(
@@ -289,15 +296,18 @@ class sieverules extends rcube_plugin
 			$this->api->output->send('sieverules.editsieverule');
 		}
 		elseif ($this->action == 'plugin.sieverules.setup') {
+			// show setup UI
 			$this->api->output->set_pagetitle($this->gettext('filters'));
 			$this->api->output->add_script(rcmail_output::JS_OBJECT_NAME .".add_onload('". rcmail_output::JS_OBJECT_NAME .".sieverules_load_setup()');");
 			$this->api->output->send('sieverules.sieverules');
 		}
 		elseif ($this->action == 'plugin.sieverules.advanced') {
+			// show "advanced mode" UI
 			$this->api->output->set_pagetitle($this->gettext('filters'));
 			$this->api->output->send('sieverules.advancededitor');
 		}
 		else {
+			// show main UI
 			$this->api->output->set_pagetitle($this->gettext('filters'));
 			$this->api->output->send('sieverules.sieverules');
 		}
@@ -305,10 +315,11 @@ class sieverules extends rcube_plugin
 
 	function init_setup()
 	{
+		// redirect setup UI, see gen_setup()
 		$this->_startup();
 
 		$this->api->output->add_handlers(array(
-		'sieverulessetup' => array($this, 'gen_setup'),
+			'sieverulessetup' => array($this, 'gen_setup'),
 		));
 
 		$this->api->output->set_pagetitle($this->gettext('filters'));
@@ -325,6 +336,7 @@ class sieverules extends rcube_plugin
 
 	function gen_advanced($attrib)
 	{
+		// create "advanced mode" UI
 		list($form_start, $form_end) = get_form_tags($attrib, 'plugin.sieverules.save');
 		$out = $form_start;
 
@@ -338,12 +350,14 @@ class sieverules extends rcube_plugin
 
 	function gen_list($attrib)
 	{
+		// create rule list for UI
 		$this->api->output->add_label('sieverules.movingfilter', 'loading', 'sieverules.switchtoadveditor', 'sieverules.filterdeleteconfirm');
 		$this->api->output->add_gui_object('sieverules_list', 'sieverules-table');
 
 		$table = new html_table(array('id' => 'sieverules-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 2));
 
 		if (rcube::get_instance()->config->get('sieverules_multiplerules', false)) {
+			// if multiple rulesets enabled then add icon to signify active ruleset
 			if ($this->current_ruleset == $this->sieve->get_active())
 				$status = html::img(array('id' => 'rulesetstatus', 'src' => $attrib['activeicon'], 'alt' => $this->gettext('isactive'), 'title' => $this->gettext('isactive')));
 			else
@@ -356,6 +370,7 @@ class sieverules extends rcube_plugin
 		}
 
 		if (sizeof($this->script) == 0) {
+			// no rules exist
 			$table->add(array('colspan' => '2'), rcube_utils::rep_specialchars_output($this->gettext('nosieverules')));
 		}
 		else foreach($this->script as $idx => $filter) {
@@ -366,6 +381,7 @@ class sieverules extends rcube_plugin
 			else
 				$table->add(null, rcmail::Q($filter['name']));
 
+			// add move icons
 			$dst = $idx - 1;
 			$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
 			$dst = $idx + 2;
@@ -379,9 +395,11 @@ class sieverules extends rcube_plugin
 
 	function gen_js_list()
 	{
+		// create JS version of rule list for updating UI via AJAX
 		$this->_startup();
 
 		if (sizeof($this->script) == 0) {
+			// no rules exist, clear rule list
 			$this->api->output->command('sieverules_update_list', 'add-first', -1, rcube_utils::rep_specialchars_output($this->gettext('nosieverules')));
 		}
 		else foreach($this->script as $idx => $filter) {
@@ -398,6 +416,7 @@ class sieverules extends rcube_plugin
 			$down_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'down_arrow', 'title' => 'sieverules.movedown', 'content' => ' '));
 			$down_link = str_replace("'", "\'", $down_link);
 
+			// send rule to UI
 			$this->api->output->command('sieverules_update_list', $idx == 0 ? 'add-first' : 'add', 'rcmrow' . $idx, rcmail::JQ($filter_name), $down_link, $up_link);
 		}
 
@@ -406,6 +425,7 @@ class sieverules extends rcube_plugin
 
 	function gen_examples($attrib)
 	{
+		// create list of example rules
 		if (sizeof($this->examples) > 0) {
 			$this->api->output->add_gui_object('sieverules_examples', 'sieverules-examples');
 
@@ -427,6 +447,7 @@ class sieverules extends rcube_plugin
 
 	function gen_advswitch($attrib)
 	{
+		// create "switch to advanced mode" element
 		$input_adv = new html_checkbox(array('id' => 'adveditor', 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_adveditor(this);', 'value' => '1'));
 		$out = html::label('adveditor', rcmail::Q($this->gettext('adveditor'))) . $input_adv->show($this->action == 'plugin.sieverules.advanced' ? '1' : '');
 		return html::tag('div', array('id' => 'advancedmode'), $out);
@@ -434,15 +455,20 @@ class sieverules extends rcube_plugin
 
 	function gen_rulelist($attrib)
 	{
+		// generate ruleset list (used when multiple rulesets enabled)
 		$this->api->output->add_label('sieverules.delrulesetconf', 'sieverules.rulesetexists');
 
+		// get all the rulesets on the server
 		$rulesets = array();
 		foreach ($this->sieve->list as $ruleset) {
 			array_push($rulesets, $ruleset);
 		}
 		sort($rulesets);
+
+		// find the currently active ruleset
 		$activeruleset = $this->sieve->get_active();
 
+		// define "next ruleset" loaded after current ruleset is deleted
 		$next_ruleset = '';
 		for ($i = 0; $i < sizeof($rulesets); $i++) {
 			if ($rulesets[$i] == $this->current_ruleset) {
@@ -456,6 +482,7 @@ class sieverules extends rcube_plugin
 			}
 		}
 
+		// pass ruleset info to UI
 		$this->api->output->set_env('ruleset_total', sizeof($rulesets));
 		$this->api->output->set_env('ruleset_active', $this->current_ruleset == $activeruleset ? True : False);
 		$this->api->output->set_env('ruleset_next', $next_ruleset);
@@ -483,6 +510,7 @@ class sieverules extends rcube_plugin
 		$buttons = html::tag('input', array('type' => 'hidden', 'id' => 'sieverulesrsdialog_action', 'value' => ''));
 		$buttons .= html::tag('input', array('type' => 'button', 'class' => 'button mainaction', 'value' => $this->gettext('save'), 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverulesdialog_submit();')) . '&nbsp;';
 
+		// create new/rename ruleset UI
 		$out .= html::tag('h3', array('id' => 'sieverulesrsdialog_add'), rcmail::Q($this->gettext('newruleset')));
 		$out .= html::tag('h3', array('id' => 'sieverulesrsdialog_edit', 'style' => 'display: none;'), rcmail::Q($this->gettext('renameruleset')));
 		$out .= html::tag('h3', array('id' => 'sieverulesrsdialog_copyto', 'style' => 'display: none;'), rcmail::Q($this->gettext('copytoruleset')));
@@ -492,9 +520,10 @@ class sieverules extends rcube_plugin
 		$out = html::tag('form', array(), $out);
 		$out = html::div(array('id' => 'sieverulesrsdialog', 'style' => 'display: none;'), $out);
 
-		// add overlay input box to html page
+		// add overlay to main UI
 		$this->api->output->add_footer($out);
 
+		// build ruleset list for UI
 		$action = ($this->action == 'plugin.sieverules.advanced') ? 'plugin.sieverules.advanced' : 'plugin.sieverules';
 		if ($attrib['type'] == 'link') {
 			$lis = '';
