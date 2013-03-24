@@ -357,7 +357,7 @@ class sieverules extends rcube_plugin
 		$table = new html_table(array('id' => 'sieverules-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 2));
 
 		if (rcube::get_instance()->config->get('sieverules_multiplerules', false)) {
-			// if multiple rulesets enabled then add icon to signify active ruleset
+			// if multiple rulesets enabled then add current ruleset name to UI plus an icon to signify active ruleset
 			if ($this->current_ruleset == $this->sieve->get_active())
 				$status = html::img(array('id' => 'rulesetstatus', 'src' => $attrib['activeicon'], 'alt' => $this->gettext('isactive'), 'title' => $this->gettext('isactive')));
 			else
@@ -376,18 +376,9 @@ class sieverules extends rcube_plugin
 		else foreach($this->script as $idx => $filter) {
 			$table->set_row_attribs(array('id' => 'rcmrow' . $idx));
 
-			if ($filter['disabled'] == 1)
-				$table->add(null, rcmail::Q($filter['name']) . ' (' . $this->gettext('disabled') . ')');
-			else
-				$table->add(null, rcmail::Q($filter['name']));
-
-			// add move icons
-			$dst = $idx - 1;
-			$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
-			$dst = $idx + 2;
-			$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'down_arrow', 'title' => 'sieverules.movedown', 'content' => ' '));
-
-			$table->add('control', $down_link . $up_link);
+			$parts = $this->_rule_list_parts($idx, $filter);
+			$table->add(null, rcmail::Q($parts['name']));
+			$table->add('control', $parts['control']);
 		}
 
 		return html::tag('div', array('id' => 'sieverules-list-filters'), $table->show($attrib));
@@ -403,21 +394,11 @@ class sieverules extends rcube_plugin
 			$this->api->output->command('sieverules_update_list', 'add-first', -1, rcube_utils::rep_specialchars_output($this->gettext('nosieverules')));
 		}
 		else foreach($this->script as $idx => $filter) {
-			if ($filter['disabled'] == 1)
-				$filter_name = $filter['name'] . ' (' . $this->gettext('disabled') . ')';
-			else
-				$filter_name = $filter['name'];
-
-			$tmp_output = new rcube_output_html('settings');
-			$dst = $idx - 1;
-			$up_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
-			$up_link = str_replace("'", "\'", $up_link);
-			$dst = $idx + 2;
-			$down_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'down_arrow', 'title' => 'sieverules.movedown', 'content' => ' '));
-			$down_link = str_replace("'", "\'", $down_link);
+			$parts = $this->_rule_list_parts($idx, $filter);
+			$parts['control'] = str_replace("'", "\'", $parts['control']);
 
 			// send rule to UI
-			$this->api->output->command('sieverules_update_list', $idx == 0 ? 'add-first' : 'add', 'rcmrow' . $idx, rcmail::JQ($filter_name), $down_link, $up_link);
+			$this->api->output->command('sieverules_update_list', $idx == 0 ? 'add-first' : 'add', 'rcmrow' . $idx, rcmail::JQ($parts['name']), $parts['control']);
 		}
 
 		$this->api->output->send();
@@ -1134,11 +1115,11 @@ class sieverules extends rcube_plugin
 							}
 						}
 
-						if ($periodtype == 'seconds')
-							$script['actions'][$i]['seconds'] = $period;
-						else
-							$script['actions'][$i]['days'] = $period;
+						// default vacation period units
+						if (!empty($periodtype))
+							$periodtype = 'days';
 
+						$script['actions'][$i][$periodtype] = $period;
 						$script['actions'][$i]['subject'] = $subject;
 						$script['actions'][$i]['origsubject'] = $origsubject;
 						$script['actions'][$i]['from'] = $from;
@@ -1210,25 +1191,16 @@ class sieverules extends rcube_plugin
 			if ($save === true && $result === true) {
 				$this->api->output->command('display_message', $this->gettext('filtersaved'), 'confirmation');
 
-				if ($script['disabled'] == 1)
-					$filter_name = $script['name'] . ' (' . $this->gettext('disabled') . ')';
-				else
-					$filter_name = $script['name'];
-
-				$dst = $iid - 1;
-				$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
-				$up_link = str_replace("'", "\'", $up_link);
-				$dst = $iid + 2;
-				$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'down_arrow', 'title' => 'sieverules.movedown', 'content' => ' '));
-				$down_link = str_replace("'", "\'", $down_link);
+				$parts = $this->_rule_list_parts($iid, $script);
+				$parts['control'] = str_replace("'", "\'", $parts['control']);
 
 				// update rule list in UI
 				if (!isset($this->script[$iid]) && sizeof($this->script) == 0)
-					$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_update_list('add-first', 'rcmrow". $iid ."', '". rcmail::Q($filter_name) ."', '". $down_link ."', '". $up_link ."');");
+					$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_update_list('add-first', 'rcmrow". $iid ."', '". rcmail::Q($parts['name']) ."', '". $parts['control'] ."');");
 				elseif (!isset($this->script[$iid]))
-					$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_update_list('add', 'rcmrow". $iid ."', '". rcmail::Q($filter_name) ."', '". $down_link ."', '". $up_link ."');");
+					$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_update_list('add', 'rcmrow". $iid ."', '". rcmail::Q($parts['name']) ."', '". $parts['control'] ."');");
 				else
-					$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_update_list('update', ". $iid .", '". rcmail::Q($filter_name) ."');");
+					$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_update_list('update', ". $iid .", '". rcmail::Q($parts['name']) ."');");
 			}
 			else {
 				if ($result === SIEVE_ERROR_BAD_ACTION)
@@ -1343,7 +1315,8 @@ class sieverules extends rcube_plugin
 
 				foreach ($eids as $eid) {
 					$this->sieve->script->add_rule($this->examples[substr($eid, 2)], $pos);
-					if ($pos) $pos++;
+					if ($pos)
+						$pos++;
 				}
 
 				$this->sieve->save();
@@ -1383,7 +1356,10 @@ class sieverules extends rcube_plugin
 			}
 			else {
 				$this->script = array();
-				if (!$redirect) $this->sieve->save();
+
+				if (!$redirect)
+					$this->sieve->save();
+
 				$this->api->output->command('display_message', $this->gettext('filterimporterror'), 'error');
 			}
 		}
@@ -2473,6 +2449,20 @@ class sieverules extends rcube_plugin
 			$actions_table->add('control', "&nbsp;");
 
 		return $actions_table;
+	}
+
+	private function _rule_list_parts($idx, $script)
+	{
+		$parts = array();
+
+		$parts['name'] = $script['name'] . ($script['disabled'] == 1 ? ' (' . $this->gettext('disabled') . ')' : '');
+
+		$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => ($idx - 1), 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
+		$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => ($idx + 2), 'type' => 'link', 'class' => 'down_arrow', 'title' => 'sieverules.movedown', 'content' => ' '));
+
+		$parts['control'] = $up_link . $down_link;
+
+		return $parts;
 	}
 
 	private function _in_headerarray($needle, $haystack)

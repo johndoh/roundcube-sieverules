@@ -186,7 +186,7 @@ rcube_webmail.prototype.sieverules_ready = function(id) {
 	return true;
 }
 
-rcube_webmail.prototype.sieverules_update_list = function(action, param1, param2, param3, param4) {
+rcube_webmail.prototype.sieverules_update_list = function(action, param1, param2, param3) {
 	var sid = rcmail.sieverules_list.get_single_selection();
 	var selection;
 	var rows = rcmail.sieverules_list.rows;
@@ -217,9 +217,8 @@ rcube_webmail.prototype.sieverules_update_list = function(action, param1, param2
 				cell.className = 'control';
 
 				param3 = param3.replace(/\\'/g, '\'');
-				param4 = param4.replace(/\\'/g, '\'');
 
-				cell.innerHTML = param3 + param4;
+				cell.innerHTML = param3;
 				newrow.appendChild(cell);
 			}
 
