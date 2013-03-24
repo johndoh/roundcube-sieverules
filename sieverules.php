@@ -22,26 +22,148 @@ class sieverules extends rcube_plugin
 	private $show_vacfrom = false;
 	private $show_vachandle = false;
 	private $current_ruleset;
+	private $standardops = array();
 
-	// default values: label => value
-	private $headers = array('subject' => 'header::Subject',
-					'from' => 'address::From',
-					'to' => 'address::To',
-					'cc' => 'address::Cc',
-					'bcc' => 'address::Bcc',
-					'envelopeto' => 'envelope::To',
-					'envelopefrom' => 'envelope::From'
+	// default headers
+	private $headers = array(
+					array('text' => 'subject', 'value' => 'header::Subject', 'ext' => null),
+					array('text' => 'from', 'value' => 'address::From', 'ext' => null),
+					array('text' => 'to', 'value' => 'address::To', 'ext' => null),
+					array('text' => 'cc', 'value' => 'address::Cc', 'ext' => null),
+					array('text' => 'bcc', 'value' => 'address::Bcc', 'ext' => null),
+					array('text' => 'envelopeto', 'value' => 'envelope::To', 'ext' => 'envelope'),
+					array('text' => 'envelopefrom', 'value' => 'envelope::From', 'ext' => 'envelope'),
+					array('text' => 'body', 'value' => 'body::body', 'ext' => 'body'),
+					array('text' => 'spamtest', 'value' => 'spamtest::spamtest', 'ext' => 'spamtest'),
+					array('text' => 'virustest', 'value' => 'virustest::virustest', 'ext' => 'virustest'),
+					array('text' => 'arrival', 'value' => 'date::currentdate', 'ext' => 'date'),
+					array('text' => 'size', 'value' => 'size::size', 'ext' => null),
+					array('text' => 'otherheader', 'value' => 'header::other', 'ext' => null)
 					);
 
-	private $operators = array('filtercontains' => 'contains',
-					'filternotcontains' => 'notcontains',
-					'filteris' => 'is',
-					'filterisnot' => 'notis',
-					'filterexists' => 'exists',
-					'filternotexists' => 'notexists'
+	// default bodyparts
+	private $bodyparts = array(
+					array('text' => 'auto', 'value' => '', 'ext' => null),
+					array('text' => 'raw', 'value' => 'raw', 'ext' => null),
+					array('text' => 'text', 'value' => 'text', 'ext' => null),
+					array('text' => 'other', 'value' => 'content', 'ext' => null),
 					);
 
-	private $flags = array('flagread' => '\\\\Seen',
+	// default dateparts
+	private $dateparts = array(
+					array('text' => 'date', 'value' => 'date', 'ext' => null),
+					array('text' => 'time', 'value' => 'time', 'ext' => null),
+					array('text' => 'weekday', 'value' => 'weekday', 'ext' => null)
+					);
+
+	// default operators
+	private $operators = array(
+					array('text' => 'filtercontains', 'value' => 'contains', 'ext' => null),
+					array('text' => 'filternotcontains', 'value' => 'notcontains', 'ext' => null),
+					array('text' => 'filteris', 'value' => 'is', 'ext' => null),
+					array('text' => 'filterisnot', 'value' => 'notis', 'ext' => null),
+					array('text' => 'filterexists', 'value' => 'exists', 'ext' => null),
+					array('text' => 'filternotexists', 'value' => 'notexists', 'ext' => null)
+					);
+
+	// default sizeoperators
+	private $sizeoperators = array(
+					array('text' => 'filterunder', 'value' => 'under', 'ext' => null),
+					array('text' => 'filterover', 'value' => 'over', 'ext' => null)
+					);
+
+	// default dateoperators
+	private $dateoperators = array(
+					array('text' => 'filteris', 'value' => 'is', 'ext' => null),
+					array('text' => 'filterisnot', 'value' => 'notis', 'ext' => null),
+					array('text' => 'filterbefore', 'value' => 'value "lt"', 'ext' => 'relational'),
+					array('text' => 'filterafter', 'value' => 'value "gt"', 'ext' => 'relational')
+					);
+
+	// default spamoperators
+	private $spamoperators = array(
+					array('text' => 'spamlevelequals', 'value' => 'eq', 'ext' => null),
+					array('text' => 'spamlevelislessthanequal', 'value' => 'le', 'ext' => null),
+					array('text' => 'spamlevelisgreaterthanequal', 'value' => 'ge', 'ext' => null)
+					);
+
+	// default sizeunits
+	private $sizeunits = array(
+					array('text' => 'B', 'value' => '', 'ext' => null),
+					array('text' => 'KB', 'value' => 'K', 'ext' => null),
+					array('text' => 'MB', 'value' => 'M', 'ext' => null)
+					);
+
+	// default spamprobability
+	private $spamprobability = array(
+					array('text' => 'notchecked', 'value' => '0', 'ext' => null),
+					array('text' => '0%', 'value' => '1', 'ext' => null),
+					array('text' => '10%', 'value' => '2', 'ext' => null),
+					array('text' => '20%', 'value' => '3', 'ext' => null),
+					array('text' => '30%', 'value' => '4', 'ext' => null),
+					array('text' => '40%', 'value' => '5', 'ext' => null),
+					array('text' => '50%', 'value' => '6', 'ext' => null),
+					array('text' => '60%', 'value' => '7', 'ext' => null),
+					array('text' => '70%', 'value' => '8', 'ext' => null),
+					array('text' => '80%', 'value' => '9', 'ext' => null),
+					array('text' => '90%', 'value' => '9', 'ext' => null),
+					array('text' => '100%', 'value' => '10', 'ext' => null)
+					);
+
+	// default virusprobability
+	private $virusprobability = array(
+					array('text' => 'notchecked', 'value' => '0', 'ext' => null),
+					array('text' => 'novirus', 'value' => '1', 'ext' => null),
+					array('text' => 'virusremoved', 'value' => '2', 'ext' => null),
+					array('text' => 'viruscured', 'value' => '3', 'ext' => null),
+					array('text' => 'possiblevirus', 'value' => '4', 'ext' => null),
+					array('text' => 'definitevirus', 'value' => '5', 'ext' => null)
+					);
+
+	// default weekdays
+	private $weekdays = array(
+					array('text' => 'sunday', 'value' => '0', 'ext' => null),
+					array('text' => 'monday', 'value' => '1', 'ext' => null),
+					array('text' => 'tuesday', 'value' => '2', 'ext' => null),
+					array('text' => 'wednesday', 'value' => '3', 'ext' => null),
+					array('text' => 'thursday', 'value' => '4', 'ext' => null),
+					array('text' => 'friday', 'value' => '5', 'ext' => null),
+					array('text' => 'saturday', 'value' => '6', 'ext' => null)
+					);
+
+	// default advoperators
+	private $advoperators = array(
+					array('text' => 'filterregex', 'value' => 'regex', 'ext' => 'regex'),
+					array('text' => 'filternotregex', 'value' => 'notregex', 'ext' => 'regex'),
+					array('text' => 'countisgreaterthan', 'value' => 'count "gt"', 'ext' => 'relational'),
+					array('text' => 'countisgreaterthanequal', 'value' => 'count "ge"', 'ext' => 'relational'),
+					array('text' => 'countislessthan', 'value' => 'count "lt"', 'ext' => 'relational'),
+					array('text' => 'countislessthanequal', 'value' => 'count "le"', 'ext' => 'relational'),
+					array('text' => 'countequals', 'value' => 'count "eq"', 'ext' => 'relational'),
+					array('text' => 'countnotequals', 'value' => 'count "ne"', 'ext' => 'relational'),
+					array('text' => 'valueisgreaterthan', 'value' => 'value "gt"', 'ext' => 'relational'),
+					array('text' => 'valueisgreaterthanequal', 'value' => 'value "ge"', 'ext' => 'relational'),
+					array('text' => 'valueislessthan', 'value' => 'value "lt"', 'ext' => 'relational'),
+					array('text' => 'valueislessthanequal', 'value' => 'value "le"', 'ext' => 'relational'),
+					array('text' => 'valueequals', 'value' => 'value "eq"', 'ext' => 'relational'),
+					array('text' => 'valuenotequals', 'value' => 'value "ne"', 'ext' => 'relational'),
+					array('text' => 'userpart', 'value' => 'user', 'ext' => 'subaddress'),
+					array('text' => 'notuserpart', 'value' => 'notuser', 'ext' => 'subaddress'),
+					array('text' => 'detailpart', 'value' => 'detail', 'ext' => 'subaddress'),
+					array('text' => 'notdetailpart', 'value' => 'notdetail', 'ext' => 'subaddress'),
+					array('text' => 'domainpart', 'value' => 'domain', 'ext' => 'subaddress'),
+					array('text' => 'notdomainpart', 'value' => 'notdomain', 'ext' => 'subaddress')
+					);
+
+	// default comparators
+	private $comparators = array(
+					array('text' => 'i;ascii-casemap', 'value' => '', 'ext' => null),
+					array('text' => 'i;octet', 'value' => 'i;octet', 'ext' => null)
+					);
+
+	// default flags
+	private $flags = array(
+					'flagread' => '\\\\Seen',
 					'flagdeleted' => '\\\\Deleted',
 					'flaganswered' => '\\\\Answered',
 					'flagdraft' => '\\\\Draft',
@@ -65,15 +187,16 @@ class sieverules extends rcube_plugin
 		else
 			$this->current_ruleset = $rcmail->config->get('sieverules_ruleset_name');
 
-		// override default values
-		if ($rcmail->config->get('sieverules_default_headers'))
-			$this->headers = $rcmail->config->get('sieverules_default_headers');
-
-		if ($rcmail->config->get('sieverules_default_operators'))
-			$this->operators = $rcmail->config->get('sieverules_default_operators');
-
-		if ($rcmail->config->get('sieverules_default_flags'))
-			$this->flags = $rcmail->config->get('sieverules_default_flags');
+		// override default dropdown values
+		foreach (array('headers', 'bodyparts', 'dateparts', 'operators', 'sizeoperators', 'dateoperators', 'spamoperators', 'sizeunits', 'spamprobability', 'virusprobability', 'advoperators', 'comparators', 'flags') as $default) {
+			if ($override = $rcmail->config->get('sieverules_default_' . $default)) {
+				// check for old format default arrays
+				if (is_array($override[0]) == is_array($this->{$default}[0]))
+					$this->{$default} = $override;
+				else
+					rcube::write_log('errors', 'Warning: SieveRules sieverules_default_' . $default . ' in wrong format.');
+			}
+		}
 
 		$this->action = $rcmail->action;
 
@@ -523,6 +646,20 @@ class sieverules extends rcube_plugin
 			'sieverules.eheadernoname','sieverules.eheadernoval');
 
 		$ext = $this->sieve->get_extensions();
+
+		// build conditional options
+		if (in_array('regex', $ext) || in_array('relational', $ext) || in_array('subaddress', $ext))
+			$this->operators[] = array('text' => 'filteradvoptions', 'value' => 'advoptions', 'ext' => null);
+
+		foreach ($ext as $extension) {
+			if (substr($extension, 0, 11) == 'comparator-' && $extension != 'comparator-i;ascii-casemap' && $extension != 'comparator-i;octet')
+				$this->comparators[] = array('text' => substr($extension, 11), 'value' => substr($extension, 11), 'ext' => null);
+		}
+
+		// define standard ops
+		foreach ($this->operators as $option)
+			$this->standardops[] = $option['value'];
+
 		$iid = rcube_utils::get_input_value('_iid', rcube_utils::INPUT_GPC);
 		if ($iid == '')
 			$iid = sizeof($this->script);
@@ -1379,9 +1516,6 @@ class sieverules extends rcube_plugin
 		if (!isset($rule))
 			$rules_table->set_row_attribs(array('style' => 'display: none;'));
 
-		if (in_array('regex', $ext) || in_array('relational', $ext) || in_array('subaddress', $ext))
-			$this->operators['filteradvoptions'] = 'advoptions';
-
 		$display['header'] = 'visibility: hidden;';
 		$display['op'] = '';
 		$display['sizeop'] = 'display: none;';
@@ -1456,7 +1590,7 @@ class sieverules extends rcube_plugin
 				$defaults['target'] = htmlspecialchars($rule['target']);
 			}
 		}
-		elseif ((isset($rule['type']) && $rule['type'] != 'exists') && in_array($rule['type'] . '::' . $rule['header'], $this->headers)) {
+		elseif ((isset($rule['type']) && $rule['type'] != 'exists') && $this->_in_headerarray($rule['type'] . '::' . $rule['header'], $this->headers)) {
 			$display['target'] = $rule['operator'] == 'exists' ? 'display: none;' : '';
 
 			$defaults['selheader'] = $rule['type'] . '::' . $rule['header'];
@@ -1562,34 +1696,20 @@ class sieverules extends rcube_plugin
 
 		// check for advanced options
 		$showadvanced = false;
-		if (!in_array($defaults['op'], $this->operators) || $rule['comparator'] != '' || $rule['contentpart'] != '') {
+		if (!in_array($defaults['op'], $this->standardops) || $rule['comparator'] != '' || $rule['contentpart'] != '') {
 			$showadvanced = true;
 			$display['target'] = 'display: none;';
 		}
 
 		$select_header = new html_select(array('name' => "_selheader[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_header_select(this)'));
-		foreach($this->headers as $name => $val) {
-			if (($val == 'envelope' && in_array('envelope', $ext)) || $val != 'envelope')
-				$select_header->add(rcmail::Q($this->gettext($name)), rcmail::Q($val));
+		foreach($this->headers as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_header->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
-
-		if (in_array('body', $ext))
-			$select_header->add(rcmail::Q($this->gettext('body')), rcmail::Q('body::body'));
-
-		if (in_array('spamtest', $ext))
-			$select_header->add(rcmail::Q($this->gettext('spamtest')), rcmail::Q('spamtest::spamtest'));
-
-		if (in_array('virustest', $ext))
-			$select_header->add(rcmail::Q($this->gettext('virustest')), rcmail::Q('virustest::virustest'));
 
 		foreach($predefined_rules as $idx => $data)
 			$select_header->add(rcmail::Q($data['name']), rcmail::Q($data['type'] . '::predefined_' . $idx));
 
-		if (in_array('date', $ext))
-			$select_header->add(rcmail::Q($this->gettext('arrival')), rcmail::Q('date::currentdate'));
-
-		$select_header->add(rcmail::Q($this->gettext('size')), rcmail::Q('size::size'));
-		$select_header->add(rcmail::Q($this->gettext('otherheader')), rcmail::Q('header::other'));
 		$input_test = new html_hiddenfield(array('name' => '_test[]', 'value' => $defaults['test']));
 		$rules_table->add('selheader', $select_header->show($defaults['selheader']) . $input_test->show());
 
@@ -1599,80 +1719,70 @@ class sieverules extends rcube_plugin
 		$input_header = new html_inputfield(array('name' => '_header[]', 'style' => $display['header'], 'class' => 'short'));
 
 		$select_bodypart = new html_select(array('name' => '_bodypart[]', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_bodypart_select(this)', 'style' => $display['bodypart']));
-		$select_bodypart->add(rcmail::Q($this->gettext('auto')), rcmail::Q(''));
-		$select_bodypart->add(rcmail::Q($this->gettext('raw')), rcmail::Q('raw'));
-		$select_bodypart->add(rcmail::Q($this->gettext('text')), rcmail::Q('text'));
-		$select_bodypart->add(rcmail::Q($this->gettext('other')), rcmail::Q('content'));
+		foreach($this->bodyparts as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_bodypart->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
+		}
 
 		$select_datepart = new html_select(array('name' => '_datepart[]', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_datepart_select(this)','style' => $display['datepart']));
-		$select_datepart->add(rcmail::Q($this->gettext('date')), rcmail::Q('date'));
-		$select_datepart->add(rcmail::Q($this->gettext('time')), rcmail::Q('time'));
-		$select_datepart->add(rcmail::Q($this->gettext('weekday')), rcmail::Q('weekday'));
+		foreach($this->dateparts as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_datepart->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
+		}
+
 		$rules_table->add('header', $input_header->show($defaults['header']) . $help_button . $select_bodypart->show($defaults['bodypart']) . $select_datepart->show($defaults['datepart']));
 
 		$select_op = new html_select(array('name' => "_operator[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_rule_op_select(this)', 'style' => $display['op']));
-		foreach($this->operators as $name => $val)
-			$select_op->add(rcmail::Q($this->gettext($name)), $val);
+		foreach($this->operators as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_op->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
+		}
 
 		$select_size_op = new html_select(array('name' => "_size_operator[]", 'style' => $display['sizeop']));
-		$select_size_op->add(rcmail::Q($this->gettext('filterunder')), 'under');
-		$select_size_op->add(rcmail::Q($this->gettext('filterover')), 'over');
+		foreach($this->sizeoperators as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_size_op->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
+		}
 
 		$select_date_op = new html_select(array('name' => "_date_operator[]", 'style' => $display['dateop']));
-		$select_date_op->add(rcmail::Q($this->gettext('filteris')), 'is');
-		$select_date_op->add(rcmail::Q($this->gettext('filterisnot')), 'notis');
-
-		if (in_array('relational', $ext)) {
-			$select_date_op->add(rcmail::Q($this->gettext('filterbefore')), 'value "lt"');
-			$select_date_op->add(rcmail::Q($this->gettext('filterafter')), 'value "gt"');
+		foreach($this->dateoperators as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_date_op->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
 		$select_spamtest_op = new html_select(array('name' => "_spamtest_operator[]", 'style' => $display['spamtestop']));
-		$select_spamtest_op->add(rcmail::Q($this->gettext('spamlevelequals')), 'eq');
-		$select_spamtest_op->add(rcmail::Q($this->gettext('spamlevelislessthanequal')), 'le');
-		$select_spamtest_op->add(rcmail::Q($this->gettext('spamlevelisgreaterthanequal')), 'ge');
+		foreach($this->spamoperators as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_spamtest_op->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
+		}
 
-		if ($showadvanced)
-			$rules_table->add('op', $select_op->show('advoptions') . $select_size_op->show($defaults['sizeop']) . $select_date_op->show($defaults['dateop']) . $select_spamtest_op->show($defaults['spamtestop']));
-		else
-			$rules_table->add('op', $select_op->show($defaults['op']) . $select_size_op->show($defaults['sizeop']) . $select_date_op->show($defaults['dateop']) . $select_spamtest_op->show($defaults['spamtestop']));
+		$rules_table->add('op', $select_op->show(($showadvanced ? 'advoptions' : $defaults['op'])) . $select_size_op->show($defaults['sizeop']) . $select_date_op->show($defaults['dateop']) . $select_spamtest_op->show($defaults['spamtestop']));
 
 		$input_target = new html_inputfield(array('name' => '_target[]', 'style' => $display['target'], 'class' => $defaults['targetsize']));
 
 		$select_units = new html_select(array('name' => "_units[]", 'style' => $display['units'], 'class' => 'short'));
-		$select_units->add(rcmail::Q($this->gettext('B')), '');
-		$select_units->add(rcmail::Q($this->gettext('KB')), 'K');
-		$select_units->add(rcmail::Q($this->gettext('MB')), 'M');
+		foreach($this->sizeunits as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_units->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
+		}
 
 		$select_spam_probability = new html_select(array('name' => "_spam_probability[]", 'style' => $display['spamprob'], 'class' => 'long'));
-		$select_spam_probability->add(rcmail::Q($this->gettext('notchecked')), '0');
-		$select_spam_probability->add(rcmail::Q("0%"), '1');
-		$select_spam_probability->add(rcmail::Q("10%"), '2');
-		$select_spam_probability->add(rcmail::Q("20%"), '3');
-		$select_spam_probability->add(rcmail::Q("40%"), '4');
-		$select_spam_probability->add(rcmail::Q("50%"), '5');
-		$select_spam_probability->add(rcmail::Q("60%"), '6');
-		$select_spam_probability->add(rcmail::Q("70%"), '7');
-		$select_spam_probability->add(rcmail::Q("80%"), '8');
-		$select_spam_probability->add(rcmail::Q("90%"), '9');
-		$select_spam_probability->add(rcmail::Q("100%"), '10');
+		foreach($this->spamprobability as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_spam_probability->add(rcmail::Q((strpos($option['text'], '%') > 0 ? $option['text'] : $this->gettext($option['text']))), rcmail::Q($option['value']));
+		}
 
 		$select_virus_probability = new html_select(array('name' => "_virus_probability[]", 'style' => $display['virusprob'], 'class' => 'long'));
-		$select_virus_probability->add(rcmail::Q($this->gettext('notchecked')), '0');
-		$select_virus_probability->add(rcmail::Q($this->gettext('novirus')), '1');
-		$select_virus_probability->add(rcmail::Q($this->gettext('virusremoved')), '2');
-		$select_virus_probability->add(rcmail::Q($this->gettext('viruscured')), '3');
-		$select_virus_probability->add(rcmail::Q($this->gettext('possiblevirus')), '4');
-		$select_virus_probability->add(rcmail::Q($this->gettext('definitevirus')), '5');
+		foreach($this->virusprobability as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_virus_probability->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
+		}
 
 		$select_weekdays = new html_select(array('name' => "_weekday[]", 'style' => $display['weekdays'], 'class' => 'long'));
-		$select_weekdays->add(rcmail::Q($this->gettext('sunday')), '0');
-		$select_weekdays->add(rcmail::Q($this->gettext('monday')), '1');
-		$select_weekdays->add(rcmail::Q($this->gettext('tuesday')), '2');
-		$select_weekdays->add(rcmail::Q($this->gettext('wednesday')), '3');
-		$select_weekdays->add(rcmail::Q($this->gettext('thursday')), '4');
-		$select_weekdays->add(rcmail::Q($this->gettext('friday')), '5');
-		$select_weekdays->add(rcmail::Q($this->gettext('saturday')), '6');
+		foreach($this->weekdays as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_weekdays->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
+		}
 
 		$rules_table->add('target', $select_weekdays->show($defaults['target']) . $select_spam_probability->show($defaults['spamprobability']) . $select_virus_probability->show($defaults['virusprobability']) . $input_target->show($defaults['target']) . "&nbsp;" . $select_units->show($defaults['units']));
 
@@ -1735,64 +1845,29 @@ class sieverules extends rcube_plugin
 
 		$field_id = 'rcmfd_advoperator_'. $rowid;
 		$select_advop = new html_select(array('id' => $field_id, 'name' => "_advoperator[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_rule_advop_select(this)'));
-
-		if (in_array('regex', $ext)) {
-			$select_advop->add(rcmail::Q($this->gettext('filterregex')), 'regex');
-			$select_advop->add(rcmail::Q($this->gettext('filternotregex')), 'notregex');
-		}
-
-		if (in_array('relational', $ext)) {
-			$select_advop->add(rcmail::Q($this->gettext('countisgreaterthan')), 'count "gt"');
-			$select_advop->add(rcmail::Q($this->gettext('countisgreaterthanequal')), 'count "ge"');
-			$select_advop->add(rcmail::Q($this->gettext('countislessthan')), 'count "lt"');
-			$select_advop->add(rcmail::Q($this->gettext('countislessthanequal')), 'count "le"');
-			$select_advop->add(rcmail::Q($this->gettext('countequals')), 'count "eq"');
-			$select_advop->add(rcmail::Q($this->gettext('countnotequals')), 'count "ne"');
-			$select_advop->add(rcmail::Q($this->gettext('valueisgreaterthan')), 'value "gt"');
-			$select_advop->add(rcmail::Q($this->gettext('valueisgreaterthanequal')), 'value "ge"');
-			$select_advop->add(rcmail::Q($this->gettext('valueislessthan')), 'value "lt"');
-			$select_advop->add(rcmail::Q($this->gettext('valueislessthanequal')), 'value "le"');
-			$select_advop->add(rcmail::Q($this->gettext('valueequals')), 'value "eq"');
-			$select_advop->add(rcmail::Q($this->gettext('valuenotequals')), 'value "ne"');
-		}
-
-		if (in_array('subaddress', $ext)) {
-			$select_advop->add(rcmail::Q($this->gettext('userpart')), 'user');
-			$select_advop->add(rcmail::Q($this->gettext('notuserpart')), 'notuser');
-			$select_advop->add(rcmail::Q($this->gettext('detailpart')), 'detail');
-			$select_advop->add(rcmail::Q($this->gettext('notdetailpart')), 'notdetail');
-			$select_advop->add(rcmail::Q($this->gettext('domainpart')), 'domain');
-			$select_advop->add(rcmail::Q($this->gettext('notdomainpart')), 'notdomain');
+		foreach($this->advoperators as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_advop->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
 		$advanced_table->add(array('style' => 'white-space: normal;', 'class' => 'selheader'), html::label($field_id, rcmail::Q($this->gettext('operator'))));
 		$advanced_table->add(array('style' => 'white-space: normal;'), $select_advop->show($defaults['op']));
 
 		$field_id = 'rcmfd_comparator_'. $rowid;
-		if (substr($defaults['op'], 0, 5) == 'count' || substr($defaults['op'], 0, 5) == 'value')
-			$select_comparator = new html_select(array('id' => $field_id, 'name' => "_comparator[]"));
-		else
-			$select_comparator = new html_select(array('id' => $field_id, 'name' => "_comparator[]", 'disabled' => 'disabled'));
-
-		$select_comparator->add(rcmail::Q($this->gettext('i;ascii-casemap')), '');
-		$select_comparator->add(rcmail::Q($this->gettext('i;octet')), 'i;octet');
-
-		foreach ($ext as $extension) {
-			if (substr($extension, 0, 11) == 'comparator-' && $extension != 'comparator-i;ascii-casemap' && $extension != 'comparator-i;octet')
-				$select_comparator->add(rcmail::Q($this->gettext(substr($extension, 11))), substr($extension, 11));
+		$select_comparator = new html_select(array('id' => $field_id, 'name' => "_comparator[]") + (substr($defaults['op'], 0, 5) == 'count' || substr($defaults['op'], 0, 5) == 'value' ? array('disabled' => 'disabled') : array()));
+		foreach($this->comparators as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_comparator->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
 		}
 
 		$advanced_table->add(array('style' => 'white-space: normal;', 'class' => 'selheader'), html::label($field_id, rcmail::Q($this->gettext('comparator'))));
 		$advanced_table->add(array('style' => 'white-space: normal;'), $select_comparator->show($rule['comparator']));
 
 		$select_advweekdays = new html_select(array('name' => "_advweekday[]", 'style' => $display['advweekdays']));
-		$select_advweekdays->add(rcmail::Q($this->gettext('sunday')), '0');
-		$select_advweekdays->add(rcmail::Q($this->gettext('monday')), '1');
-		$select_advweekdays->add(rcmail::Q($this->gettext('tuesday')), '2');
-		$select_advweekdays->add(rcmail::Q($this->gettext('wednesday')), '3');
-		$select_advweekdays->add(rcmail::Q($this->gettext('thursday')), '4');
-		$select_advweekdays->add(rcmail::Q($this->gettext('friday')), '5');
-		$select_advweekdays->add(rcmail::Q($this->gettext('saturday')), '6');
+		foreach($this->weekdays as $option) {
+			if (empty($option['ext']) || in_array($option['ext'], $ext))
+				$select_advweekdays->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
+		}
 
 		$field_id = 'rcmfd_advtarget_'. $rowid;
 		$input_advtarget = new html_inputfield(array('id' => $field_id, 'name' => '_advtarget[]', 'style' => $display['advtarget']));
@@ -1801,6 +1876,7 @@ class sieverules extends rcube_plugin
 
 		if (!($showadvanced && $predefined == -1))
 			$rules_table->set_row_attribs(array('style' => 'display: none;'));
+
 		$rules_table->add(array('colspan' => 5), $advanced_table->show());
 
 		return $rules_table;
@@ -2303,7 +2379,7 @@ class sieverules extends rcube_plugin
 	private function _in_headerarray($needle, $haystack)
 	{
 		foreach ($haystack as $data) {
-			$args = explode("::", $data);
+			$args = (strpos($needle, "::") > 0 ? array($data['value'], $data['value']) : explode("::", $data['value']));
 			if ($args[1] == $needle)
 				return $args[0];
 		}
