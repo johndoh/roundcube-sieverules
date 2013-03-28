@@ -1538,39 +1538,41 @@ class sieverules extends rcube_plugin
 	{
 		$rcmail = rcube::get_instance();
 
-		if (!isset($rule))
-			$rules_table->set_row_attribs(array('style' => 'display: none;'));
-
 		// set default field display
-		$display['header'] = 'visibility: hidden;';
-		$display['op'] = '';
-		$display['sizeop'] = 'display: none;';
-		$display['dateop'] = 'display: none;';
-		$display['spamtestop'] = 'display: none;';
-		$display['target'] = '';
-		$display['units'] = 'display: none;';
-		$display['bodypart'] = 'display: none;';
-		$display['datepart'] = 'display: none;';
-		$display['advcontentpart'] = 'display: none;';
-		$display['spamprob'] = 'display: none;';
-		$display['virusprob'] = 'display: none;';
-		$display['weekdays'] = 'display: none;';
-		$display['advweekdays'] = 'display: none;';
-		$display['advtarget'] = '';
+		$display = array(
+			'header' => 'visibility: hidden;',
+			'op' => '',
+			'sizeop' => 'display: none;',
+			'dateop' => 'display: none;',
+			'spamtestop' => 'display: none;',
+			'target' => '',
+			'units' => 'display: none;',
+			'bodypart' => 'display: none;',
+			'datepart' => 'display: none;',
+			'advcontentpart' => 'display: none;',
+			'spamprob' => 'display: none;',
+			'virusprob' => 'display: none;',
+			'weekdays' => 'display: none;',
+			'advweekdays' => 'display: none;',
+			'advtarget' => ''
+		);
 
 		// set default values
-		$defaults['test'] = 'header';
-		$defaults['selheader'] = 'Subject';
-		$defaults['header'] = 'Subject';
-		$defaults['op'] = 'contains';
-		$defaults['sizeop'] = 'under';
-		$defaults['spamtestop'] = 'ge';
-		$defaults['target'] = '';
-		$defaults['targetsize'] = '';
-		$defaults['units'] = 'KB';
-		$defaults['bodypart'] = '';
-		$defaults['advcontentpart'] = '';
+		$defaults = array(
+			'test' => 'header',
+			'selheader' => 'Subject',
+			'header' => 'Subject',
+			'op' => 'contains',
+			'sizeop' => 'under',
+			'spamtestop' => 'ge',
+			'target' => '',
+			'targetsize' => '',
+			'units' => 'KB',
+			'bodypart' => '',
+			'advcontentpart' => ''
+		);
 
+		// check if current rule is predefined (hide all option boxes)
 		$predefined = -1;
 		foreach($predefined_rules as $idx => $data) {
 			if (($data['type'] == $rule['type'] || $rule['type'] == 'exists')
@@ -1728,6 +1730,11 @@ class sieverules extends rcube_plugin
 			$showadvanced = true;
 			$display['target'] = 'display: none;';
 		}
+
+		// hide the "template" row
+		if (!isset($rule))
+			$rules_table->set_row_attribs(array('style' => 'display: none;'));
+
 
 		// header select box
 		$select_header = new html_select(array('name' => "_selheader[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_header_select(this)'));
@@ -1946,18 +1953,16 @@ class sieverules extends rcube_plugin
 	{
 		$rcmail = rcube::get_instance();
 		static $a_mailboxes;
-
-		if (!isset($action))
-			$actions_table->set_row_attribs(array('style' => 'display: none;'));
-
 		$help_icon = html::img(array('src' => $attrib['helpicon'], 'alt' => $this->gettext('messagehelp'), 'border' => 0));
 
 		// set default field display
-		$display['vacadv'] = ($action['type'] != 'vacation' && $this->force_vacto) ? '' : 'display: none;';
-		$display['vacfrom'] = ($this->show_vacfrom) ? $display['vacadv'] : 'display: none;';
-		$display['vachandle'] = ($this->show_vachandle) ? $display['vacadv'] : 'display: none;';
-		$display['noteadv'] = 'display: none;';
-		$display['eheadadv'] = 'display: none;';
+		$display = array(
+			'vacadv' => ($action['type'] != 'vacation' && $this->force_vacto) ? '' : 'display: none;',
+			'vacfrom' => ($this->show_vacfrom) ? $display['vacadv'] : 'display: none;',
+			'vachandle' => ($this->show_vachandle) ? $display['vacadv'] : 'display: none;',
+			'noteadv' => 'display: none;',
+			'eheadadv' => 'display: none;'
+		);
 
 		// setup allowed actions
 		$allowed_actions = array();
@@ -1997,32 +2002,34 @@ class sieverules extends rcube_plugin
 
 		// set the default values
 		reset($allowed_actions);
-		$defaults['method'] = key($allowed_actions);
 
-		$defaults['folder'] = 'INBOX';
-		$defaults['reject'] = '';
+		$defaults = array(
+			'method' => key($allowed_actions),
+			'folder' => 'INBOX',
+			'reject' => '',
+			'vacto' => null,
+			'address' => '',
+			'period' => '',
+			'periodtype' => '',
+			'handle' => '',
+			'subject' => '',
+			'origsubject' => '',
+			'msg' => '',
+			'charset' => RCUBE_CHARSET,
+			'flags' => '',
+			'nfrom' => '',
+			'nimpt' => '',
+			'nmethod' => '',
+			'noptions' => '',
+			'nmsg' => ''
+		);
 
+		// set default identity for use in vacation action
 		$identity = $rcmail->user->get_identity();
 		if ($this->show_vacfrom)
 			$defaults['vacfrom'] = (in_array('variables', $ext)) ? 'auto' : $identity['email'];
 		else
 			$defaults['vacfrom'] = null;
-
-		$defaults['vacto'] = null;
-		$defaults['address'] = '';
-		$defaults['period'] = '';
-		$defaults['periodtype'] = '';
-		$defaults['handle'] = '';
-		$defaults['subject'] = '';
-		$defaults['origsubject'] = '';
-		$defaults['msg'] = '';
-		$defaults['charset'] = RCUBE_CHARSET;
-		$defaults['flags'] = '';
-		$defaults['nfrom'] = '';
-		$defaults['nimpt'] = '';
-		$defaults['nmethod'] = '';
-		$defaults['noptions'] = '';
-		$defaults['nmsg'] = '';
 
 		// apply current action values
 		if ($action['type'] == 'fileinto' || $action['type'] == 'fileinto_copy') {
@@ -2112,6 +2119,10 @@ class sieverules extends rcube_plugin
 		elseif ($action['type'] == 'discard' || $action['type'] == 'keep' || $action['type'] == 'stop') {
 			$defaults['method'] = $action['type'];
 		}
+
+		// hide the "template" row
+		if (!isset($action))
+			$actions_table->set_row_attribs(array('style' => 'display: none;'));
 
 		// action type select box
 		$select_action = new html_select(array('name' => "_act[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_action_select(this)'));
