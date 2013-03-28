@@ -1108,7 +1108,7 @@ class sieverules extends rcube_plugin
 						}
 
 						// default vacation period units
-						if (!empty($periodtype))
+						if (empty($periodtype))
 							$periodtype = 'days';
 
 						$script['actions'][$i][$periodtype] = $period;
