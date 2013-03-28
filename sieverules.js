@@ -1366,6 +1366,15 @@ $(document).ready(function() {
 					for (var i = 0; i < document.getElementsByName('_comparator[]').length; i++)
 						document.getElementsByName('_comparator[]')[i].disabled = false;
 
+					// remove "template" rows
+					var rulesTable = rcube_find_object('rules-table').tBodies[0];
+					rulesTable.deleteRow(2);
+					rulesTable.deleteRow(1);
+					rulesTable.deleteRow(0);
+
+					var actsTable = rcube_find_object('actions-table').tBodies[0];
+					actsTable.deleteRow(0);
+
 					rcmail.gui_objects.editform.submit();
 				}, true);
 

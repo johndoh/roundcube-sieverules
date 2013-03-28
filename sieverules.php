@@ -966,10 +966,6 @@ class sieverules extends rcube_plugin
 				$script['tests'][0]['type'] = 'true';
 			}
 			else foreach($tests as $idx => $type) {
-				// ignore the first (default) row
-				if ($idx == 0)
-					continue;
-
 				// parse form input
 				$header = $this->_strip_val($headers[$idx]);
 				$op = $this->_strip_val($ops[$idx]);
@@ -1057,10 +1053,6 @@ class sieverules extends rcube_plugin
 			// actions
 			$i = 0;
 			foreach($actions as $idx => $type) {
-				// ignore the first (default) row
-				if ($idx == 0)
-					continue;
-
 				$type = $this->_strip_val($type);
 
 				$script['actions'][$i]['type'] = $type;
