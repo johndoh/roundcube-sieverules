@@ -923,6 +923,10 @@ class sieverules extends rcube_plugin
 			$comparators = rcube_utils::get_input_value('_comparator', rcube_utils::INPUT_POST);
 			$advops = rcube_utils::get_input_value('_advoperator', rcube_utils::INPUT_POST);
 			$advtargets = rcube_utils::get_input_value('_advtarget', rcube_utils::INPUT_POST, true);
+			$dateparts = rcube_utils::get_input_value('_datepart', rcube_utils::INPUT_POST);
+			$weekdays = rcube_utils::get_input_value('_weekday', rcube_utils::INPUT_POST);
+			$advweekdays = rcube_utils::get_input_value('_advweekday', rcube_utils::INPUT_POST);
+
 			$actions = rcube_utils::get_input_value('_act', rcube_utils::INPUT_POST);
 			$folders = rcube_utils::get_input_value('_folder', rcube_utils::INPUT_POST);
 			$customfolders = rcube_utils::get_input_value('_customfolder', rcube_utils::INPUT_POST);
@@ -944,10 +948,6 @@ class sieverules extends rcube_plugin
 			$nmethods = rcube_utils::get_input_value('_nmethod', rcube_utils::INPUT_POST);
 			$noptions = rcube_utils::get_input_value('_noption', rcube_utils::INPUT_POST);
 			$nmsgs = rcube_utils::get_input_value('_nmsg', rcube_utils::INPUT_POST, true);
-			$dateparts = rcube_utils::get_input_value('_datepart', rcube_utils::INPUT_POST);
-			$weekdays = rcube_utils::get_input_value('_weekday', rcube_utils::INPUT_POST);
-			$advweekdays = rcube_utils::get_input_value('_advweekday', rcube_utils::INPUT_POST);
-			$advweekdays = rcube_utils::get_input_value('_advweekday', rcube_utils::INPUT_POST);
 			$eheadnames = rcube_utils:: get_input_value('_eheadname', rcube_utils::INPUT_POST, true);
 			$eheadvals = rcube_utils::get_input_value('_eheadval', rcube_utils::INPUT_POST, true);
 			$eheadopps = rcube_utils::get_input_value('_eheadopp', rcube_utils::INPUT_POST);
@@ -1612,15 +1612,6 @@ class sieverules extends rcube_plugin
 				$defaults['target'] = htmlspecialchars($rule['target']);
 			}
 		}
-		elseif ((isset($rule['type']) && $rule['type'] != 'exists') && $this->_in_headerarray($rule['type'] . '::' . $rule['header'], $this->headers)) {
-			$display['target'] = $rule['operator'] == 'exists' ? 'display: none;' : '';
-
-			$defaults['selheader'] = $rule['type'] . '::' . $rule['header'];
-			$defaults['test'] = $rule['type'];
-			$defaults['header'] = $rule['header'];
-			$defaults['op'] = ($rule['not'] ? 'not' : '') . $rule['operator'];
-			$defaults['target'] = htmlspecialchars($rule['target']);
-		}
 		elseif ((isset($rule['type']) && $rule['type'] == 'exists') && $this->_in_headerarray($rule['header'], $this->headers) != false) {
 			$display['target'] = $rule['operator'] == 'exists' ? 'display: none;' : '';
 
@@ -1704,6 +1695,15 @@ class sieverules extends rcube_plugin
 			$defaults['datepart'] = $rule['datepart'];
 			$defaults['dateop'] = ($rule['not'] ? 'not' : '') . $rule['operator'];
 			$defaults['target'] = $rule['target'];
+		}
+		elseif ((isset($rule['type']) && $rule['type'] != 'exists') && $this->_in_headerarray($rule['type'] . '::' . $rule['header'], $this->headers)) {
+			$display['target'] = $rule['operator'] == 'exists' ? 'display: none;' : '';
+
+			$defaults['selheader'] = $rule['type'] . '::' . $rule['header'];
+			$defaults['test'] = $rule['type'];
+			$defaults['header'] = $rule['header'];
+			$defaults['op'] = ($rule['not'] ? 'not' : '') . $rule['operator'];
+			$defaults['target'] = htmlspecialchars($rule['target']);
 		}
 		elseif (isset($rule['type']) && $rule['type'] != 'true') {
 			$display['header'] = '';
@@ -1898,7 +1898,7 @@ class sieverules extends rcube_plugin
 		$select_advop = new html_select(array('id' => $field_id, 'name' => "_advoperator[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_rule_advop_select(this)'));
 		foreach($this->advoperators as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
-				$select_advop->add(rcmail::Q($this->gettext($option['text'])), rcmail::Q($option['value']));
+				$select_advop->add(rcmail::Q($this->gettext($option['text'])), $option['value']);
 		}
 
 		// add to advanced UI
@@ -1955,7 +1955,7 @@ class sieverules extends rcube_plugin
 			'noteadv' => 'display: none;',
 			'eheadadv' => 'display: none;'
 		);
-
+$ext[] = 'editheader';
 		// setup allowed actions
 		$allowed_actions = array();
 		$config_actions = $rcmail->config->get('sieverules_allowed_actions', array());
