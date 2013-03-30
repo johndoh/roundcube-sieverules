@@ -267,7 +267,7 @@ class sieverules extends rcube_plugin
 			else
 				$filter_name = $filter['name'];
 
-			$tmp_output = new rcube_output_html('settings');
+			$tmp_output = new rcmail_output_html('settings');
 			$dst = $idx - 1;
 			$up_link = $tmp_output->button(array('command' => 'plugin.sieverules.move', 'prop' => $dst, 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
 			$up_link = str_replace("'", "\'", $up_link);
