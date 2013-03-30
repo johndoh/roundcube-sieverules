@@ -1375,6 +1375,58 @@ $(document).ready(function() {
 					var actsTable = rcube_find_object('actions-table').tBodies[0];
 					actsTable.deleteRow(0);
 
+					// disable unused rule fields
+					var fields = ['_bodypart', '_size_operator', '_date_operator', '_spamtest_operator', '_units', '_body_contentpart', '_comparator', '_advoperator', '_advtarget', '_datepart', '_weekday', '_advweekday'];
+					for (var i = 0; i < fields.length; i++) {
+						if ($('form.propform select[name="'+ fields[i] +'[]"]:visible').length == 0 && $('form.propform input[name="'+ fields[i] +'[]"]:visible').length == 0) {
+							$('form.propform select[name="'+ fields[i] +'[]"]').attr('disabled', 'disabled');
+							$('form.propform input[name="'+ fields[i] +'[]"]').attr('disabled', 'disabled');
+						}
+					}
+
+					// disable unused action fields
+					var actions = ['_folder', '_redirect', '_reject', '_subject', '_imapflags', '_nmethod', '_eheadname'];
+					for (var i = 0; i < actions.length; i++) {
+						if ($('form.propform select[name="'+ actions[i] +'[]"]:visible').length == 0 && $('form.propform input[name="'+ actions[i] +'[]"]:visible').length == 0 && $('form.propform textarea[name="'+ actions[i] +'[]"]:visible').length == 0) {
+							switch(actions[i]) {
+								case '_folder':
+									$('form.propform select[name="_folder[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_customfolder[]"]').attr('disabled', 'disabled');
+									break;
+								case '_subject':
+									$('form.propform select[name="_vacfrom[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_vacfrom[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_vacto[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_period[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_periodtype[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_handle[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_subject[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_orig_subject[]"]').attr('disabled', 'disabled');
+									$('form.propform textarea[name="_msg[]"]').attr('disabled', 'disabled');
+									$('form.propform textarea[name="_htmlmsg[]"]').attr('disabled', 'disabled');
+									$('form.propform select[name="_vaccharset[]"]').attr('disabled', 'disabled');
+									break;
+								case '_nmethod':
+									$('form.propform select[name="_nfrom[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_nimpt[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_nmethod[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_noption[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_nmsg[]"]').attr('disabled', 'disabled');
+									break;
+								case '_eheadname':
+									$('form.propform input[name="_eheadname[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_eheadval[]"]').attr('disabled', 'disabled');
+									$('form.propform select[name="_eheadopp[]"]').attr('disabled', 'disabled');
+									$('form.propform select[name="_eheadindex[]"]').attr('disabled', 'disabled');
+									break;
+								default:
+									$('form.propform select[name="'+ actions[i] +'[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="'+ actions[i] +'[]"]').attr('disabled', 'disabled');
+									$('form.propform textarea[name="'+ actions[i] +'[]"]').attr('disabled', 'disabled');
+							}
+						}
+					}
+
 					rcmail.gui_objects.editform.submit();
 				}, true);
 
