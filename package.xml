@@ -13,11 +13,11 @@
 		<email>roundcube@tehinterweb.co.uk</email>
 		<active>yes</active>
 	</lead>
-	<date>2013-02-24</date>
-	<time>10:16:53</time>
+	<date>2013-03-31</date>
+	<time>09:47:36</time>
 	<version>
-		<release>1.18</release>
-		<api>1.18</api>
+		<release>2.0</release>
+		<api>2.0</api>
 	</version>
 	<stability>
 		<release>stable</release>
@@ -40,10 +40,10 @@
 			<file name="README.md" role="data"/>
 			<file name="importFilters/avelsieve.php" role="php"/>
 			<file name="importFilters/ingo.php" role="php"/>
-			<file name="include/rcube_sieve.php" role="php"/>
-			<file name="include/rcube_sieve_script.php" role="php"/>
 			<file name="jquery.maskedinput.js" role="data"/>
 			<file name="lib/Net/Sieve.php" role="php"/>
+			<file name="lib/Roundcube/rcube_sieve.php" role="php"/>
+			<file name="lib/Roundcube/rcube_sieve_script.php" role="php"/>
 			<file name="localization/ca_ES.inc" role="data"/>
 			<file name="localization/cs_CZ.inc" role="data"/>
 			<file name="localization/de_CH.inc" role="data"/>
