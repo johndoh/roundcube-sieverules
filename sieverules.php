@@ -1856,7 +1856,15 @@ class sieverules extends rcube_plugin
 		$to_addresses = "";
 		$vacto_arr = explode(",", $vacto);
 		$user_identities = $rcmail->user->list_identities();
-		if (count($user_identities)) {
+                $possible_vacto_arr=array();
+                if (count($user_identities)) {
+                        foreach ($user_identities as $sql_arr) {
+                                $possible_vacto_arr[ $sql_arr['identity_id'] ]=$sql_arr['email'];
+                        }
+                }
+                $data= rcmail::get_instance()->plugins->exec_hook('sieverules_vacto',array('vacto' => $possible_vacto_arr));
+                $possible_vacto_arr=$data['vacto'];
+		if (count($possible_vacto_arr)) {
 			$field_id = 'rcmfd_sievevacfrom_'. $rowid;
 			$select_id = new html_select(array('id' => $field_id, 'name' => "_vacfrom[]", 'class' => 'short', 'onchange' => JS_OBJECT_NAME . '.enable_sig(this);'));
 
@@ -1865,21 +1873,21 @@ class sieverules extends rcube_plugin
 			elseif (!$this->show_vacfrom)
 				$select_id->add(Q($this->gettext('autodetect')), "");
 
-			foreach ($user_identities as $sql_arr) {
-				$select_id->add($sql_arr['email'], $sql_arr['email']);
+			foreach ($possible_vacto_arr as $current_identity_id=>$current_email) {
+				$select_id->add($current_email, $current_email);
 
-				$ffield_id = 'rcmfd_vac_' . $rowid . '_' . $sql_arr['identity_id'];
+				$ffield_id = 'rcmfd_vac_' . $rowid . '_' . $current_identity_id;
 
 				if ($this->force_vacto) {
-					$curaddress = $sql_arr['email'];
-					$vacto .= (!empty($vacto) ? ',' : '') . $sql_arr['email'];
+					$curaddress = $current_email;
+					$vacto .= (!empty($vacto) ? ',' : '') . $current_email;
 				}
 				else {
-					$curaddress = in_array($sql_arr['email'], $vacto_arr) ? $sql_arr['email'] : "";
+					$curaddress = in_array($current_email, $vacto_arr) ? $current_email : "";
 				}
 
-				$input_address = new html_checkbox(array('id' => $ffield_id, 'name' => '_vacto_check_' . $rowid . '[]', 'value' => $sql_arr['email'], 'onclick' => JS_OBJECT_NAME . '.sieverules_toggle_vac_to(this, '. $rowid .')', 'class' => 'checkbox'));
-				$to_addresses .= $input_address->show($curaddress) . "&nbsp;" . html::label($ffield_id, Q($sql_arr['email'])) . "<br />";
+				$input_address = new html_checkbox(array('id' => $ffield_id, 'name' => '_vacto_check_' . $rowid . '[]', 'value' => $current_email, 'onclick' => JS_OBJECT_NAME . '.sieverules_toggle_vac_to(this, '. $rowid .')', 'class' => 'checkbox'));
+				$to_addresses .= $input_address->show($curaddress) . "&nbsp;" . html::label($ffield_id, Q($current_email)) . "<br />";
 			}
 		}
 
