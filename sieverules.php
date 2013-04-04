@@ -1955,7 +1955,7 @@ class sieverules extends rcube_plugin
 			'noteadv' => 'display: none;',
 			'eheadadv' => 'display: none;'
 		);
-$ext[] = 'editheader';
+
 		// setup allowed actions
 		$allowed_actions = array();
 		$config_actions = $rcmail->config->get('sieverules_allowed_actions', array());
