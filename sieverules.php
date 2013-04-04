@@ -1541,6 +1541,7 @@ class sieverules extends rcube_plugin
 			'units' => 'display: none;',
 			'bodypart' => 'display: none;',
 			'datepart' => 'display: none;',
+			'advancedopts' => false,
 			'advcontentpart' => 'display: none;',
 			'spamprob' => 'display: none;',
 			'virusprob' => 'display: none;',
@@ -1717,16 +1718,14 @@ class sieverules extends rcube_plugin
 		}
 
 		// check for advanced options
-		$showadvanced = false;
 		if (!in_array($defaults['op'], $this->standardops) || $rule['comparator'] != '' || $rule['contentpart'] != '') {
-			$showadvanced = true;
+			$display['advancedopts'] = true;
 			$display['target'] = 'display: none;';
 		}
 
 		// hide the "template" row
 		if (!isset($rule))
 			$rules_table->set_row_attribs(array('style' => 'display: none;'));
-
 
 		// header select box
 		$select_header = new html_select(array('name' => "_selheader[]", 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_header_select(this)'));
@@ -1793,7 +1792,7 @@ class sieverules extends rcube_plugin
 		}
 
 		// add operator inputs to UI
-		$rules_table->add('op', $select_op->show(($showadvanced ? 'advoptions' : $defaults['op'])) . $select_size_op->show($defaults['sizeop']) . $select_date_op->show($defaults['dateop']) . $select_spamtest_op->show($defaults['spamtestop']));
+		$rules_table->add('op', $select_op->show(($display['advancedopts'] ? 'advoptions' : $defaults['op'])) . $select_size_op->show($defaults['sizeop']) . $select_date_op->show($defaults['dateop']) . $select_spamtest_op->show($defaults['spamtestop']));
 
 		// target input box
 		$input_target = new html_inputfield(array('name' => '_target[]', 'style' => $display['target'], 'class' => $defaults['targetsize']));
@@ -1932,7 +1931,7 @@ class sieverules extends rcube_plugin
 		$advanced_table->add(array('style' => 'white-space: normal;', 'class' => 'selheader'), html::label($field_id, rcmail::Q($this->gettext('teststring'))));
 		$advanced_table->add(array('style' => 'white-space: normal;'), $input_advtarget->show($defaults['target']) . $select_advweekdays->show($defaults['target']));
 
-		if (!($showadvanced && $predefined == -1))
+		if (!($display['advancedopts'] && $predefined == -1))
 			$rules_table->set_row_attribs(array('style' => 'display: none;'));
 
 		// add advanced UI to main UI
