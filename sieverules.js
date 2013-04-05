@@ -186,7 +186,7 @@ rcube_webmail.prototype.sieverules_ready = function(id) {
 	return true;
 }
 
-rcube_webmail.prototype.sieverules_update_list = function(action, param1, param2, param3, param4) {
+rcube_webmail.prototype.sieverules_update_list = function(action, param1, param2, param3) {
 	var sid = rcmail.sieverules_list.get_single_selection();
 	var selection;
 	var rows = rcmail.sieverules_list.rows;
@@ -217,9 +217,8 @@ rcube_webmail.prototype.sieverules_update_list = function(action, param1, param2
 				cell.className = 'control';
 
 				param3 = param3.replace(/\\'/g, '\'');
-				param4 = param4.replace(/\\'/g, '\'');
 
-				cell.innerHTML = param3 + param4;
+				cell.innerHTML = param3;
 				newrow.appendChild(cell);
 			}
 
@@ -581,7 +580,7 @@ rcube_webmail.prototype.sieverules_action_select = function(sel) {
 	document.getElementsByName('_redirect[]')[idx].style.display = 'none';
 	document.getElementsByName('_reject[]')[idx].style.display = 'none';
 	document.getElementsByName('_imapflags[]')[idx].style.display = 'none';
-	document.getElementsByName('_day[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+	document.getElementsByName('_period[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
 	document.getElementsByName('_nmethod[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
 	document.getElementsByName('_eheadname[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
 
@@ -590,7 +589,7 @@ rcube_webmail.prototype.sieverules_action_select = function(sel) {
 	else if (obj.value == 'reject' || obj.value == 'ereject')
 		document.getElementsByName('_reject[]')[idx].style.display = '';
 	else if (obj.value == 'vacation') {
-		document.getElementsByName('_day[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
+		document.getElementsByName('_period[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
 
 		if (rcmail.env.sieverules_htmleditor == 1) {
 			rowid = document.getElementsByName('_msg[]')[idx].id.replace('rcmfd_sievevacmag_', '');
@@ -690,6 +689,11 @@ rcube_webmail.prototype.sieverules_toggle_vac_html = function(obj, rowid, txtid)
 rcube_webmail.prototype.sieverules_notify_impt = function(sel, id) {
 	var obj = rcube_find_object('rcmfd_sievenimpt_' + id);
 	obj.value = sel.value == 'none' ? '' : sel.value;
+}
+
+rcube_webmail.prototype.sieverules_period_type = function(sel, id) {
+	var obj = rcube_find_object('rcmfd_sievevacperiodtype_' + id);
+	obj.value = sel.value;
 }
 
 rcmail.sieverules_help = function(sel, row) {
@@ -1162,7 +1166,7 @@ $(document).ready(function() {
 					var rejects = document.getElementsByName('_reject[]');
 					var senders = document.getElementsByName('_vacfrom[]');
 					var aliases = document.getElementsByName('_vacto[]');
-					var days = document.getElementsByName('_day[]');
+					var periods = document.getElementsByName('_period[]');
 					var subjects = document.getElementsByName('_subject[]');
 					var msgs = document.getElementsByName('_msg[]');
 					var nmethods = document.getElementsByName('_nmethod[]');
@@ -1297,15 +1301,15 @@ $(document).ready(function() {
 								return false;
 							}
 
-							//if (days[i].value == '') {
-							//	alert(rcmail.gettext('vacnodays','sieverules'));
-							//	days[i].focus();
+							//if (periods[i].value == '') {
+							//	alert(rcmail.gettext('vacnoperiod','sieverules'));
+							//	periods[i].focus();
 							//	return false;
 							//}
 
-							if (days[i].value != '' && (!size_test.test(days[i].value) || days[i].value < 1)) {
-								alert(rcmail.gettext('vacdayswrongformat','sieverules'));
-								days[i].focus();
+							if (periods[i].value != '' && (!size_test.test(periods[i].value) || periods[i].value < 1)) {
+								alert(rcmail.gettext('vacperiodwrongformat','sieverules'));
+								periods[i].focus();
 								return false;
 							}
 
@@ -1361,6 +1365,67 @@ $(document).ready(function() {
 					// enable the comparators field
 					for (var i = 0; i < document.getElementsByName('_comparator[]').length; i++)
 						document.getElementsByName('_comparator[]')[i].disabled = false;
+
+					// remove "template" rows
+					var rulesTable = rcube_find_object('rules-table').tBodies[0];
+					rulesTable.deleteRow(2);
+					rulesTable.deleteRow(1);
+					rulesTable.deleteRow(0);
+
+					var actsTable = rcube_find_object('actions-table').tBodies[0];
+					actsTable.deleteRow(0);
+
+					// disable unused rule fields
+					var fields = ['_bodypart', '_size_operator', '_date_operator', '_spamtest_operator', '_units', '_body_contentpart', '_comparator', '_advoperator', '_advtarget', '_datepart', '_weekday', '_advweekday'];
+					for (var i = 0; i < fields.length; i++) {
+						if ($('form.propform select[name="'+ fields[i] +'[]"]:visible').length == 0 && $('form.propform input[name="'+ fields[i] +'[]"]:visible').length == 0) {
+							$('form.propform select[name="'+ fields[i] +'[]"]').attr('disabled', 'disabled');
+							$('form.propform input[name="'+ fields[i] +'[]"]').attr('disabled', 'disabled');
+						}
+					}
+
+					// disable unused action fields
+					var actions = ['_folder', '_redirect', '_reject', '_subject', '_imapflags', '_nmethod', '_eheadname'];
+					for (var i = 0; i < actions.length; i++) {
+						if ($('form.propform select[name="'+ actions[i] +'[]"]:visible').length == 0 && $('form.propform input[name="'+ actions[i] +'[]"]:visible').length == 0 && $('form.propform textarea[name="'+ actions[i] +'[]"]:visible').length == 0) {
+							switch(actions[i]) {
+								case '_folder':
+									$('form.propform select[name="_folder[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_customfolder[]"]').attr('disabled', 'disabled');
+									break;
+								case '_subject':
+									$('form.propform select[name="_vacfrom[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_vacfrom[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_vacto[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_period[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_periodtype[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_handle[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_subject[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_orig_subject[]"]').attr('disabled', 'disabled');
+									$('form.propform textarea[name="_msg[]"]').attr('disabled', 'disabled');
+									$('form.propform textarea[name="_htmlmsg[]"]').attr('disabled', 'disabled');
+									$('form.propform select[name="_vaccharset[]"]').attr('disabled', 'disabled');
+									break;
+								case '_nmethod':
+									$('form.propform select[name="_nfrom[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_nimpt[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_nmethod[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_noption[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_nmsg[]"]').attr('disabled', 'disabled');
+									break;
+								case '_eheadname':
+									$('form.propform input[name="_eheadname[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="_eheadval[]"]').attr('disabled', 'disabled');
+									$('form.propform select[name="_eheadopp[]"]').attr('disabled', 'disabled');
+									$('form.propform select[name="_eheadindex[]"]').attr('disabled', 'disabled');
+									break;
+								default:
+									$('form.propform select[name="'+ actions[i] +'[]"]').attr('disabled', 'disabled');
+									$('form.propform input[name="'+ actions[i] +'[]"]').attr('disabled', 'disabled');
+									$('form.propform textarea[name="'+ actions[i] +'[]"]').attr('disabled', 'disabled');
+							}
+						}
+					}
 
 					rcmail.gui_objects.editform.submit();
 				}, true);
