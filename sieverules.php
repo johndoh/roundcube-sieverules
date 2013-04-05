@@ -2456,7 +2456,7 @@ class sieverules extends rcube_plugin
 	private function _rule_list_parts($idx, $script)
 	{
 		$parts = array();
-		$output = is_a($this->api->output, 'rcmail_output_html') ? $this->api->output: new rcmail_output_html('settings');
+		$output = is_a($this->api->output, 'rcmail_output_html') ? $this->api->output : new rcmail_output_html('settings');
 
 		$parts['name'] = $script['name'] . ($script['disabled'] == 1 ? ' (' . $this->gettext('disabled') . ')' : '');
 
