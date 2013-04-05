@@ -2456,11 +2456,12 @@ class sieverules extends rcube_plugin
 	private function _rule_list_parts($idx, $script)
 	{
 		$parts = array();
+		$output = is_a($this->api->output, 'rcmail_output_html') ? $this->api->output: new rcmail_output_html('settings');
 
 		$parts['name'] = $script['name'] . ($script['disabled'] == 1 ? ' (' . $this->gettext('disabled') . ')' : '');
 
-		$up_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => ($idx - 1), 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
-		$down_link = $this->api->output->button(array('command' => 'plugin.sieverules.move', 'prop' => ($idx + 2), 'type' => 'link', 'class' => 'down_arrow', 'title' => 'sieverules.movedown', 'content' => ' '));
+		$up_link = $output->button(array('command' => 'plugin.sieverules.move', 'prop' => ($idx - 1), 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
+		$down_link = $output->button(array('command' => 'plugin.sieverules.move', 'prop' => ($idx + 2), 'type' => 'link', 'class' => 'down_arrow', 'title' => 'sieverules.movedown', 'content' => ' '));
 
 		$parts['control'] = $up_link . $down_link;
 
