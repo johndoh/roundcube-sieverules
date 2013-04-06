@@ -170,6 +170,9 @@ class sieverules extends rcube_plugin
 					'flagflagged' => '\\\\Flagged'
 					);
 
+	private $identities = array();
+	private $mailboxes = array();
+
 	function init()
 	{
 		$rcmail = rcube::get_instance();
@@ -675,6 +678,38 @@ class sieverules extends rcube_plugin
 		foreach ($this->operators as $option)
 			$this->standardops[] = $option['value'];
 
+		// get user identities
+		$this->identities = $rcmail->user->list_identities();
+		foreach ($this->identities as $sql_id => $sql_arr)
+			$this->identities[$sql_id]['from'] = $this->_rcmail_get_identity($sql_arr['identity_id']);
+
+		// get user folders
+		if (empty($this->mailboxes)) {
+			$rcmail->storage_init();
+
+			// get mailbox list
+			if ($rcmail->config->get('sieverules_fileinto_options', 0) > 0)
+				$a_folders = $rcmail->storage->list_folders();
+			else
+				$a_folders = $rcmail->storage->list_folders_subscribed();
+
+			$delimiter = $rcmail->storage->get_hierarchy_delimiter();
+			$this->mailboxes = array();
+
+			foreach ($a_folders as $ifolder) {
+				if ($rcmail->config->get('sieverules_folder_encoding'))
+					$ifolder = $this->_mbox_encode($ifolder, $rcmail->config->get('sieverules_folder_encoding'));
+
+				if ($rcmail->config->get('sieverules_folder_delimiter', false))
+					$rcmail->build_folder_tree($this->mailboxes, str_replace($delimiter, $rcmail->config->get('sieverules_folder_delimiter'), $ifolder), $rcmail->config->get('sieverules_folder_delimiter'));
+				else
+					$rcmail->build_folder_tree($this->mailboxes, $ifolder, $delimiter);
+			}
+
+			if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2 && in_array('mailbox', $ext))
+				array_push($this->mailboxes, array('id' => '@@newfolder', 'name' => $this->gettext('createfolder'), 'virtual' => '', 'folders' => array()));
+		}
+
 		$iid = rcube_utils::get_input_value('_iid', rcube_utils::INPUT_GPC);
 		if ($iid == '')
 			$iid = sizeof($this->script);
@@ -769,7 +804,6 @@ class sieverules extends rcube_plugin
 				. $join_type . "<br /><br />"
 				. $rules_table->show($attrib));
 
-		$rcmail->storage_init();
 		$actions_table = new html_table(array('id' => 'actions-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 3));
 		$actions_table = $this->_action_row($ext, $actions_table, 'rowid', null, $attrib, $example);
 
@@ -789,9 +823,8 @@ class sieverules extends rcube_plugin
 		$out .= $form_end;
 
 		// output sigs for vacation messages
-		$user_identities = $rcmail->user->list_identities();
-		if (count($user_identities)) {
-			foreach ($user_identities as $sql_arr) {
+		if (count($this->identities)) {
+			foreach ($this->identities as $sql_arr) {
 				// add signature to array
 				if (!empty($sql_arr['signature'])) {
 					$identity_id = $sql_arr['identity_id'];
@@ -1943,7 +1976,6 @@ class sieverules extends rcube_plugin
 	private function _action_row($ext, $actions_table, $rowid, $action, $attrib, $example)
 	{
 		$rcmail = rcube::get_instance();
-		static $a_mailboxes;
 		$help_icon = html::img(array('src' => $attrib['helpicon'], 'alt' => $this->gettext('messagehelp'), 'border' => 0));
 
 		// set default field display
@@ -2128,26 +2160,24 @@ class sieverules extends rcube_plugin
 
 		$to_addresses = "";
 		$vacto_arr = explode(",", $defaults['vacto']);
-		$user_identities = $rcmail->user->list_identities();
-		if (count($user_identities)) {
-			$field_id = 'rcmfd_sievevacfrom_'. $rowid;
-			$select_id = new html_select(array('id' => $field_id, 'name' => "_vacfrom[]", 'class' => 'short', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.enable_sig(this);'));
+		$field_id_vacfrom = 'rcmfd_sievevacfrom_'. $rowid;
+		$field_id_vacto = 'rcmfd_sievevacto_'. $rowid;
+		if (count($this->identities)) {
+			$select_id = new html_select(array('id' => $field_id_vacfrom, 'name' => "_vacfrom[]", 'class' => 'short', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.enable_sig(this);'));
 
 			if ($this->show_vacfrom && in_array('variables', $ext))
 				$select_id->add(rcmail::Q($this->gettext('autodetect')), "auto");
 			elseif (!$this->show_vacfrom)
 				$select_id->add(rcmail::Q($this->gettext('autodetect')), "");
 
-			foreach ($user_identities as $sql_arr) {
-				$from = $this->_rcmail_get_identity($sql_arr['identity_id']);
-
+			foreach ($this->identities as $sql_arr) {
 				// find currently selected from address
-				if ($defaults['vacfrom'] != '' && $defaults['vacfrom'] == rcmail::Q($from['string']))
+				if ($defaults['vacfrom'] != '' && $defaults['vacfrom'] == rcmail::Q($sql_arr['from']['string']))
 					$defaults['vacfrom'] = $sql_arr['identity_id'];
-				elseif ($defaults['vacfrom'] != '' && $defaults['vacfrom'] == $from['mailto'])
+				elseif ($defaults['vacfrom'] != '' && $defaults['vacfrom'] == $sql_arr['from']['mailto'])
 					$defaults['vacfrom'] = $sql_arr['identity_id'];
 
-				$select_id->add($from['disp_string'], $sql_arr['identity_id']);
+				$select_id->add($sql_arr['from']['disp_string'], $sql_arr['identity_id']);
 
 				$ffield_id = 'rcmfd_vac_' . $rowid . '_' . $sql_arr['identity_id'];
 
@@ -2165,45 +2195,36 @@ class sieverules extends rcube_plugin
 		}
 
 		if ($rcmail->config->get('sieverules_limit_vacto', true) && strlen($to_addresses) > 0) {
-			$vacs_table->set_row_attribs(array('class' => ($this->show_vacfrom) ? 'advanced' : 'disabled', 'style' => $display['vacfrom']));
-			$vacs_table->add(null, html::label($field_id, rcmail::Q($this->gettext('from'))));
-			$vacs_table->add(null, $select_id->show($defaults['vacfrom']));
-
-			$sig_button = $this->api->output->button(array('command' => 'plugin.sieverules.vacation_sig', 'prop' => $rowid, 'type' => 'link', 'class' => 'vacsig', 'classact' => 'vacsig_act', 'title' => 'insertsignature', 'content' => ' '));
-			$vacs_table->add(null, $sig_button);
-
-			$field_id = 'rcmfd_sievevacto_'. $rowid;
-			$input_vacto = new html_hiddenfield(array('id' => $field_id, 'name' => '_vacto[]', 'value' => $defaults['vacto']));
-			$vacs_table->set_row_attribs(array('class' => 'advanced', 'style' => $display['vacadv']));
-			$vacs_table->add(array('style' => 'vertical-align: top;'), rcmail::Q($this->gettext('sieveto')));
-			$vacs_table->add(null, $to_addresses . $input_vacto->show());
-			$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail_output::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
-			$vacs_table->add(array('style' => 'vertical-align: top;'), $help_button);
-
-			$vacs_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
-			$vacs_table->add(array('colspan' => 3, 'class' => 'helpmsg'), $this->gettext('vactoexp'));
+			$vacfrom_input = $select_id->show($defaults['vacfrom']);
+			$input_vacto = new html_inputfield(array('id' => $field_id_vacto, 'name' => '_vacto[]', 'value' => $defaults['vacto']));
+			$vacto_input = $to_addresses . $input_vacto->show();
+			$vac_help = $this->gettext('vactoexp');
 		}
 		else {
-			$field_id = 'rcmfd_sievevacfrom_'. $rowid;
-			$input_vacfrom = new html_inputfield(array('id' => $field_id, 'name' => '_vacfrom[]'));
-			$vacs_table->set_row_attribs(array('class' => ($this->show_vacfrom) ? 'advanced' : 'disabled', 'style' => $display['vacfrom']));
-			$vacs_table->add(null, html::label($field_id, rcmail::Q($this->gettext('from'))));
-			$vacs_table->add(null, $input_vacfrom->show($defaults['vacfrom']));
-
-			$sig_button = $this->api->output->button(array('command' => 'plugin.sieverules.vacation_sig', 'prop' => $rowid, 'type' => 'link', 'class' => 'vacsig', 'classact' => 'vacsig_act', 'title' => 'insertsignature', 'content' => ' '));
-			$vacs_table->add(null, $sig_button);
-
-			$field_id = 'rcmfd_sievevacto_'. $rowid;
-			$input_vacto = new html_inputfield(array('id' => $field_id, 'name' => '_vacto[]', 'class' => 'short'));
-			$vacs_table->set_row_attribs(array('class' => 'advanced', 'style' => $display['vacadv']));
-			$vacs_table->add(null, html::label($field_id, rcmail::Q($this->gettext('sieveto'))));
-			$vacs_table->add(null, $input_vacto->show($defaults['vacto']));
-
-			$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail_output::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
-			$vacs_table->add(null, $help_button);
-			$vacs_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
-			$vacs_table->add(array('colspan' => 3, 'class' => 'helpmsg'), $this->gettext('vactoexp') . '<br /><br />' . $this->gettext('vactoexp_adv'));
+			$input_vacfrom = new html_inputfield(array('id' => $field_id_vacfrom, 'name' => '_vacfrom[]'));
+			$vacfrom_input = $input_vacfrom->show($defaults['vacfrom']);
+			$input_vacto = new html_inputfield(array('id' => $field_id_vacto, 'name' => '_vacto[]', 'class' => 'short'));
+			$vacto_input = $input_vacto->show($defaults['vacto']);
+			$vac_help = $this->gettext('vactoexp') . '<br /><br />' . $this->gettext('vactoexp_adv');
 		}
+
+		// from param
+		$vacs_table->set_row_attribs(array('class' => ($this->show_vacfrom) ? 'advanced' : 'disabled', 'style' => $display['vacfrom']));
+		$vacs_table->add(null, html::label($field_id_vacfrom, rcmail::Q($this->gettext('from'))));
+		$vacs_table->add(null, $vacfrom_input);
+
+		$sig_button = $this->api->output->button(array('command' => 'plugin.sieverules.vacation_sig', 'prop' => $rowid, 'type' => 'link', 'class' => 'vacsig', 'classact' => 'vacsig_act', 'title' => 'insertsignature', 'content' => ' '));
+		$vacs_table->add(null, $sig_button);
+
+		// to param
+		$vacs_table->set_row_attribs(array('class' => 'advanced', 'style' => $display['vacadv']));
+		$vacs_table->add(array('style' => 'vertical-align: top;'), html::label($field_id_vacto, rcmail::Q($this->gettext('sieveto'))));
+		$vacs_table->add(null, $vacto_input);
+
+		$help_button = html::a(array('href' => "#", 'onclick' => 'return ' . rcmail_output::JS_OBJECT_NAME . '.sieverules_help(this, ' . $vacs_table->size() . ');', 'title' => $this->gettext('messagehelp')), $help_icon);
+		$vacs_table->add(array('style' => 'vertical-align: top;'), $help_button);
+		$vacs_table->set_row_attribs(array('class' => 'advhelp', 'style' => 'display: none;'));
+		$vacs_table->add(array('colspan' => 3, 'class' => 'helpmsg'), $vac_help);
 
 		$field_id = 'rcmfd_sievevacperiod_'. $rowid;
 		$input_period = new html_inputfield(array('id' => $field_id, 'name' => '_period[]', 'class' => 'short'));
@@ -2270,22 +2291,19 @@ class sieverules extends rcube_plugin
 		// begin notify action
 		$notify_table = new html_table(array('class' => 'records-table', 'cellspacing' => '0', 'cols' => 3, 'style' => ($defaults['method'] == 'notify' || $defaults['method'] == 'enotify') ? '' : 'display: none;'));
 
-		$user_identities = $rcmail->user->list_identities();
-		if (count($user_identities)) {
+		if (count($this->identities)) {
 			$field_id = 'rcmfd_sievenotifyfrom_'. $rowid;
 			$select_id = new html_select(array('id' => $field_id, 'name' => "_nfrom[]"));
 			$select_id->add(rcmail::Q($this->gettext('autodetect')), "");
 
-			foreach ($user_identities as $sql_arr) {
-				$from = $this->_rcmail_get_identity($sql_arr['identity_id']);
-
+			foreach ($this->identities as $sql_arr) {
 				// find currently selected from address
-				if ($defaults['nfrom'] != '' && $defaults['nfrom'] == rcmail::Q($from['string']))
+				if ($defaults['nfrom'] != '' && $defaults['nfrom'] == rcmail::Q($sql_arr['from']['string']))
 					$defaults['nfrom'] = $sql_arr['identity_id'];
-				elseif ($defaults['nfrom'] != '' && $defaults['nfrom'] == $from['mailto'])
+				elseif ($defaults['nfrom'] != '' && $defaults['nfrom'] == $sql_arr['from']['mailto'])
 					$defaults['nfrom'] = $sql_arr['identity_id'];
 
-				$select_id->add($from['disp_string'], $sql_arr['identity_id']);
+				$select_id->add($sql_arr['from']['disp_string'], $sql_arr['identity_id']);
 			}
 
 			$notify_table->set_row_attribs(array('class' => 'advanced', 'style' => $display['noteadv']));
@@ -2386,36 +2404,9 @@ class sieverules extends rcube_plugin
 		$headers_table->add(array('colspan' => '3', 'style' => 'text-align: right'), html::label('nadvopts' . $rowid, rcmail::Q($this->gettext('advancedoptions'))) . $input_advopts->show(($display['eheadadv'] == '' ? 1 : 0)));
 
 		// begin fileinto action
-		// get mailbox list
 		$mbox_name = $rcmail->storage->get_folder();
-
-		// build the folders tree
-		if (empty($a_mailboxes)) {
-			// get mailbox list
-			if ($rcmail->config->get('sieverules_fileinto_options', 0) > 0)
-				$a_folders = $rcmail->storage->list_folders();
-			else
-				$a_folders = $rcmail->storage->list_folders_subscribed();
-
-			$delimiter = $rcmail->storage->get_hierarchy_delimiter();
-			$a_mailboxes = array();
-
-			foreach ($a_folders as $ifolder) {
-				if ($rcmail->config->get('sieverules_folder_encoding'))
-					$ifolder = $this->_mbox_encode($ifolder, $rcmail->config->get('sieverules_folder_encoding'));
-
-				if ($rcmail->config->get('sieverules_folder_delimiter', false))
-					$rcmail->build_folder_tree($a_mailboxes, str_replace($delimiter, $rcmail->config->get('sieverules_folder_delimiter'), $ifolder), $rcmail->config->get('sieverules_folder_delimiter'));
-				else
-					$rcmail->build_folder_tree($a_mailboxes, $ifolder, $delimiter);
-			}
-
-			if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2 && in_array('mailbox', $ext))
-				array_push($a_mailboxes, array('id' => '@@newfolder', 'name' => $this->gettext('createfolder'), 'virtual' => '', 'folders' => array()));
-		}
-
 		$input_folderlist = new html_select(array('name' => '_folder[]', 'onchange' => rcmail_output::JS_OBJECT_NAME . '.sieverules_select_folder(this);', 'style' => ($defaults['method'] == 'fileinto' || $defaults['method'] == 'fileinto_copy') ? '' : 'display: none;', 'is_escaped' => true));
-		$rcmail->render_folder_tree_select($a_mailboxes, $mbox_name, 100, $input_folderlist, false);
+		$rcmail->render_folder_tree_select($this->mailboxes, $mbox_name, 100, $input_folderlist, false);
 
 		$show_customfolder = 'display: none;';
 		if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2 && !$rcmail->storage->folder_exists($defaults['folder'])) {
