@@ -200,15 +200,12 @@ class sieverules extends rcube_plugin
 		// include the 'handle' option when creating vacation messages
 		$this->show_vachandle = $rcmail->config->get('sieverules_show_vachandle', $this->show_vachandle);
 
-		// override default dropdown values
-		foreach (array('headers', 'bodyparts', 'dateparts', 'operators', 'sizeoperators', 'dateoperators', 'spamoperators', 'sizeunits', 'spamprobability', 'virusprobability', 'advoperators', 'comparators', 'flags') as $default) {
-			if ($override = $rcmail->config->get('sieverules_default_' . $default)) {
-				// check for old format default arrays, skip them and put a warning in the logs
-				if (is_array($override[0]) == is_array($this->{$default}[0]))
-					$this->{$default} = $override;
-				else
-					rcube::write_log('errors', 'Warning: SieveRules sieverules_default_' . $default . ' in wrong format.');
-			}
+		// use header command for address tests if requested
+		if ($rcmail->config->get('sieverules_header_rules', false)) {
+			$this->headers[1]['value'] = 'header::From';
+			$this->headers[2]['value'] = 'header::To';
+			$this->headers[3]['value'] = 'header::Cc';
+			$this->headers[4]['value'] = 'header::Bcc';
 		}
 
 		$this->action = $rcmail->action;
@@ -730,6 +727,16 @@ class sieverules extends rcube_plugin
 			if (isset($this->script[$iid]))
 				$this->api->output->add_script("parent.". rcmail_output::JS_OBJECT_NAME .".sieverules_ready('".$iid."');");
 		}
+
+		// exec sieverules_init hook, allows for edit of default values
+		$defaults = array();
+		foreach (array('headers', 'bodyparts', 'dateparts', 'operators', 'sizeoperators', 'dateoperators', 'spamoperators', 'sizeunits', 'spamprobability', 'virusprobability', 'advoperators', 'comparators', 'flags', 'identities', 'folders') as $default)
+			$defaults[$default] = $this->{$default};
+
+		list($iid, $cur_script, $ext, $defaults) = array_values($rcmail->plugins->exec_hook('sieverules_init', array('id' => $iid, 'script' => $cur_script, 'extensions' => $ext, 'defaults' => $defaults)));
+
+		foreach ($defaults as $name => $content)
+			$this->{$name} = $content;
 
 		//  build predefined rules and add to UI
 		if (sizeof($rcmail->config->get('sieverules_predefined_rules')) > 0) {

@@ -108,6 +108,10 @@ $rcmail_config['sieverules_auto_load_default'] = FALSE;
 // Example sieve rule file
 $rcmail_config['sieverules_example_file'] = '/etc/dovecot/sieve/example';
 
+// By default the "address" command is used for email address based tests: from/to/cc/bcc
+// to use "header" command instead set this option to true
+$rcmail_config['sieverules_header_rules'] = FALSE;
+
 // Force the :addresses line to always be added to new vacation rules
 // Some sieve setups require that the :address part of a vacation rule is always present for the message to be sent
 // Cyrus setups need this to option set to true
@@ -142,6 +146,5 @@ $rcmail_config['sieverules_fileinto_options'] = 0;
 $rcmail_config['sieverules_from_format'] = 0;
 
 // For information on customising the rule file see "The structure of the rule file" in the README
-// For information on customising the contents of the drop downs see "Default values for drop downs" in the README
 
 ?>
