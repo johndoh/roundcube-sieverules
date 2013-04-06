@@ -108,9 +108,9 @@ $rcmail_config['sieverules_auto_load_default'] = FALSE;
 // Example sieve rule file
 $rcmail_config['sieverules_example_file'] = '/etc/dovecot/sieve/example';
 
-// By default the "address" command is used for email address based tests: from/to/cc/bcc
-// to use "header" command instead set this option to true
-$rcmail_config['sieverules_header_rules'] = FALSE;
+// By default the "header" command is used for email address based tests: from/to/cc/bcc
+// to use "address" command instead set this option to false
+$rcmail_config['sieverules_address_rules'] = FALSE;
 
 // Force the :addresses line to always be added to new vacation rules
 // Some sieve setups require that the :address part of a vacation rule is always present for the message to be sent
@@ -130,9 +130,9 @@ $rcmail_config['sieverules_show_vacfrom'] = FALSE;
 $rcmail_config['sieverules_show_vachandle'] = FALSE;
 
 // The rule file can be written as one IF/ELSIF statement or as a series of unrelated IF statements
-// TRUE  - one IF/ELSIF statement (default)
-// FALSE -  a series of unrelated IF statements
-$rcmail_config['sieverules_use_elsif'] = TRUE;
+// TRUE - one IF/ELSIF statement
+// FALSE - a series of unrelated IF statements (default)
+$rcmail_config['sieverules_use_elsif'] = FALSE;
 
 // Fileinto action options
 // 0 - List only subscribed folders

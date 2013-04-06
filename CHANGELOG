@@ -1,9 +1,12 @@
 Roundcube Webmail SieveRules
 ============================
 
+ * Update default config for most common setups:
+     sieverules_address_rules = FALSE
+     sieverules_use_elsif = FALSE
  * Change file structure to match core and use include_path
  * Improve form submission
- * Add new config option "sieverules_header_rules" to toggle address/header command in tests
+ * Add new config option "sieverules_address_rules" to toggle address/header command in tests
  * Improve default value setup - added sieverules_init hook
  * Add support for vacation-seconds extension
 

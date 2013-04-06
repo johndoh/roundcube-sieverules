@@ -27,10 +27,10 @@ class sieverules extends rcube_plugin
 	// default headers
 	private $headers = array(
 					array('text' => 'subject', 'value' => 'header::Subject', 'ext' => null),
-					array('text' => 'from', 'value' => 'address::From', 'ext' => null),
-					array('text' => 'to', 'value' => 'address::To', 'ext' => null),
-					array('text' => 'cc', 'value' => 'address::Cc', 'ext' => null),
-					array('text' => 'bcc', 'value' => 'address::Bcc', 'ext' => null),
+					array('text' => 'from', 'value' => 'header::From', 'ext' => null),
+					array('text' => 'to', 'value' => 'header::To', 'ext' => null),
+					array('text' => 'cc', 'value' => 'header::Cc', 'ext' => null),
+					array('text' => 'bcc', 'value' => 'header::Bcc', 'ext' => null),
 					array('text' => 'envelopeto', 'value' => 'envelope::To', 'ext' => 'envelope'),
 					array('text' => 'envelopefrom', 'value' => 'envelope::From', 'ext' => 'envelope'),
 					array('text' => 'body', 'value' => 'body::body', 'ext' => 'body'),
@@ -200,12 +200,13 @@ class sieverules extends rcube_plugin
 		// include the 'handle' option when creating vacation messages
 		$this->show_vachandle = $rcmail->config->get('sieverules_show_vachandle', $this->show_vachandle);
 
-		// use header command for address tests if requested
-		if ($rcmail->config->get('sieverules_header_rules', false)) {
-			$this->headers[1]['value'] = 'header::From';
-			$this->headers[2]['value'] = 'header::To';
-			$this->headers[3]['value'] = 'header::Cc';
-			$this->headers[4]['value'] = 'header::Bcc';
+		// use address command for address tests if configured
+		// use address command by default for backwards compatibility
+		if ($rcmail->config->get('sieverules_address_rules', true)) {
+			$this->headers[1]['value'] = 'address::From';
+			$this->headers[2]['value'] = 'address::To';
+			$this->headers[3]['value'] = 'address::Cc';
+			$this->headers[4]['value'] = 'address::Bcc';
 		}
 
 		$this->action = $rcmail->action;
