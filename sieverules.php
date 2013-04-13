@@ -1651,7 +1651,7 @@ class sieverules extends rcube_plugin
 			else {
 				$defaults['header'] = $rule['header'];
 				$defaults['op'] = ($rule['not'] ? 'not' : '') . $rule['operator'];
-				$defaults['target'] = htmlspecialchars($rule['target']);
+				$defaults['target'] = $rule['target'];
 			}
 		}
 		elseif ((isset($rule['type']) && $rule['type'] == 'exists') && $this->_in_headerarray($rule['header'], $this->headers) != false) {
@@ -1685,7 +1685,7 @@ class sieverules extends rcube_plugin
 			$defaults['test'] = 'body';
 			$defaults['bodypart'] = $rule['bodypart'];
 			$defaults['op'] = ($rule['not'] ? 'not' : '') . $rule['operator'];
-			$defaults['target'] = htmlspecialchars($rule['target']);
+			$defaults['target'] = $rule['target'];
 
 			if ($rule['contentpart'] != '') {
 				$defaults['advcontentpart'] = $rule['contentpart'];
@@ -1745,7 +1745,7 @@ class sieverules extends rcube_plugin
 			$defaults['test'] = $rule['type'];
 			$defaults['header'] = $rule['header'];
 			$defaults['op'] = ($rule['not'] ? 'not' : '') . $rule['operator'];
-			$defaults['target'] = htmlspecialchars($rule['target']);
+			$defaults['target'] = $rule['target'];
 		}
 		elseif (isset($rule['type']) && $rule['type'] != 'true') {
 			$display['header'] = '';
@@ -1755,7 +1755,7 @@ class sieverules extends rcube_plugin
 			$defaults['test'] = 'header';
 			$defaults['header'] = is_array($rule['header']) ? join(', ', $rule['header']) : $rule['header'];
 			$defaults['op'] = ($rule['not'] ? 'not' : '') . $rule['operator'];
-			$defaults['target'] = htmlspecialchars($rule['target']);
+			$defaults['target'] = $rule['target'];
 		}
 
 		// check for advanced options
@@ -2072,7 +2072,7 @@ class sieverules extends rcube_plugin
 		}
 		elseif ($action['type'] == 'reject' || $action['type'] == 'ereject') {
 			$defaults['method'] = $action['type'];
-			$defaults['reject'] = htmlspecialchars($action['target']);
+			$defaults['reject'] = $action['target'];
 		}
 		elseif ($action['type'] == 'vacation') {
 			$defaults['method'] = 'vacation';
@@ -2089,8 +2089,8 @@ class sieverules extends rcube_plugin
 			$defaults['vacfromdefault'] = $defaults['vacfrom'];
 			$defaults['vacfrom'] = $action['from'];
 			$defaults['vacto'] = $action['addresses'];
-			$defaults['handle'] = htmlspecialchars($action['handle']);
-			$defaults['subject'] = htmlspecialchars($action['subject']);
+			$defaults['handle'] = $action['handle'];
+			$defaults['subject'] = $action['subject'];
 			$defaults['origsubject'] = $action['origsubject'];
 			$defaults['msg'] = $action['msg'];
 			$defaults['htmlmsg'] = $action['htmlmsg'] ? '1' : '';
@@ -2102,7 +2102,7 @@ class sieverules extends rcube_plugin
 				$defaults['htmlmsg'] = '';
 			}
 			elseif ($defaults['htmlmsg'] == '' && $rcmail->config->get('htmleditor') == '1') {
-				$defaults['msg'] = htmlspecialchars($defaults['msg']);
+				$defaults['msg'] = $defaults['msg'];
 				$defaults['msg'] = nl2br($defaults['msg']);
 				$defaults['htmlmsg'] = '1';
 			}
@@ -2127,8 +2127,8 @@ class sieverules extends rcube_plugin
 		}
 		elseif ($action['type'] == 'notify' || $action['type'] == 'enotify') {
 			$defaults['method'] = $action['type'];
-			$defaults['nfrom'] = htmlspecialchars($action['from']);
-			$defaults['nimpt'] = htmlspecialchars($action['importance']);
+			$defaults['nfrom'] = $action['from'];
+			$defaults['nimpt'] = $action['importance'];
 			$defaults['nmethod'] = $action['method'];
 			$defaults['noptions'] = $action['options'];
 			$defaults['nmsg'] = $action['msg'];
@@ -2139,8 +2139,8 @@ class sieverules extends rcube_plugin
 		}
 		elseif ($action['type'] == 'editheaderadd' || $action['type'] == 'editheaderrem') {
 			$defaults['method'] = $action['type'];
-			$defaults['headername'] = htmlspecialchars($action['name']);
-			$defaults['headerval'] = htmlspecialchars($action['value']);
+			$defaults['headername'] = $action['name'];
+			$defaults['headerval'] = $action['value'];
 			$defaults['headerindex'] = $action['index'];
 			$defaults['headerop'] = $action['operator'];
 
