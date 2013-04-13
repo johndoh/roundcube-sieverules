@@ -1445,7 +1445,7 @@ class sieverules extends rcube_plugin
 			else {
 				$header = $rule['header'];
 				$op = ($rule['not'] ? 'not' : '') . $rule['operator'];
-				$target = htmlspecialchars($rule['target']);
+				$target = $rule['target'];
 			}
 		}
 		elseif ((isset($rule['type']) && $rule['type'] != 'exists') && in_array($rule['type'] . '::' . $rule['header'], $this->headers)) {
@@ -1455,7 +1455,7 @@ class sieverules extends rcube_plugin
 			$test = $rule['type'];
 			$header = $rule['header'];
 			$op = ($rule['not'] ? 'not' : '') . $rule['operator'];
-			$target = htmlspecialchars($rule['target']);
+			$target = $rule['target'];
 		}
 		elseif ((isset($rule['type']) && $rule['type'] == 'exists') && $this->_in_headerarray($rule['header'], $this->headers) != false) {
 			$target_style = $rule['operator'] == 'exists' ? 'display: none;' : '';
@@ -1488,7 +1488,7 @@ class sieverules extends rcube_plugin
 			$test = 'body';
 			$bodypart = $rule['bodypart'];
 			$op = ($rule['not'] ? 'not' : '') . $rule['operator'];
-			$target = htmlspecialchars($rule['target']);
+			$target = $rule['target'];
 
 			if ($rule['contentpart'] != '') {
 				$advcontentpart = $rule['contentpart'];
@@ -1549,7 +1549,7 @@ class sieverules extends rcube_plugin
 			$test = 'header';
 			$header = is_array($rule['header']) ? join(', ', $rule['header']) : $rule['header'];
 			$op = ($rule['not'] ? 'not' : '') . $rule['operator'];
-			$target = htmlspecialchars($rule['target']);
+			$target = $rule['target'];
 		}
 
 		// check for advanced options
@@ -1890,7 +1890,7 @@ class sieverules extends rcube_plugin
 		}
 		elseif ($action['type'] == 'reject' || $action['type'] == 'ereject') {
 			$method = $action['type'];
-			$reject = htmlspecialchars($action['target']);
+			$reject = $action['target'];
 		}
 		elseif ($action['type'] == 'vacation') {
 			$method = 'vacation';
@@ -1898,8 +1898,8 @@ class sieverules extends rcube_plugin
 			$vacfrom_default = $vacfrom;
 			$vacfrom = $action['from'];
 			$vacto = $action['addresses'];
-			$handle = htmlspecialchars($action['handle']);
-			$subject = htmlspecialchars($action['subject']);
+			$handle = $action['handle'];
+			$subject = $action['subject'];
 			$origsubject = $action['origsubject'];
 			$msg = $action['msg'];
 			$htmlmsg = $action['htmlmsg'] ? '1' : '';
@@ -1911,7 +1911,7 @@ class sieverules extends rcube_plugin
 				$htmlmsg = '';
 			}
 			elseif ($htmlmsg == '' && $rcmail->config->get('htmleditor') == '1') {
-				$msg = htmlspecialchars($msg);
+				$msg = $msg;
 				$msg = nl2br($msg);
 				$htmlmsg = '1';
 			}
@@ -1937,8 +1937,8 @@ class sieverules extends rcube_plugin
 		}
 		elseif ($action['type'] == 'notify' || $action['type'] == 'enotify') {
 			$method = $action['type'];
-			$nfrom = htmlspecialchars($action['from']);
-			$nimpt = htmlspecialchars($action['importance']);
+			$nfrom = $action['from'];
+			$nimpt = $action['importance'];
 			$nmethod = $action['method'];
 			$noptions = $action['options'];
 			$nmsg = $action['msg'];
@@ -1951,8 +1951,8 @@ class sieverules extends rcube_plugin
 		}
 		elseif ($action['type'] == 'editheaderadd' || $action['type'] == 'editheaderrem') {
 			$method = $action['type'];
-			$headername = htmlspecialchars($action['name']);
-			$headerval = htmlspecialchars($action['value']);
+			$headername = $action['name'];
+			$headerval = $action['value'];
 			$headerindex = $action['index'];
 			$headeropp = $action['operator'];
 
