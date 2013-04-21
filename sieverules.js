@@ -1437,13 +1437,13 @@ $(document).ready(function() {
 					if (!obj || !obj.options)
 						return false;
 
-					var sig, id;
+					var sig, sig_id;
 					var sig_separator = '-- ';
 
 					if (obj.options[0].value == 'auto' || obj.options[0].value == '')
-						id = obj.selectedIndex;
+						sig_id = obj.selectedIndex;
 					else
-						id = obj.selectedIndex + 1;
+						sig_id = obj.selectedIndex + 1;
 
 					if (is_html) {
 						var editor = tinyMCE.get("rcmfd_sievevacmag_" + id),
@@ -1463,14 +1463,14 @@ $(document).ready(function() {
 							body.appendChild(sigElem);
 						}
 
-						if (rcmail.env.signatures[id]) {
-							if (rcmail.env.signatures[id].is_html) {
-								sig = rcmail.env.signatures[id].text;
-								if (!rcmail.env.signatures[id].plain_text.match(/^--[ -]\r?\n/m))
+						if (rcmail.env.signatures[sig_id]) {
+							if (rcmail.env.signatures[sig_id].is_html) {
+								sig = rcmail.env.signatures[sig_id].text;
+								if (!rcmail.env.signatures[sig_id].plain_text.match(/^--[ -]\r?\n/m))
 									sig = sig_separator + '<br />' + sig;
 							}
 							else {
-								sig = rcmail.env.signatures[id].text;
+								sig = rcmail.env.signatures[sig_id].text;
 								if (!sig.match(/^--[ -]\r?\n/m))
 									sig = sig_separator + '\n' + sig;
 
@@ -1484,8 +1484,8 @@ $(document).ready(function() {
 						var input_message = $("#rcmfd_sievevacmag_" + id);
 						var message = input_message.val();
 
-						if (rcmail.env.signatures && rcmail.env.signatures[id]) {
-							sig = rcmail.env.signatures[id]['text'];
+						if (rcmail.env.signatures && rcmail.env.signatures[sig_id]) {
+							sig = rcmail.env.signatures[sig_id]['text'];
 							sig = sig.replace(/\r\n/g, '\n');
 
 							if (!sig.match(/^--[ -]\n/))

@@ -1492,8 +1492,6 @@ class sieverules extends rcube_plugin
 			$include_path .= ini_get('include_path');
 			set_include_path($include_path);
 
-			$rcmail = rcube::get_instance();
-
 			// try to connect to managesieve server and to fetch the script
 			$this->sieve = new rcube_sieve($_SESSION['username'],
 						$rcmail->decrypt($_SESSION['password']),
