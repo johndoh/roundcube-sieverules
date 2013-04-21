@@ -74,22 +74,24 @@ class rcube_sieve
 		}
 
 		// init importers
-		$dir = slashify(realpath(slashify($dir) . 'importFilters/'));
-		$handle = opendir($dir);
-		while ($importer = readdir($handle)) {
-			if (is_file($dir . $importer) && is_readable($dir . $importer)) {
-				include($dir . $importer);
+		if ($dir = realpath(slashify($dir) . 'importFilters/')) {
+			$dir = slashify($dir);
+			$handle = opendir($dir);
+			while ($importer = readdir($handle)) {
+				if (is_file($dir . $importer) && is_readable($dir . $importer)) {
+					include($dir . $importer);
 
-				$importer = substr($importer, 0, -4);
-				$importer = 'srimport_' . $importer;
+					$importer = substr($importer, 0, -4);
+					$importer = 'srimport_' . $importer;
 
-				if (class_exists($importer, false)) {
-					$importerClass = new $importer();
-					$this->importers[$importer] = $importerClass;
+					if (class_exists($importer, false)) {
+						$importerClass = new $importer();
+						$this->importers[$importer] = $importerClass;
+					}
 				}
 			}
+			closedir($handle);
 		}
-		closedir($handle);
 	}
 
 	public function __destruct()
