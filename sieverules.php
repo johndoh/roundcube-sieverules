@@ -206,7 +206,7 @@ class sieverules extends rcube_plugin
 		$out = $form_start;
 
 		$input_script = new html_textarea(array('id' => 'sieverules_adv', 'name' => '_script'));
-		$out .= $input_script->show(htmlspecialchars($this->sieve->script->raw));
+		$out .= $input_script->show($this->sieve->script->raw);
 
 		$out .= $form_end;
 
