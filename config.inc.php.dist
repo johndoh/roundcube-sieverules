@@ -14,7 +14,7 @@
 $rcmail_config['sieverules_host'] = 'localhost';
 
 // managesieve server port
-$rcmail_config['sieverules_port'] = 2000;
+$rcmail_config['sieverules_port'] = 4190;
 
 // Log managesieve conversation to <log_dir>/sieverules or to syslog
 $rcmail_config['sieverules_debug'] = false;
