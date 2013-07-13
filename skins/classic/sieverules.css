@@ -107,6 +107,12 @@ span.disableLink
   width: 100%;
 }
 
+table.sieverules-table
+{
+  border-collapse: collapse;
+  border-spacing: 0px;
+}
+
 #sieverules-table tbody td
 {
   cursor: default;

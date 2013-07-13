@@ -355,7 +355,7 @@ class sieverules extends rcube_plugin
 		$this->api->output->add_label('sieverules.movingfilter', 'loading', 'sieverules.switchtoadveditor', 'sieverules.filterdeleteconfirm');
 		$this->api->output->add_gui_object('sieverules_list', 'sieverules-table');
 
-		$table = new html_table(array('id' => 'sieverules-table', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 2));
+		$table = new html_table(array('id' => 'sieverules-table', 'class' => 'records-table sieverules-table fixedheader', 'cellspacing' => '0', 'cols' => 2));
 
 		if (rcube::get_instance()->config->get('sieverules_multiplerules', false)) {
 			// if multiple rulesets enabled then add current ruleset name to UI plus an icon to signify active ruleset
