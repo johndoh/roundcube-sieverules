@@ -411,7 +411,7 @@ class sieverules extends rcube_plugin
 		if (sizeof($this->examples) > 0) {
 			$this->api->output->add_gui_object('sieverules_examples', 'sieverules-examples');
 
-			$examples = new html_table(array('id' => 'sieverules-examples', 'class' => 'records-table', 'cellspacing' => '0', 'cols' => 1));
+			$examples = new html_table(array('id' => 'sieverules-examples', 'class' => 'records-table sieverules-examples fixedheader', 'cellspacing' => '0', 'cols' => 1));
 			$examples->add_header(null, $this->gettext('examplefilters'));
 
 			foreach($this->examples as $idx => $filter) {

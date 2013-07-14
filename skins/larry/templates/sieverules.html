@@ -23,8 +23,8 @@
 
 <div id="sieverules-list" class="uibox listbox">
 <div class="scroller withfooter">
-<roundcube:object name="sieveruleslist" class="listing fixedheader" cellspacing="0" noheader="true" activeicon="/this/tick.png" inactiveicon="/this/cross.png" />
-<roundcube:object name="sieverulesexamplelist" class="listing" cellspacing="0" noheader="true" />
+<roundcube:object name="sieveruleslist" class="listing sieverules-table fixedheader" cellspacing="0" noheader="true" activeicon="/this/tick.png" inactiveicon="/this/cross.png" />
+<roundcube:object name="sieverulesexamplelist" class="listing sieverules-examples fixedheader" cellspacing="0" noheader="true" />
 </div>
 <div class="boxfooter">
 <roundcube:button command="plugin.sieverules.add" type="link" title="sieverules.newfilter" class="listbutton add disabled" classAct="listbutton add" innerClass="inner" content="+" /><roundcube:button command="plugin.sieverules.delete" type="link" title="delete" class="listbutton delete disabled" classAct="listbutton delete" innerClass="inner" content="-" /><roundcube:if condition="config:sieverules_multiplerules == true || config:sieverules_adveditor == 1 || config:sieverules_adveditor == 2" /><roundcube:button name="sieverulesactions" id="sieverulesactionsmenulink" type="link" title="sieverules.moreactions" class="listbutton groupactions"  onclick="UI.show_popup('sieverulesactionsmenu', true, {id: 'sieverulesactionsmenu', obj:$('#sieverulesactionsmenu'), above:1}); return false" innerClass="inner" content="&#9881;" /><roundcube:endif />

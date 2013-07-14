@@ -101,31 +101,27 @@ span.disableLink
   text-align: right;
 }
 
-#sieverules-table,
-#sieverules-examples
+table.sieverules-table,
+table.sieverules-examples
 {
   width: 100%;
-}
-
-table.sieverules-table
-{
   border-collapse: collapse;
   border-spacing: 0px;
 }
 
-#sieverules-table tbody td
+table.sieverules-table tbody td
 {
   cursor: default;
 }
 
-#sieverules-table tbody td.control,
+table.sieverules-table tbody td.control,
 #rules-table tbody td.control,
 #actions-table tbody td.control
 {
   text-align: right;
 }
 
-#sieverules-table tbody td.control a,
+table.sieverules-table tbody td.control a,
 #rules-table tbody td.control a,
 #actions-table tbody td.control a
 {
@@ -136,12 +132,12 @@ table.sieverules-table
   background-image: url(icons.png);
 }
 
-#sieverules-table tbody td.control a.up_arrow
+table.sieverules-table tbody td.control a.up_arrow
 {
   background-position: 0 0;
 }
 
-#sieverules-table tbody td.control a.down_arrow
+table.sieverules-table tbody td.control a.down_arrow
 {
   background-position: 0 -18px;
 }
