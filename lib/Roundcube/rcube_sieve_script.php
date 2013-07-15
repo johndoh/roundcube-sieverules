@@ -640,7 +640,7 @@ class rcube_sieve_script
 		$patterns[] = '^\s*vacation\s+(:(days|seconds)\s+([0-9]+)\s+)?(:addresses\s+\[(.*?[^\\\])\]\s+)?(:subject\s+(".*?[^"\\\]")\s+)?(:handle\s+(".*?[^"\\\]")\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:mime\s+)?text:(.*)\n\.\n;';
 		$patterns[] = '^\s*vacation\s+(:(days|seconds)\s+([0-9]+)\s+)?(:addresses\s+\[(.*?[^\\\])\]\s+)?(:subject\s+(".*?[^"\\\]")\s+)?(:handle\s+(".*?[^"\\\]")\s+)?(:from\s+(".*?[^"\\\]")\s+)?(.*?[^\\\]);';
 		$patterns[] = '^\s*notify\s+:method\s+(".*?[^"\\\]")\s+(:options\s+\[(.*?[^\\\])\]\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:importance\s+(".*?[^"\\\]")\s+)?:message\s+(".*?[^"\\\]");';
-		$patterns[] = '^\s*notify\s+(:options\s+\[(.*?[^\\\])\]\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:importance\s+(".*?[^"\\\]")\s+)?:message\s+(".*?[^"\\\]")\s+(.*);';
+		$patterns[] = '^\s*notify\s+(:options\s+\[(.*?[^\\\])\]\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:importance\s+(".*?[^"\\\]")\s+)?:message\s+(".*?[^"\\\]")\s+(.*?[^\\\]);';
 		$patterns[] = '^\s*addheader\s+(:(last))?\s*(".*?[^"\\\]")\s+(".*?[^"\\\]");';
 		$patterns[] = '^\s*deleteheader\s+(:(last)|:index\s([0-9])+)?\s*(:(contains))?\s*(".*?[^"\\\]")\s*(".*?[^"\\\]")?;';
 
