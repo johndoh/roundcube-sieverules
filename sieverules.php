@@ -482,7 +482,7 @@ class sieverules extends rcube_plugin
 		}
 		else foreach ($rulesets as $ruleset) {
 			if ($ruleset !== $this->current_ruleset)
-				$select_ruleset->add(rcmail::Q($ruleset), rcmail::Q($ruleset));
+				$select_ruleset->add($ruleset, $ruleset);
 		}
 
 		$table->set_row_attribs(array('id' => 'sieverulesrsdialog_select'));
@@ -808,7 +808,7 @@ class sieverules extends rcube_plugin
 		$this->api->output->set_env('sieverules_rules', $rules_table->size());
 
 		$out .= html::tag('fieldset', null, html::tag('legend', null, rcmail::Q($this->gettext('messagesrules')))
-				. rcmail::Q((!$rcmail->config->get('sieverules_use_elsif', true)) ? $this->gettext('sieveruleexp_stop'): $this->gettext('sieveruleexp')) . "<br /><br />"
+				. rcmail::Q((!$rcmail->config->get('sieverules_use_elsif', true)) ? $this->gettext('sieveruleexp_stop') : $this->gettext('sieveruleexp')) . "<br /><br />"
 				. $join_type . "<br /><br />"
 				. $rules_table->show($attrib));
 
