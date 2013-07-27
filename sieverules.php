@@ -695,9 +695,6 @@ class sieverules extends rcube_plugin
 			$this->mailboxes = array();
 
 			foreach ($a_folders as $ifolder) {
-				if ($rcmail->config->get('sieverules_folder_encoding'))
-					$ifolder = $this->_mbox_encode($ifolder, $rcmail->config->get('sieverules_folder_encoding'));
-
 				if ($rcmail->config->get('sieverules_folder_delimiter', false))
 					$rcmail->build_folder_tree($this->mailboxes, str_replace($delimiter, $rcmail->config->get('sieverules_folder_delimiter'), $ifolder), $rcmail->config->get('sieverules_folder_delimiter'));
 				else
@@ -1108,12 +1105,15 @@ class sieverules extends rcube_plugin
 						$script['actions'][$i]['create'] = false;
 						if ($folder == '@@newfolder') {
 							$script['actions'][$i]['create'] = true;
-							$folder = $this->_strip_val($customfolders[$idx]);
+							$folder = rcube_charset::convert($customfolders[$idx], RCMAIL_CHARSET, 'UTF7-IMAP');
+							$folder = $this->_strip_val($folder);
 							$folder = $rcmail->config->get('sieverules_include_imap_root', true) ? $rcmail->storage->mod_folder($folder, 'IN') : $folder;
 						}
 						$script['actions'][$i]['target'] = $rcmail->config->get('sieverules_include_imap_root', true) ? $folder : $rcmail->storage->mod_folder($folder);
 						if ($rcmail->config->get('sieverules_folder_delimiter', false))
 							$script['actions'][$i]['target'] = str_replace($rcmail->storage->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $script['actions'][$i]['target']);
+						if ($rcmail->config->get('sieverules_folder_encoding'))
+							$script['actions'][$i]['target'] = rcube_charset::convert($script['actions'][$i]['target'], 'UTF7-IMAP', $rcmail->config->get('sieverules_folder_encoding'));
 						break;
 					case 'redirect':
 					case 'redirect_copy':
@@ -2067,6 +2067,9 @@ class sieverules extends rcube_plugin
 
 			if ($rcmail->config->get('sieverules_folder_delimiter', false))
 				$defaults['folder'] = str_replace($rcmail->storage->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $defaults['folder']);
+
+			if ($rcmail->config->get('sieverules_folder_encoding'))
+				$defaults['folder'] = rcube_charset::convert($defaults['folder'], $rcmail->config->get('sieverules_folder_encoding'), 'UTF7-IMAP');
 		}
 		elseif ($action['type'] == 'reject' || $action['type'] == 'ereject') {
 			$defaults['method'] = $action['type'];
@@ -2416,7 +2419,7 @@ class sieverules extends rcube_plugin
 
 		$show_customfolder = 'display: none;';
 		if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2 && !$rcmail->storage->folder_exists($defaults['folder'])) {
-			$customfolder = $rcmail->storage->mod_folder($defaults['folder']);
+			$customfolder = rcube_charset::convert($rcmail->storage->mod_folder($defaults['folder']), $rcmail->config->get('sieverules_folder_encoding', 'UTF7-IMAP'));
 			$defaults['folder'] = '@@newfolder';
 			$show_customfolder = '';
 		}
@@ -2482,11 +2485,6 @@ class sieverules extends rcube_plugin
 		$str = $trim ? trim($str) : $str;
 
 		return $str;
-	}
-
-	private function _mbox_encode($text, $encoding)
-	{
-		return rcube_charset::convert($text, 'UTF7-IMAP', $encoding);
 	}
 
 	// get identity record
