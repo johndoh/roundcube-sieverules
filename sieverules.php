@@ -694,12 +694,8 @@ class sieverules extends rcube_plugin
 			$delimiter = $rcmail->storage->get_hierarchy_delimiter();
 			$this->mailboxes = array();
 
-			foreach ($a_folders as $ifolder) {
-				if ($rcmail->config->get('sieverules_folder_delimiter', false))
-					$rcmail->build_folder_tree($this->mailboxes, str_replace($delimiter, $rcmail->config->get('sieverules_folder_delimiter'), $ifolder), $rcmail->config->get('sieverules_folder_delimiter'));
-				else
-					$rcmail->build_folder_tree($this->mailboxes, $ifolder, $delimiter);
-			}
+			foreach ($a_folders as $ifolder)
+				$rcmail->build_folder_tree($this->mailboxes, $ifolder, $delimiter);
 
 			if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2 && in_array('mailbox', $ext))
 				array_push($this->mailboxes, array('id' => '@@newfolder', 'name' => $this->gettext('createfolder'), 'virtual' => '', 'folders' => array()));
@@ -1110,7 +1106,7 @@ class sieverules extends rcube_plugin
 							$folder = $rcmail->config->get('sieverules_include_imap_root', true) ? $rcmail->storage->mod_folder($folder, 'IN') : $folder;
 						}
 						$script['actions'][$i]['target'] = $rcmail->config->get('sieverules_include_imap_root', true) ? $folder : $rcmail->storage->mod_folder($folder);
-						if ($rcmail->config->get('sieverules_folder_delimiter', false))
+						if ($rcmail->config->get('sieverules_folder_delimiter'))
 							$script['actions'][$i]['target'] = str_replace($rcmail->storage->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $script['actions'][$i]['target']);
 						if ($rcmail->config->get('sieverules_folder_encoding'))
 							$script['actions'][$i]['target'] = rcube_charset::convert($script['actions'][$i]['target'], 'UTF7-IMAP', $rcmail->config->get('sieverules_folder_encoding'));
@@ -2063,13 +2059,15 @@ class sieverules extends rcube_plugin
 		// apply current action values
 		if ($action['type'] == 'fileinto' || $action['type'] == 'fileinto_copy') {
 			$defaults['method'] = $action['type'];
-			$defaults['folder'] = $rcmail->config->get('sieverules_include_imap_root', true) ? $action['target'] : $rcmail->storage->mod_folder($action['target'], 'IN');
-
-			if ($rcmail->config->get('sieverules_folder_delimiter', false))
-				$defaults['folder'] = str_replace($rcmail->storage->get_hierarchy_delimiter(), $rcmail->config->get('sieverules_folder_delimiter'), $defaults['folder']);
+			$defaults['folder'] = $action['target'];
 
 			if ($rcmail->config->get('sieverules_folder_encoding'))
 				$defaults['folder'] = rcube_charset::convert($defaults['folder'], $rcmail->config->get('sieverules_folder_encoding'), 'UTF7-IMAP');
+
+			if ($rcmail->config->get('sieverules_folder_delimiter'))
+				$defaults['folder'] = str_replace($rcmail->config->get('sieverules_folder_delimiter'), $rcmail->storage->get_hierarchy_delimiter(), $defaults['folder']);
+
+			$defaults['folder'] = $rcmail->config->get('sieverules_include_imap_root', true) ? $defaults['folder'] : $rcmail->storage->mod_folder($defaults['folder'], 'IN');
 		}
 		elseif ($action['type'] == 'reject' || $action['type'] == 'ereject') {
 			$defaults['method'] = $action['type'];
