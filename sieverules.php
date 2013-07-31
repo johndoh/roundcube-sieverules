@@ -2417,7 +2417,7 @@ class sieverules extends rcube_plugin
 
 		$show_customfolder = 'display: none;';
 		if ($rcmail->config->get('sieverules_fileinto_options', 0) == 2 && !$rcmail->storage->folder_exists($defaults['folder'])) {
-			$customfolder = rcube_charset::convert($rcmail->storage->mod_folder($defaults['folder']), $rcmail->config->get('sieverules_folder_encoding', 'UTF7-IMAP'));
+			$customfolder = rcube_charset::convert($rcmail->storage->mod_folder($defaults['folder']), 'UTF7-IMAP');
 			$defaults['folder'] = '@@newfolder';
 			$show_customfolder = '';
 		}
