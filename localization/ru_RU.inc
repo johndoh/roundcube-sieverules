@@ -3,6 +3,7 @@
 
 $labels = array();
 $labels['filters'] = 'Фильтры';
+$labels['filtersname'] = 'Фильтры ($name)';
 $labels['managefilters'] = 'управление фильтрами';
 $labels['filtername'] = 'Имя фильтра';
 $labels['disablerule'] = 'отключить правило';
@@ -58,7 +59,7 @@ $labels['messagemoveto'] = 'переместить сообщения в';
 $labels['messageredirect'] = 'перенаправить сообщения на адрес';
 $labels['messageimapflags'] = 'пометить сообщения как';
 $labels['messagereject'] = 'отклонить с сообщением';
-$labels['messagevacation'] = 'сообщение "Нет на месте"';
+$labels['messagevacation'] = 'сообщение \'Нет на месте\'';
 $labels['messagekeep'] = 'сохранить сообщение';
 $labels['messagediscard'] = 'отклонить сообщение';
 $labels['messagenotify'] = 'отправить уведомление';
