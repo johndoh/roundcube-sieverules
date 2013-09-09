@@ -5,6 +5,15 @@ Inspiration and most of the code for this plugin was taken from:
 [Aleksander Machniak][alec] - original Roundcube managesieve patch
 Tested with Dovecot-managesieve
 
+ATTENTION
+---------
+This is just a snapshot from the GIT repository and is **NOT A STABLE version
+of SieveRules**. It is Intended for use with the **GIT-master** version of
+Roundcube and it may not be compatible with older versions. Stable versions of
+SieveRules are available from the [Roundcube plugin repository][rcplugrepo]
+(for 1.0 and above) or the [releases section][releases] of the GitHub
+repository.
+
 Requirements
 ------------
 * [Roundcube jQueryUI plugin][rcjqui]
@@ -265,5 +274,7 @@ Return:
   will be shown to the user
 
 [alec]: mailto:alec@alec.pl
+[rcplugrepo]: http://plugins.roundcube.net/packages/johndoh/sieverules
+[releases]: http://github.com/JohnDoh/Roundcube-Plugin-SieveRules-Managesieve/releases
 [rcjqui]: http://github.com/roundcube/roundcubemail/tree/master/plugins/jqueryui
 [gpl]: http://www.gnu.org/licenses/gpl.html
