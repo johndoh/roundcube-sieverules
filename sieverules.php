@@ -1098,7 +1098,7 @@ class sieverules extends rcube_plugin
 						$folder = $this->_strip_val($folders[$idx], false, false);
 						$rcmail = rcube::get_instance();
 						$rcmail->storage_init();
-						$script['actions'][$i]['create'] = false;
+                                                $script['actions'][$i]['create'] = (bool) $rcmail->config->get('sieverules_fileinto_autocreate');
 						if ($folder == '@@newfolder') {
 							$script['actions'][$i]['create'] = true;
 							$folder = rcube_charset::convert($customfolders[$idx], RCMAIL_CHARSET, 'UTF7-IMAP');
