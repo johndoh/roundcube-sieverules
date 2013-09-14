@@ -138,7 +138,7 @@ $config['sieverules_use_elsif'] = FALSE;
 // FALSE - Don't autocreate folders
 // TRUE - Autocreate folders (requires sieve mailbox extension)
 // You probably want to have a look at dovecot's lda_mailbox_autocreate & lda_mailbox_autosubscribe settings if you want it to work
-$config['sieverules_fileinto_autocreate'] = 0;
+$config['sieverules_fileinto_autocreate'] = FALSE;
 
 // Fileinto action options
 // 0 - List only subscribed folders
