@@ -511,7 +511,7 @@ class sieverules extends rcube_plugin
 			$lis = '';
 
 			if (sizeof($this->sieve->list) == 0) {
-				$href  = html::a(array('href' => "#", 'class' => 'active', 'onclick' => 'return false;'), rcmail::Q($this->gettext('nosieverulesets')));
+				$href = html::a(array('href' => "#", 'class' => 'active', 'onclick' => 'return false;'), rcmail::Q($this->gettext('nosieverulesets')));
 				$lis .= html::tag('li', $href);
 			}
 			else foreach ($rulesets as $ruleset) {
