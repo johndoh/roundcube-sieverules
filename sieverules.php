@@ -2201,6 +2201,11 @@ class sieverules extends rcube_plugin
 			}
 		}
 
+		// deduplicate vacto list
+		$tmparr = explode(",", $defaults['vacto']);
+		$tmparr = array_unique($tmparr);
+		$defaults['vacto'] = implode(",", $tmparr);
+
 		if ($rcmail->config->get('sieverules_limit_vacto', true) && strlen($to_addresses) > 0) {
 			$vacfrom_input = $select_id->show($defaults['vacfrom']);
 			$input_vacto = new html_hiddenfield(array('id' => $field_id_vacto, 'name' => '_vacto[]', 'value' => $defaults['vacto']));
