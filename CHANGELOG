@@ -1,6 +1,7 @@
 Roundcube Webmail SieveRules
 ============================
 
+ * Use new settings_actions hook to create settings tab (c49c35c)
  * Improve (and simplify) folder name encoding in fileinto actions
  * Correct espacing of values (now done in the core)
  * Update config file var names to match core

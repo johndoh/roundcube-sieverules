@@ -211,9 +211,10 @@ class sieverules extends rcube_plugin
 
 		$this->action = $rcmail->action;
 
-		$this->add_texts('localization/', array('filters', 'managefilters'));
+		$this->add_texts('localization/');
 		$this->include_stylesheet($this->local_skin_path() . '/tabstyles.css');
 		$this->include_script('sieverules.js');
+		$this->add_hook('settings_actions', array($this, 'settings_tab'));
 
 		// register internal plugin actions
 		$this->register_action('plugin.sieverules', array($this, 'init_html'));
@@ -230,6 +231,13 @@ class sieverules extends rcube_plugin
 		$this->register_action('plugin.sieverules.rename_ruleset', array($this, 'rename_ruleset'));
 		$this->register_action('plugin.sieverules.enable_ruleset', array($this, 'enable_ruleset'));
 		$this->register_action('plugin.sieverules.copy_filter', array($this, 'copy_filter'));
+	}
+
+	function settings_tab($p)
+	{
+		// add sieverules tab
+		$p['actions'][] = array('action' => 'plugin.sieverules', 'class' => 'sieverules', 'label' => 'sieverules.filters', 'title' => 'sieverules.managefilters');
+		return $p;
 	}
 
 	function init_html()
