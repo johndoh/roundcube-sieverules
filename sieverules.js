@@ -843,16 +843,6 @@ rcube_webmail.prototype.sieverules_toggle_eheadlast = function(obj) {
 $(document).ready(function() {
 	if (window.rcmail) {
 		rcmail.addEventListener('init', function(evt) {
-			if (rcmail.env.action == 'plugin.sieverules.add' || rcmail.env.action == 'plugin.sieverules.edit' || rcmail.env.action == 'plugin.sieverules.setup' || rcmail.env.action == 'plugin.sieverules.advanced')
-				var tab = $('<span>').attr('id', 'settingstabpluginsieverules').addClass('tablink selected');
-			else
-				var tab = $('<span>').attr('id', 'settingstabpluginsieverules').addClass('tablink');
-
-			var button = $('<a>').attr('href', rcmail.env.comm_path+'&_action=plugin.sieverules').attr('title', rcmail.gettext('managefilters', 'sieverules')).html(rcmail.gettext('filters','sieverules')).appendTo(tab);
-
-			// add button and register command
-			rcmail.add_element(tab, 'tabs');
-
 			if ((rcmail.env.action == 'plugin.sieverules' || rcmail.env.action == 'plugin.sieverules.advanced') && !rcmail.env.sieveruleserror) {
 				if (rcmail.gui_objects.sieverules_list) {
 					rcmail.sieverules_list = new rcube_list_widget(rcmail.gui_objects.sieverules_list, {multiselect:false, draggable:true, keyboard:true});
