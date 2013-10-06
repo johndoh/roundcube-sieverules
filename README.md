@@ -17,6 +17,7 @@ repository.
 Requirements
 ------------
 * [Roundcube jQueryUI plugin][rcjqui]
+* PEAR Net_Sieve 1.3.2 or newer ([included in Roundcube core][netsieve])
 
 Supported Extensions
 --------------------
@@ -277,4 +278,5 @@ Return:
 [rcplugrepo]: http://plugins.roundcube.net/packages/johndoh/sieverules
 [releases]: http://github.com/JohnDoh/Roundcube-Plugin-SieveRules-Managesieve/releases
 [rcjqui]: http://github.com/roundcube/roundcubemail/tree/master/plugins/jqueryui
+[netsieve]: http://github.com/roundcube/roundcubemail/blob/master/program/lib/Net/Sieve.php
 [gpl]: http://www.gnu.org/licenses/gpl.html
