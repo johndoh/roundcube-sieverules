@@ -25,7 +25,7 @@
   "require": {
     "php": ">=5.2.1",
     "roundcube/plugin-installer": ">=0.1.2",
-    "pear-pear2/Net_Sieve": ">=1.3.2"
+    "pear-pear2/PEAR2_Net_Sieve": ">=1.3.2"
   },
   "extra": {
     "roundcube": {
