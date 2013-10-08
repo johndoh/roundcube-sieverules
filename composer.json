@@ -16,16 +16,11 @@
     {
       "type": "composer",
       "url": "http://plugins.roundcube.net"
-    },
-    {
-      "type": "pear",
-      "url": "http://pear.php.net/"
     }
   ],
   "require": {
     "php": ">=5.2.1",
-    "roundcube/plugin-installer": ">=0.1.2",
-    "pear-pear/Net_Sieve": ">=1.3.2"
+    "roundcube/plugin-installer": ">=0.1.2"
   },
   "extra": {
     "roundcube": {
