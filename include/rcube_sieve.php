@@ -75,21 +75,16 @@ class rcube_sieve
 
 		// init importers
 		$dir = slashify(realpath(slashify($dir) . 'importFilters/'));
-		$handle = opendir($dir);
-		while ($importer = readdir($handle)) {
-			if (is_file($dir . $importer) && is_readable($dir . $importer)) {
-				include($dir . $importer);
+		foreach(glob($dir . '*.php') as $importer) {
+			$path_parts = pathinfo($importer);
+			include($importer);
+			$importer = 'srimport_' . $path_parts['filename'];
 
-				$importer = substr($importer, 0, -4);
-				$importer = 'srimport_' . $importer;
-
-				if (class_exists($importer, false)) {
-					$importerClass = new $importer();
-					$this->importers[$importer] = $importerClass;
-				}
+			if (class_exists($importer, false)) {
+				$importerClass = new $importer();
+				$this->importers[$importer] = $importerClass;
 			}
 		}
-		closedir($handle);
 	}
 
 	public function __destruct()
@@ -145,7 +140,7 @@ class rcube_sieve
 			$script = $this->sieve->getScript($ruleset);
 
 			foreach ($this->importers as $id => $importer) {
-				if ($importer->detector($script)) {
+				if ($importer->detector($script, $ruleset)) {
 					$result = array($id, $importer->name, $ruleset);
 					break;
 				}
