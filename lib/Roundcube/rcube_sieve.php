@@ -78,7 +78,7 @@ class rcube_sieve
 			$dir = slashify($dir);
 			$handle = opendir($dir);
 			while ($importer = readdir($handle)) {
-				if (is_file($dir . $importer) && is_readable($dir . $importer)) {
+				if (preg_match('/\.php$/', $importer) && is_file($dir . $importer) && is_readable($dir . $importer)) {
 					include($dir . $importer);
 
 					$importer = substr($importer, 0, -4);
@@ -147,7 +147,7 @@ class rcube_sieve
 			$script = $this->sieve->getScript($ruleset);
 
 			foreach ($this->importers as $id => $importer) {
-				if ($importer->detector($script)) {
+				if ($importer->detector($script, $ruleset)) {
 					$result = array($id, $importer->name, $ruleset);
 					break;
 				}

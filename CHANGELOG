@@ -1,6 +1,7 @@
 Roundcube Webmail SieveRules
 ============================
 
+ * add second argument (ruleset name) to import filter detect() function
  * lib/Net Sieve.php moved to Roundcube /lib directory (4daaa09)
  * Use new settings_actions hook to create settings tab (c49c35c)
  * Improve (and simplify) folder name encoding in fileinto actions

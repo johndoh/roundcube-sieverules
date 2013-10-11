@@ -15,7 +15,7 @@ class srimport_ingo
 {
 	public $name = 'Horde (INGO)';
 
-	public function detector($script)
+	public function detector($script, $name)
 	{
 		return preg_match('/# [a-z0-9\ ]+/i', $script) ? True : False;
 	}

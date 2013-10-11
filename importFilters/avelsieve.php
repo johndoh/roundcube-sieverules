@@ -15,7 +15,7 @@ class srimport_avelsieve
 {
 	public $name = 'Squirrelmail (Avelsieve)';
 
-	public function detector($script)
+	public function detector($script, $name)
 	{
 		return preg_match('/#AVELSIEVE_VERSION.*/', $script) ? True : False;
 	}
