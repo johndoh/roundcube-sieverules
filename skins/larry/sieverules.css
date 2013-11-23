@@ -68,7 +68,7 @@
 {
   position: absolute;
   top: 0;
-  left: 232px;
+  left: 212px;
   right: 0;
   bottom: 0;
 }
@@ -425,11 +425,4 @@ input.inputmask
   height: 20px;
   background-image: url(listicons.png);
   background-position: 5px -52px;
-}
-
-#sieverules-advanced .boxfooter #message
-{
-  position: absolute;
-  top: 0;
-  left: 65px;
 }
