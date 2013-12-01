@@ -1,14 +1,16 @@
 Roundcube Webmail SieveRules
 ============================
 
+Version 2.1 (2013-12-01, rc-1.0)
+=================================================
  * add second argument (ruleset name) to import filter detect() function
  * lib/Net Sieve.php moved to Roundcube /lib directory (4daaa09)
  * Use new settings_actions hook to create settings tab (c49c35c)
  * Improve (and simplify) folder name encoding in fileinto actions
- * Correct espacing of values (now done in the core)
+ * Correct escaping of values (now done in the core)
  * Update config file var names to match core
 
-Version 2.0 (2013-05-193, rc-1.0)
+Version 2.0 (2013-05-19, rc-1.0)
 =================================================
  * Update default config for most common setups:
      sieverules_address_rules = FALSE
