@@ -4,12 +4,12 @@
 
 #settings-sections #settingstabpluginsieverules a
 {
-  background-image: url(listicons.png);
+  background-image: url(images/listicons.png);
   background-position: 6px -2px;
 }
 
 #settings-sections #settingstabpluginsieverules.selected a
 {
-  background-image: url(listicons.png);
+  background-image: url(images/listicons.png);
   background-position: 6px -25px;
 }

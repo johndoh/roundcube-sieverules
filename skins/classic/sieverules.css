@@ -129,7 +129,7 @@ table.sieverules-table tbody td.control a,
   float: right;
   width: 16px;
   height: 16px;
-  background-image: url(icons.png);
+  background-image: url(images/icons.png);
 }
 
 table.sieverules-table tbody td.control a.up_arrow
@@ -172,7 +172,7 @@ table.sieverules-table tbody td.control a.down_arrow
   display: block;
   width: 16px;
   height: 16px;
-  background-image: url(icons.png);
+  background-image: url(images/icons.png);
   background-position: 0 -108px;
 }
 
@@ -181,7 +181,7 @@ table.sieverules-table tbody td.control a.down_arrow
   display: block;
   width: 16px;
   height: 16px;
-  background-image: url(icons.png);
+  background-image: url(images/icons.png);
   background-position: 0 -90px;
 }
 
