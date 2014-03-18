@@ -331,7 +331,7 @@ class sieverules extends rcube_plugin
 			'sieverulessetup' => array($this, 'gen_setup'),
 		));
 
-		$this->api->output->set_pagetitle($this->gettext('filters'));
+		$this->api->output->set_pagetitle($this->gettext('importfilters'));
 		$this->api->output->send('sieverules.setupsieverules');
 	}
 
@@ -626,7 +626,6 @@ class sieverules extends rcube_plugin
 			$out .= "&nbsp;&nbsp;" . $this->api->output->button(array('command' => 'plugin.sieverules.import', 'prop' => '_import=_none_', 'type' => 'input', 'class' => 'button', 'label' => 'cancel'));
 
 			$out = html::tag('p', array('style' => 'text-align: center; padding: 10px;'), "\n" . $out);
-			$out = html::tag('div', array('id' => 'prefs-title', 'class' => 'boxtitle'), rcmail::Q($this->gettext('importfilters'))) . $out;
 
 			return $out;
 		}
