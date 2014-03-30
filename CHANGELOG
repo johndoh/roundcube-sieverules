@@ -1,6 +1,15 @@
 Roundcube Webmail SieveRules
 ============================
 
+Version 2.1.2 (2014-03-30, rc-1.0)
+=================================================
+ * Update pear package name in composer requirements
+ * Update rule list row counting after change in core
+
+Version 2.1.1 (2013-12-29, rc-1.0)
+=================================================
+ * Correct skin folder structure for Roundcube packaging
+
 Version 2.1 (2013-12-01, rc-1.0)
 =================================================
  * add second argument (ruleset name) to import filter detect() function
