@@ -1948,7 +1948,7 @@ class sieverules extends rcube_plugin
 
 		// comparator select box
 		$field_id = 'rcmfd_comparator_'. $rowid;
-		$select_comparator = new html_select(array('id' => $field_id, 'name' => "_comparator[]") + (substr($defaults['op'], 0, 5) == 'count' || substr($defaults['op'], 0, 5) == 'value' ? array('disabled' => 'disabled') : array()));
+		$select_comparator = new html_select(array('id' => $field_id, 'name' => "_comparator[]") + (substr($defaults['op'], 0, 5) == 'count' || substr($defaults['op'], 0, 5) == 'value' ? array() : array('disabled' => 'disabled')));
 		foreach($this->comparators as $option) {
 			if (empty($option['ext']) || in_array($option['ext'], $ext))
 				$select_comparator->add($this->gettext($option['text']), $option['value']);

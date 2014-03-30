@@ -42,7 +42,23 @@ folder for details on the skin license.
 
 Install
 -------
-* Place this plugin folder into plugins directory of Roundcube
+* For installation with Composer the pear repository must be included in the
+repositories section of the composer.json file in the Roundcube root. For
+example:
+```js
+"repositories": [
+	{
+	  "type": "composer",
+	  "url": "http://plugins.roundcube.net"
+	},
+	{
+	  "type": "pear",
+	  "url": "http://pear.php.net"
+	}
+]
+```
+* For direct download place this plugin folder into plugins directory of
+Roundcube
 * Add sieverules to $config['plugins'] in your Roundcube config
 
 **NB:** When downloading the plugin from GitHub you will need to create a
