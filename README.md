@@ -203,7 +203,7 @@ have permission to read it.
 Import existing rulesets
 ------------------------
 The plugin contains a basic import system and 2 basic import filters. These
-example import filters are not perfect, use them with care you may loose some
+example import filters are not perfect, use them with care you may lose some
 rule data! You can create your own filter (or modify existing ones), if you do
 please consider sharing it. To create an import filter you must add a file in
 the importFilters directory. The file must contain a class named
