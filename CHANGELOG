@@ -1,6 +1,7 @@
 Roundcube Webmail SieveRules
 ============================
 
+ * Add support for :matches
  * Drop IE6 support
 
 Version 2.1.2 (2014-03-30, rc-1.0)

@@ -133,6 +133,8 @@ class sieverules extends rcube_plugin
 
 	// default advoperators
 	private $advoperators = array(
+					array('text' => 'filtermatches', 'value' => 'matches', 'ext' => null),
+					array('text' => 'filternotmatches', 'value' => 'notmatches', 'ext' => null),
 					array('text' => 'filterregex', 'value' => 'regex', 'ext' => 'regex'),
 					array('text' => 'filternotregex', 'value' => 'notregex', 'ext' => 'regex'),
 					array('text' => 'countisgreaterthan', 'value' => 'count "gt"', 'ext' => 'relational'),

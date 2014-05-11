@@ -109,6 +109,8 @@ The following options are available in each field:
   * 'notis' : is not equal to
   * 'exists' : exists
   * 'notexists' : does not exist
+  * 'matches' : matches wildcard string
+  * 'notmatches' : does not match wildcard string
   * 'regex' : matches regular expression
   * 'notregex' : does not match regular expression
   * 'count "gt"': count is greater than
