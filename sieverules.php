@@ -298,9 +298,8 @@ class sieverules extends rcube_plugin
 			$rcmail->html_editor('sieverules');
 			$this->api->output->add_script(sprintf("window.rcmail_editor_settings = %s",
 				json_encode(array(
-				'plugins' => 'paste,tabfocus',
-				'theme_advanced_buttons1' => 'bold,italic,underline,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,separator,outdent,indent,charmap,hr',
-				'theme_advanced_buttons2' => 'link,unlink,code,forecolor,fontselect,fontsizeselect',
+				'plugins' => array('autolink charmap code hr link paste tabfocus textcolor'),
+				'toolbar' => 'bold italic underline alignleft aligncenter alignright alignjustify | outdent indent charmap hr | link unlink | code forecolor | fontselect fontsizeselect'
 			))), 'head');
 
 			$this->api->output->set_pagetitle($this->action == 'plugin.sieverules.add' ? $this->gettext('newfilter') : $this->gettext('edititem'));
@@ -664,8 +663,8 @@ class sieverules extends rcube_plugin
 			'sieverules.norulename', 'sieverules.ruleexists', 'sieverules.noheader',
 			'sieverules.headerbadchars', 'sieverules.noheadervalue', 'sieverules.sizewrongformat',
 			'sieverules.noredirect', 'sieverules.redirectaddresserror', 'sieverules.noreject', 'sieverules.vacnoperiod',
-			'sieverules.vacperiodwrongformat', 'sieverules.vacnomsg', 'sieverules.notifynomethod', 'sieverules.missingfoldername',
-			'sieverules.notifynomsg', 'sieverules.ruledeleteconfirm',
+			'sieverules.vacperiodwrongformat', 'sieverules.vacnomsg', 'sieverules.vacmsgone', 'sieverules.notifynomethod',
+			'sieverules.missingfoldername', 'sieverules.notifynomsg', 'sieverules.ruledeleteconfirm',
 			'sieverules.actiondeleteconfirm', 'sieverules.notifyinvalidmethod', 'sieverules.nobodycontentpart',
 			'sieverules.badoperator','sieverules.baddateformat','sieverules.badtimeformat','sieverules.vactoexp_err','editorwarning',
 			'sieverules.eheadernoname','sieverules.eheadernoval');
@@ -823,7 +822,7 @@ class sieverules extends rcube_plugin
 		else foreach ($cur_script['actions'] as $idx => $actions)
 			$actions_table = $this->_action_row($ext, $actions_table, $idx, $actions, $attrib, $example);
 
-		$this->api->output->set_env('sieverules_actions', $actions_table->size());
+		$this->api->output->set_env('sieverules_actions', $actions_table->size() - 3);
 		$this->api->output->set_env('sieverules_htmleditor', $rcmail->config->get('htmleditor'));
 
 		$out .= html::tag('fieldset', null, html::tag('legend', null, rcmail::Q($this->gettext('messagesactions')))

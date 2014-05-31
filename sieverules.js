@@ -589,15 +589,22 @@ rcube_webmail.prototype.sieverules_action_select = function(sel) {
 	else if (obj.value == 'reject' || obj.value == 'ereject')
 		document.getElementsByName('_reject[]')[idx].style.display = '';
 	else if (obj.value == 'vacation') {
-		document.getElementsByName('_period[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
+		if ($('input[name="_subject[]"]:visible').length == 0) {
+			document.getElementsByName('_period[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
 
-		if (rcmail.env.sieverules_htmleditor == 1) {
-			rowid = document.getElementsByName('_msg[]')[idx].id.replace('rcmfd_sievevacmag_', '');
-			document.getElementById('rcmfd_sievevachtmlcb_' + rowid).checked = true;
-			rcmail.sieverules_toggle_vac_html(document.getElementById('rcmfd_sievevachtmlcb_' + rowid), rowid, 'rcmfd_sievevacmag_' + rowid);
+			if (rcmail.env.sieverules_htmleditor == 1) {
+				rowid = document.getElementsByName('_msg[]')[idx].id.replace('rcmfd_sievevacmag_', '');
+				document.getElementById('rcmfd_sievevachtmlcb_' + rowid).checked = true;
+				rcmail.sieverules_toggle_vac_html(document.getElementById('rcmfd_sievevachtmlcb_' + rowid), rowid, 'rcmfd_sievevacmag_' + rowid);
+			}
+
+			rcmail.enable_sig(document.getElementsByName('_vacfrom[]')[idx]);
 		}
-
-		rcmail.enable_sig(document.getElementsByName('_vacfrom[]')[idx]);
+		else {
+			alert(rcmail.gettext('vacmsgone','sieverules'));
+			obj.selectedIndex = obj.selectedIndex != 0 ? 0 : 1;
+			rcmail.sieverules_action_select(obj);
+		}
 	}
 	else if (obj.value == 'notify' || obj.value == 'enotify')
 		document.getElementsByName('_nmethod[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
@@ -680,8 +687,12 @@ rcube_webmail.prototype.sieverules_toggle_vac_osubj = function(sel, id) {
 }
 
 rcube_webmail.prototype.sieverules_toggle_vac_html = function(obj, rowid, txtid) {
-	rcmail_toggle_editor(obj, txtid);
+	// make sure the editor is initalised
+	if (obj.checked && !$('#' + txtid).hasClass('mce_editor')) {
+		rcmail.editor_init(rcmail.env.editor_config, txtid);
+	}
 
+	rcmail.command('toggle-editor', {id: txtid, html: obj.checked});
 	var sel = rcube_find_object('rcmfd_sievevachtmlhd_' + rowid);
 	sel.value = obj.checked ? obj.value : "";
 }
@@ -1313,7 +1324,7 @@ $(document).ready(function() {
 							//	return false;
 							//}
 
-							var editor = tinyMCE.get("rcmfd_sievevacmag_" + (i - 1));
+							var editor = tinymce.get("rcmfd_sievevacmag_" + (i - 1));
 							if ((editor && editor.getContent() == '') || (!editor && msgs[i].value == '')) {
 								alert(rcmail.gettext('vacnomsg','sieverules'));
 								msgs[i].focus();
@@ -1440,7 +1451,7 @@ $(document).ready(function() {
 						sig_id = obj.selectedIndex + 1;
 
 					if (is_html) {
-						var editor = tinyMCE.get("rcmfd_sievevacmag_" + id),
+						var editor = tinymce.get("rcmfd_sievevacmag_" + id),
 						sigElem = editor.dom.get('_rc_sig');
 
 						// Append the signature as a div within the body
@@ -1503,6 +1514,9 @@ $(document).ready(function() {
 					rcmail.enable_command('plugin.sieverules.del_action', true);
 
 				rcmail.enable_command('toggle-editor', true);
+				if ($('.mce_editor').length == 1) {
+					rcmail.editor_init(rcmail.env.editor_config, $('.mce_editor').attr('id'));
+				}
 
 				// enable sig button
 				var acts = document.getElementsByName('_act[]');
