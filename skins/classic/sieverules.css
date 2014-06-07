@@ -30,12 +30,12 @@
   overflow: auto;
 }
 
-#sieverules-list-filters thead td
+#sieverules-list-filters thead th
 {
   height: 20px;
 }
 
-#sieverules-list-filters thead td span
+#sieverules-list-filters thead th span
 {
   position: absolute;
   top: 2px;
@@ -48,7 +48,7 @@
 }
 
 
-#sieverules-list-filters thead td img
+#sieverules-list-filters thead th img
 {
   position: absolute;
   top: 2px;

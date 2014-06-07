@@ -238,7 +238,7 @@ class sieverules extends rcube_plugin
 	function settings_tab($p)
 	{
 		// add sieverules tab
-		$p['actions'][] = array('action' => 'plugin.sieverules', 'class' => 'sieverules', 'label' => 'sieverules.filters', 'title' => 'sieverules.managefilters');
+		$p['actions'][] = array('action' => 'plugin.sieverules', 'class' => 'sieverules', 'label' => 'sieverules.filters', 'title' => 'sieverules.managefilters', 'role' => 'button', 'aria-disabled' => 'false', 'tabindex' => '0');
 		return $p;
 	}
 

@@ -22,12 +22,13 @@
   overflow: auto;
 }
 
-#sieverules-list-filters thead td
+#sieverules-list-filters thead th
 {
   height: 15px;
+  text-align: left;
 }
 
-#sieverules-list-filters thead td span
+#sieverules-list-filters thead th span
 {
   position: absolute;
   top: 10px;
@@ -38,7 +39,7 @@
 }
 
 
-#sieverules-list-filters thead td img
+#sieverules-list-filters thead th img
 {
   position: absolute;
   top: 9px;
@@ -169,7 +170,7 @@ table.records-table
 }
 
 table.records-table tbody td,
-table.records-table thead td
+table.records-table thead th
 {
   border: 0;
 }
