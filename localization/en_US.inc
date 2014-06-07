@@ -147,6 +147,7 @@ $labels['headerappend'] = 'Append to existing message header.';
 $labels['headerindex'] = 'Header index';
 $labels['headerdelall'] = 'all occurrences';
 $labels['last'] = 'last';
+$labels['arialabelfiltersform'] = 'Filters edit form';
 
 $messages = array();
 $messages['nosieverules'] = 'No filters found.';
