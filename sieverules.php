@@ -277,6 +277,7 @@ class sieverules extends rcube_plugin
 
 		// add handlers for the various UI elements
 		$this->api->output->add_handlers(array(
+			'sieveruleslisttitle' => array($this, 'gen_list_title'),
 			'sieveruleslist' => array($this, 'gen_list'),
 			'sieverulesexamplelist' => array($this, 'gen_examples'),
 			'sieverulessetup' => array($this, 'gen_setup'),
@@ -358,25 +359,37 @@ class sieverules extends rcube_plugin
 		return $out;
 	}
 
+	function gen_list_title($attrib)
+	{
+		if (rcube::get_instance()->config->get('sieverules_multiplerules', false)) {
+			// if multiple rulesets enabled then add current ruleset name to UI plus an icon to signify active ruleset
+			if ($this->current_ruleset == $this->sieve->get_active()) {
+				$status = html::img(array('id' => 'rulesetstatus', 'src' => $attrib['activeicon'], 'alt' => $this->gettext('isactive'), 'title' => $this->gettext('isactive')));
+			}
+			else {
+				$status = html::img(array('id' => 'rulesetstatus', 'src' => $attrib['inactiveicon'], 'alt' => $this->gettext('isinactive'), 'title' => $this->gettext('isinactive')));
+			}
+
+			$title = html::span(array('title' => $this->current_ruleset), $this->gettext(array('name' => 'filtersname', 'vars' => array('name' => $this->current_ruleset)))) . $status;
+		}
+		else {
+			$title = $this->gettext('filters');
+		}
+
+		return $title;
+	}
+
+
 	function gen_list($attrib)
 	{
 		// create rule list for UI
 		$this->api->output->add_label('sieverules.movingfilter', 'loading', 'sieverules.switchtoadveditor', 'sieverules.filterdeleteconfirm');
 		$this->api->output->add_gui_object('sieverules_list', 'sieverules-table');
 
-		$table = new html_table(array('id' => 'sieverules-table', 'class' => 'records-table sieverules-table fixedheader', 'cellspacing' => '0', 'cols' => 2));
+		$table = new html_table($attrib + array('cols' => 2));
 
-		if (rcube::get_instance()->config->get('sieverules_multiplerules', false)) {
-			// if multiple rulesets enabled then add current ruleset name to UI plus an icon to signify active ruleset
-			if ($this->current_ruleset == $this->sieve->get_active())
-				$status = html::img(array('id' => 'rulesetstatus', 'src' => $attrib['activeicon'], 'alt' => $this->gettext('isactive'), 'title' => $this->gettext('isactive')));
-			else
-				$status = html::img(array('id' => 'rulesetstatus', 'src' => $attrib['inactiveicon'], 'alt' => $this->gettext('isinactive'), 'title' => $this->gettext('isinactive')));
-
-			$table->add_header(array('colspan' => '2'), html::span(array('title' => $this->current_ruleset), $this->gettext(array('name' => 'filtersname', 'vars' => array('name' => $this->current_ruleset)))) . $status);
-		}
-		else {
-			$table->add_header(array('colspan' => 2), $this->gettext('filters'));
+		if (!$attrib['noheader']) {
+			$table->add_header(array('colspan' => 2), $this->gen_list_title($attrib));
 		}
 
 		if (sizeof($this->script) == 0) {
@@ -420,8 +433,11 @@ class sieverules extends rcube_plugin
 		if (sizeof($this->examples) > 0) {
 			$this->api->output->add_gui_object('sieverules_examples', 'sieverules-examples');
 
-			$examples = new html_table(array('id' => 'sieverules-examples', 'class' => 'records-table sieverules-examples fixedheader', 'cellspacing' => '0', 'cols' => 1));
-			$examples->add_header(null, $this->gettext('examplefilters'));
+			$examples = new html_table($attrib + array('cols' => 1));
+
+			if (!$attrib['noheader']) {
+				$examples->add_header(null, $this->gettext('examplefilters'));
+			}
 
 			foreach($this->examples as $idx => $filter) {
 				$examples->set_row_attribs(array('id' => 'rcmrowex' . $idx));
@@ -520,8 +536,8 @@ class sieverules extends rcube_plugin
 			$lis = '';
 
 			if (sizeof($this->sieve->list) == 0) {
-				$href = html::a(array('href' => "#", 'class' => 'active', 'onclick' => 'return false;'), rcmail::Q($this->gettext('nosieverulesets')));
-				$lis .= html::tag('li', $href);
+				$href = html::a(array('href' => "#", 'class' => 'active', 'onclick' => 'return false;', 'role' => 'button', 'tabindex' => '0', 'aria-disabled' => 'false'), rcmail::Q($this->gettext('nosieverulesets')));
+				$lis .= html::tag('li', array('role' => 'menuitem'), $href);
 			}
 			else foreach ($rulesets as $ruleset) {
 				$class = 'active';
@@ -532,8 +548,8 @@ class sieverules extends rcube_plugin
 				if ($ruleset === $activeruleset)
 					$ruleset_text = str_replace('%s', $ruleset, $this->gettext('activeruleset'));
 
-				$href = html::a(array('href' => "#", 'class' => $class, 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_select_ruleset(\''. $ruleset .'\', \''. $action .'\');'), rcmail::Q($ruleset_text));
-				$lis .= html::tag('li', null, $href);
+				$href = html::a(array('href' => "#", 'class' => $class, 'onclick' => rcmail_output::JS_OBJECT_NAME . '.sieverules_select_ruleset(\''. $ruleset .'\', \''. $action .'\');', 'role' => 'button', 'tabindex' => '0', 'aria-disabled' => 'false'), rcmail::Q($ruleset_text));
+				$lis .= html::tag('li', array('role' => 'menuitem'), $href);
 			}
 
 			return $lis;
@@ -1874,7 +1890,7 @@ class sieverules extends rcube_plugin
 		// add add/delete buttons to UI
 		$add_button = $this->api->output->button(array('command' => 'plugin.sieverules.add_rule', 'type' => 'link', 'class' => 'add', 'title' => 'sieverules.addsieverule', 'content' => ' '));
 		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_rule', 'type' => 'link', 'class' => 'delete', 'classact' => 'delete_act', 'title' => 'sieverules.deletesieverule', 'content' => ' '));
-		$rules_table->add('control', $delete_button . $add_button);
+		$rules_table->add('control', $add_button . $delete_button);
 
 		if (isset($rule))
 			$rowid = $rules_table->size();
@@ -2457,7 +2473,7 @@ class sieverules extends rcube_plugin
 		$delete_button = $this->api->output->button(array('command' => 'plugin.sieverules.del_action', 'type' => 'link', 'class' => 'delete', 'classact' => 'delete_act', 'title' => 'sieverules.deletesieveact', 'content' => ' '));
 
 		if ($rcmail->config->get('sieverules_multiple_actions'))
-			$actions_table->add('control', $delete_button . $add_button);
+			$actions_table->add('control', $add_button . $delete_button);
 		else
 			$actions_table->add('control', "&nbsp;");
 
@@ -2474,7 +2490,7 @@ class sieverules extends rcube_plugin
 		$up_link = $output->button(array('command' => 'plugin.sieverules.move', 'prop' => ($idx - 1), 'type' => 'link', 'class' => 'up_arrow', 'title' => 'sieverules.moveup', 'content' => ' '));
 		$down_link = $output->button(array('command' => 'plugin.sieverules.move', 'prop' => ($idx + 2), 'type' => 'link', 'class' => 'down_arrow', 'title' => 'sieverules.movedown', 'content' => ' '));
 
-		$parts['control'] = $up_link . $down_link;
+		$parts['control'] = $down_link . $up_link;
 
 		return $parts;
 	}

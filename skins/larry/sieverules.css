@@ -22,27 +22,10 @@
   overflow: auto;
 }
 
-#sieverules-list-filters thead th
-{
-  height: 18px;
-  text-align: left;
-}
-
-#sieverules-list-filters thead th span
+#sieverules-list h2 img
 {
   position: absolute;
-  top: 10px;
-  left: 8px;
-  right: 30px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-
-#sieverules-list-filters thead th img
-{
-  position: absolute;
-  top: 9px;
+  top: 7px;
   right: 8px;
 }
 
@@ -54,6 +37,11 @@
   right: 0;
   width: 100%;
   overflow: auto;
+}
+
+#sieverules-list-examples thead th
+{
+  text-align: left;
 }
 
 #sieverules-details
@@ -103,21 +91,25 @@ table.sieverules-table tbody td.control a,
 #rules-table tbody td.control a,
 #actions-table tbody td.control a
 {
-  display: block;
-  float: right;
+  display: inline-block;
   width: 16px;
   height: 16px;
   background-image: url(images/icons.png);
 }
 
+table.sieverules-table tbody td.control a {
+  height: 12px;
+}
+
+
 table.sieverules-table tbody td.control a.up_arrow
 {
-  background-position: 0 0;
+  background-position: 0 -1px;
 }
 
 table.sieverules-table tbody td.control a.down_arrow
 {
-  background-position: 0 -18px;
+  background-position: 0 -19px;
 }
 
 #rules-table tbody td.control,

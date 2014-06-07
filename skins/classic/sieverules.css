@@ -125,21 +125,24 @@ table.sieverules-table tbody td.control a,
 #rules-table tbody td.control a,
 #actions-table tbody td.control a
 {
-  display: block;
-  float: right;
+  display: inline-block;
   width: 16px;
   height: 16px;
   background-image: url(images/icons.png);
 }
 
+table.sieverules-table tbody td.control a {
+  height: 10px;
+}
+
 table.sieverules-table tbody td.control a.up_arrow
 {
-  background-position: 0 0;
+  background-position: 0 -2px;
 }
 
 table.sieverules-table tbody td.control a.down_arrow
 {
-  background-position: 0 -18px;
+  background-position: 0 -19px;
 }
 
 #rules-table tbody td.control,
