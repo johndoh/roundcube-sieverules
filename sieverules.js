@@ -1082,6 +1082,7 @@ $(document).ready(function() {
 					newNode2.style.display = "none";
 					newNode3.style.display = "none";
 
+					$(window).trigger('resize');
 					return false;
 				}, true);
 
@@ -1100,6 +1101,7 @@ $(document).ready(function() {
 					if (rcube_find_object('rules-table').tBodies[0].rows.length == 6)
 						rcmail.enable_command('plugin.sieverules.del_rule', false);
 
+					$(window).trigger('resize');
 					return false;
 				}, false);
 
@@ -1124,6 +1126,7 @@ $(document).ready(function() {
 
 					newNode.style.display = "";
 
+					$(window).trigger('resize');
 					return false;
 				}, true);
 
@@ -1139,6 +1142,7 @@ $(document).ready(function() {
 					if (rcube_find_object('actions-table').tBodies[0].rows.length == 2)
 						rcmail.enable_command('plugin.sieverules.del_action', false);
 
+					$(window).trigger('resize');
 					return false;
 				}, false);
 

@@ -776,19 +776,19 @@ class sieverules extends rcube_plugin
 		if (sizeof($cur_script['tests']) == 1 && $cur_script['tests'][0]['type'] == 'true' && !$cur_script['tests'][0]['not'])
 			$any = true;
 
-		// filter disable
-		$field_id = 'rcmfd_disable';
-		$input_disable = new html_checkbox(array('name' => '_disable', 'id' => $field_id, 'value' => 1));
-
-		$out .= html::span('disableLink', html::label($field_id, rcmail::Q($this->gettext('disablerule')))
-				. "&nbsp;" . $input_disable->show($cur_script['disabled']));
-
 		// filter name input
 		$field_id = 'rcmfd_name';
 		$input_name = new html_inputfield(array('name' => '_name', 'id' => $field_id));
 
 		$out .= html::label($field_id, rcmail::Q($this->gettext('filtername')));
 		$out .= "&nbsp;" . $input_name->show($cur_script['name']);
+
+		// filter disable
+		$field_id = 'rcmfd_disable';
+		$input_disable = new html_checkbox(array('name' => '_disable', 'id' => $field_id, 'value' => 1));
+
+		$out .= html::span('disableLink', html::label($field_id, rcmail::Q($this->gettext('disablerule')))
+				. "&nbsp;" . $input_disable->show($cur_script['disabled']));
 
 		$out .= "<br /><br />";
 
