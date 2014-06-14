@@ -9,13 +9,13 @@
 
 <style type="text/css">
 
-#sieverules-list { width: <roundcube:exp expression="!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter-5 : 240" />px; }
+#sieverules-list { width: <roundcube:exp expression="!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter-5 : 190" />px; }
 <roundcube:if condition="env:examples" />
 #sieverules-list-filters { bottom: <roundcube:exp expression="!empty(cookie:sievefiltersviewsplitter) ? cookie:sievefiltersviewsplitter+5 : 0" />px; }
 <roundcube:else />
 #sieverules-list-filters { bottom: 0; }
 <roundcube:endif />
-#sieverules-details { left: <roundcube:exp expression="!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter+5 : 250" />px; }
+#sieverules-details { left: <roundcube:exp expression="!empty(cookie:sieverulesviewsplitter) ? cookie:sieverulesviewsplitter+5 : 200" />px; }
 </style>
 
 </head>
@@ -42,7 +42,7 @@
 </div>
 
 <script type="text/javascript">
-	var rulesviewsplit = new rcube_splitter({id:'sieverulesviewsplitter', p1: 'sieverules-list', p2: 'sieverules-details', orientation: 'v', relative: true, start: 245});
+	var rulesviewsplit = new rcube_splitter({id:'sieverulesviewsplitter', p1: 'sieverules-list', p2: 'sieverules-details', orientation: 'v', relative: true, start: 195});
 	rcmail.add_onload('rulesviewsplit.init()');
 
 	if ($('#sieverules-list-examples').length > 0) {

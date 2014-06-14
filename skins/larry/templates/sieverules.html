@@ -59,7 +59,7 @@
 /* <![CDATA[ */
 
 $(document).ready(function(){
-	new rcube_splitter({id:'sieverulesviewsplitter', p1: '#sieverules-list', p2: '#sieverules-details', orientation: 'v', relative: true, start: 240}).init();
+	new rcube_splitter({id:'sieverulesviewsplitter', p1: '#sieverules-list', p2: '#sieverules-details', orientation: 'v', relative: true, start:266, min:180, size:12}).init();
 
 	if ($('#sieverules-list-examples').length > 0) {
 		var filtersHeight = parseInt($('#sieverules-list').height() - 210);
