@@ -34,6 +34,18 @@ $config['sieverules_auth_pw'] = null;
 // enable TLS for managesieve server connection
 $config['sieverules_usetls'] = FALSE;
 
+// Connection context options
+// See http://php.net/manual/en/context.ssl.php
+// The example below enables server certificate validation
+// $config['sieverules_conn_options'] = array(
+//   'ssl'         => array(
+//     'verify_peer'  => true,
+//     'verify_depth' => 3,
+//     'cafile'       => '/etc/openssl/certs/ca.crt',
+//   )
+// );
+$config['sieverules_conn_options'] = null;
+
 // folder delimiter - if your sieve system uses a different folder delimiter to
 // your IMAP server set it here, otherwise leave as null to use IMAP delimiter
 $config['sieverules_folder_delimiter'] = null;

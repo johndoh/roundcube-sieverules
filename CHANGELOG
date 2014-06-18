@@ -1,6 +1,7 @@
 Roundcube Webmail SieveRules
 ============================
 
+ * Add connection options like 109bcce
  * Update after dev-accessibility merged to RC master
  * Update to TinyMCE 4 (731d190)
  * Add support for :matches

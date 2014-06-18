@@ -29,14 +29,14 @@ class rcube_sieve
 	public $list = array();
 	public $script;
 
-	public function __construct($username, $password, $host, $port, $auth_type = NULL, $usetls, $ruleset, $dir, $elsif = true, $auth_cid = NULL, $auth_pw = NULL)
+	public function __construct($username, $password, $host, $port, $auth_type = NULL, $usetls, $ruleset, $dir, $elsif = true, $auth_cid = NULL, $auth_pw = NULL, $socket_options = array())
 	{
 		$this->sieve = new Net_Sieve();
 
 		$data = rcube::get_instance()->plugins->exec_hook('sieverules_connect', array(
 			'username' => $username, 'password' => $password, 'host' => $host, 'port' => $port,
 			'auth_type' => $auth_type, 'usetls' => $usetls, 'ruleset' => $ruleset, 'dir' => $dir,
-			'elsif' => $elsif, 'auth_cid' => $auth_cid, 'auth_pw' => $auth_pw));
+			'elsif' => $elsif, 'auth_cid' => $auth_cid, 'auth_pw' => $auth_pw, 'socket_options' => $options));
 
 		$username = $data['username'];
 		$password = $data['password'];
@@ -49,8 +49,9 @@ class rcube_sieve
 		$elsif = $data['elsif'];
 		$auth_cid = $data['auth_cid'];
 		$auth_pw = $data['auth_pw'];
+		$socket_options = $data['socket_options'];
 
-		if (PEAR::isError($this->sieve->connect($host, $port, NULL, $usetls)))
+		if (PEAR::isError($this->sieve->connect($host, $port, $socket_options, $usetls)))
 			return $this->_set_error(SIEVE_ERROR_CONNECTION);
 
 		if (!empty($auth_cid)) {
