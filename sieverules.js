@@ -795,7 +795,12 @@ rcube_webmail.prototype.sieverulesdialog_submit = function() {
 	var action = rcube_find_object('sieverulesrsdialog_action').value;
 	var val = rcube_find_object('sieverulesrsdialog_name').value;
 
-	if (action == '' || action == 'rename_ruleset') {
+	if (val == '') {
+		alert(rcmail.gettext('norulesetname','sieverules'));
+		rcube_find_object('sieverulesrsdialog_name').focus();
+		return false;
+	}
+	else if (action == '' || action == 'rename_ruleset') {
 		var obj = rcube_find_object('sieverulesrsdialog_ruleset');
 		for (i = 0; i < obj.options.length ; i++) {
 			if (obj.options[i].value == val) {

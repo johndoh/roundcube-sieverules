@@ -299,11 +299,11 @@ class sieverules extends rcube_plugin
 			$rcmail->html_editor('sieverules');
 			$this->api->output->add_script(sprintf("window.rcmail_editor_settings = %s",
 				json_encode(array(
-				'plugins' => array('autolink charmap code hr link paste tabfocus textcolor'),
+				'plugins' => 'autolink charmap code colorpicker hr link paste tabfocus textcolor',
 				'toolbar' => 'bold italic underline alignleft aligncenter alignright alignjustify | outdent indent charmap hr | link unlink | code forecolor | fontselect fontsizeselect'
 			))), 'head');
 
-			$this->api->output->set_pagetitle($this->action == 'plugin.sieverules.add' ? $this->gettext('newfilter') : $this->gettext('edititem'));
+			$this->api->output->set_pagetitle($this->action == 'plugin.sieverules.add' ? $this->gettext('newfilter') : $this->gettext('editfilter'));
 			$this->api->output->send('sieverules.editsieverule');
 		}
 		elseif ($this->action == 'plugin.sieverules.setup') {
@@ -463,7 +463,7 @@ class sieverules extends rcube_plugin
 	function gen_rulelist($attrib)
 	{
 		// generate ruleset list (used when multiple rulesets enabled)
-		$this->api->output->add_label('sieverules.delrulesetconf', 'sieverules.rulesetexists');
+		$this->api->output->add_label('sieverules.delrulesetconf', 'sieverules.rulesetexists', 'sieverules.norulesetname');
 
 		// get all the rulesets on the server
 		$rulesets = array();
@@ -499,7 +499,7 @@ class sieverules extends rcube_plugin
 		$table = new html_table(array('cols' => 2, 'class' => 'propform'));
 		$table->set_row_attribs(array('id' => 'sieverulesrsdialog_input'));
 		$table->add('title', html::label('sieverulesrsdialog_name', rcmail::Q($this->gettext('name'))));
-		$table->add(null, html::tag('input', array('type' => 'text', 'id' => 'sieverulesrsdialog_name', 'name' => '_name', 'value' => '')));
+		$table->add(null, html::tag('input', array('type' => 'text', 'id' => 'sieverulesrsdialog_name', 'name' => '_name', 'value' => '', 'required' => 'required')));
 
 		$select_ruleset = new html_select(array('id' => 'sieverulesrsdialog_ruleset'));
 		if (sizeof($this->sieve->list) == 1) {
@@ -778,7 +778,7 @@ class sieverules extends rcube_plugin
 
 		// filter name input
 		$field_id = 'rcmfd_name';
-		$input_name = new html_inputfield(array('name' => '_name', 'id' => $field_id));
+		$input_name = new html_inputfield(array('name' => '_name', 'id' => $field_id, 'required' => 'required'));
 
 		$out .= html::label($field_id, rcmail::Q($this->gettext('filtername')));
 		$out .= "&nbsp;" . $input_name->show($cur_script['name']);
