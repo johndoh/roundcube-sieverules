@@ -5,7 +5,7 @@
 <roundcube:include file="/includes/links.html" />
 <link rel="stylesheet" type="text/css" href="/this/sieverules.css" />
 </head>
-<body class="noscroll">
+<roundcube:if condition="env:extwin" /><body class="noscroll extwin"><roundcube:else /><body class="noscroll"><roundcube:endif />
 
 <roundcube:include file="/includes/header.html" />
 
