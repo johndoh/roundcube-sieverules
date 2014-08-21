@@ -21,6 +21,8 @@ $labels['filteris'] = 'es igual a';
 $labels['filterisnot'] = 'es distinto de';
 $labels['filterexists'] = 'existe';
 $labels['filternotexists'] = 'no existe';
+
+
 $labels['filterregex'] = 'concuerda con la expresion regular';
 $labels['filternotregex'] = 'no concuerda con la expresion regular';
 $labels['filterunder'] = 'es menos que';
