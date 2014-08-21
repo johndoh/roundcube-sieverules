@@ -3,11 +3,13 @@
 
 $labels = array();
 $labels['filters'] = 'Filtros';
+$labels['filtersname'] = 'Filtros ($name)';
 $labels['managefilters'] = 'Manejo de filtros';
 $labels['filtername'] = 'Nombre del filtro';
 $labels['disablerule'] = 'Desactivar regla';
 $labels['disabled'] = 'Desactivada';
 $labels['newfilter'] = 'Nuevo filtro';
+$labels['editfilter'] = 'Editar filtro';
 $labels['moveup'] = 'Mover arriba';
 $labels['movedown'] = 'Mover abajo';
 $labels['filterallof'] = 'concuerda con TODAS las reglas siguientes';
@@ -19,6 +21,8 @@ $labels['filteris'] = 'es igual a';
 $labels['filterisnot'] = 'es distinto de';
 $labels['filterexists'] = 'existe';
 $labels['filternotexists'] = 'no existe';
+
+
 $labels['filterregex'] = 'concuerda con la expresion regular';
 $labels['filternotregex'] = 'no concuerda con la expresion regular';
 $labels['filterunder'] = 'es menos que';
@@ -90,6 +94,8 @@ $labels['envelopefrom'] = 'Remitente en la cabecera';
 $labels['envelopeto'] = 'Destinatario en la cabecera';
 $labels['otherheader'] = 'Otra cabecera';
 $labels['period'] = 'Periodo';
+$labels['days'] = 'dias';
+$labels['seconds'] = 'segundos';
 $labels['message'] = 'Mensaje';
 $labels['sieveruleheaders'] = 'Ver ejemplos de otras cabeceras';
 $labels['examplefilters'] = 'Filtros de ejemplo';
