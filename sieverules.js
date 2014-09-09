@@ -3,14 +3,15 @@
  */
 
 rcube_webmail.prototype.sieverules_select = function(list) {
-	if (rcmail.sieverules_examples) rcmail.sieverules_examples.clear_selection();
-	var id;
+	if (rcmail.sieverules_examples)
+		rcmail.sieverules_examples.clear_selection();
 
 	if (this.sieverules_timer)
 		clearTimeout(rcmail.sieverules_timer);
 
+	var id;
 	if (id = list.get_single_selection())
-		rcmail.sieverules_timer = window.setTimeout(function() { rcmail.sieverules_load(id, 'plugin.sieverules.edit'); }, 200);
+		rcmail.sieverules_timer = window.setTimeout(function(id) { rcmail.sieverules_load(id, 'plugin.sieverules.edit'); }, 200, id);
 }
 
 rcube_webmail.prototype.sieverules_keypress = function(list) {
@@ -30,7 +31,7 @@ rcube_webmail.prototype.sieverules_ex_select = function(list) {
 
 	var id;
 	if (id = list.get_single_selection())
-		rcmail.sieverules_timer = window.setTimeout(function() { rcmail.sieverules_load(id, 'plugin.sieverules.add'); }, 200);
+		rcmail.sieverules_timer = window.setTimeout(function(id) { rcmail.sieverules_load(id, 'plugin.sieverules.add'); }, 200, id);
 }
 
 rcube_webmail.prototype.sieverules_mouse_up = function(e) {
