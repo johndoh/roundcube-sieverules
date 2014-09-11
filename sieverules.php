@@ -2278,6 +2278,7 @@ class sieverules extends rcube_plugin
 			$period_type_show .= '&nbsp;&nbsp;' . $input_periodtype->show($defaults['periodtype']) . "&nbsp;" . html::label($field_id . '_seconds', rcmail::Q($this->gettext('seconds')));
 			$input_periodtype = new html_hiddenfield(array('id' => 'rcmfd_sievevacperiodtype_'. $rowid, 'name' => '_periodtype[]'));
 
+			$vacs_table->set_row_attribs(array('class' => 'advanced', 'style' => $display['vacadv']));
 			$vacs_table->add(null, '&nbsp;');
 			$vacs_table->add(null, $period_type_show . $input_periodtype->show($defaults['periodtype']));
 			$vacs_table->add(null, '&nbsp;');
