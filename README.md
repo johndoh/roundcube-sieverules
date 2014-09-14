@@ -188,12 +188,13 @@ have permission to read it.
 
 Import existing rulesets
 ------------------------
-The plugin contains a basic import system and 2 basic import filters. These
-example import filters are not perfect, use them with care you may lose some
-rule data! You can create your own filter (or modify existing ones), if you do
-please consider sharing it. To create an import filter you must add a file in
-the importFilters directory. The file must contain a class named
-'srimport_[filename]'. Each import filter must have:
+The plugin contains a basic import system and 2 example import filters. These
+filters are not perfect, use them with care you may lose some rule data! You
+can create your own filter (or modify existing ones). To create an import
+filter you must either rename one of the example files by removing .ex from
+the end of the file name or create your own file in the importFilters
+directory. The file must contain a class named 'srimport_[filename]'. Each
+import filter must have:
 * An attribute called name - this should be the user friendly name of the
 import e.g. Squirrelmail (Avelsieve)
 * A pubic function called detector - used to detect of if current rule file
