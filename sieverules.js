@@ -325,6 +325,8 @@ rcube_webmail.prototype.sieverules_header_select = function(sel) {
 	var header = obj.value.split('::')[1];
 	var selIdx = 0;
 	var target_obj = $("input[name='_target[]']")[idx];
+	$(target_obj).datepicker("destroy");
+	$(target_obj).unmask();
 
 	document.getElementsByName('_test[]')[idx].value = testType;
 	document.getElementsByName('_header[]')[idx].value = header;
@@ -333,7 +335,6 @@ rcube_webmail.prototype.sieverules_header_select = function(sel) {
 	document.getElementsByName('_bodypart[]')[idx].style.display = 'none';
 	document.getElementsByName('_datepart[]')[idx].style.display = 'none';
 	document.getElementsByName('_weekday[]')[idx].style.display = 'none';
-	$(target_obj).unmask();
 
 	if (header == 'size') {
 		document.getElementsByName('_header[]')[idx].style.visibility = 'hidden';
