@@ -83,7 +83,7 @@ $config['sieverules_allowed_actions'] = array(
 
 // headers listed as examples of "Other headers"
 $config['sieverules_other_headers'] = array(
-											'Reply-To', 'List-Id', 'MailingList', 'Mailing-List',
+											'Bcc', 'Reply-To', 'List-Id', 'MailingList', 'Mailing-List',
 											'X-ML-Name', 'X-List', 'X-List-Name', 'X-Mailing-List',
 											'Resent-From', 'Resent-To', 'X-Mailer', 'X-MailingList',
 											'X-Spam-Status', 'X-Priority', 'Importance', 'X-MSMail-Priority',

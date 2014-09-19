@@ -30,7 +30,6 @@ class sieverules extends rcube_plugin
 					array('text' => 'from', 'value' => 'header::From', 'ext' => null),
 					array('text' => 'to', 'value' => 'header::To', 'ext' => null),
 					array('text' => 'cc', 'value' => 'header::Cc', 'ext' => null),
-					array('text' => 'bcc', 'value' => 'header::Bcc', 'ext' => null),
 					array('text' => 'envelopeto', 'value' => 'envelope::To', 'ext' => 'envelope'),
 					array('text' => 'envelopefrom', 'value' => 'envelope::From', 'ext' => 'envelope'),
 					array('text' => 'body', 'value' => 'body::body', 'ext' => 'body'),
