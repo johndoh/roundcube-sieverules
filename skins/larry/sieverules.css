@@ -402,7 +402,7 @@ input.inputmask
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eaeaea), color-stop(100%,#c8c8c8));
   background: -o-linear-gradient(top, #eaeaea 0%, #c8c8c8 100%);
   background: -ms-linear-gradient(top, #eaeaea 0%, #c8c8c8 100%);
-  background: linear-gradient(top, #eaeaea 0%, #c8c8c8 100%);
+  background: linear-gradient(to bottom, #eaeaea 0%, #c8c8c8 100%);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
