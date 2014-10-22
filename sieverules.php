@@ -1502,7 +1502,8 @@ class sieverules extends rcube_plugin
 						$rcmail->config->get('sieverules_port'), $rcmail->config->get('sieverules_auth_type', NULL),
 						$rcmail->config->get('sieverules_usetls'), $this->current_ruleset,
 						$this->home, $rcmail->config->get('sieverules_use_elsif', true),
-						$rcmail->config->get('sieverules_auth_cid', NULL), $rcmail->config->get('sieverules_auth_pw', NULL));
+						$rcmail->config->get('sieverules_auth_cid', NULL), $rcmail->config->get('sieverules_auth_pw', NULL),
+						$rcmail->config->get('sieverules_conn_options', NULL));
 
 			if ($rcmail->config->get('sieverules_debug', false))
 				$this->sieve->set_debug(true);

@@ -1,6 +1,8 @@
 Roundcube Webmail SieveRules
 ============================
 
+ * Add connection options like 109bcce
+
 Version 2.1.2 (2014-03-30, rc-1.0)
 =================================================
  * Update pear package name in composer requirements
