@@ -36,6 +36,12 @@ class srimport_ingo
 				}
 				elseif (isset($name[$i])) {
 					$token = str_replace(":comparator \"i;ascii-casemap\" ", "", $token);
+					
+                                        // correct ingo syntax "address :all :contains "From|To", just refer to header
+                                        $pregsearch = '/address :all :contains "(From|To)"/';
+                                        $pregrepl = 'header :contains "${1}"';
+                                        $token = preg_replace($pregsearch, $pregrepl, $token);					
+					
 					$content .= $token . "\n";
 					$i++;
 				}
