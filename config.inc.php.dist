@@ -157,6 +157,18 @@ $config['sieverules_fileinto_options'] = 0;
 // 1 - Use the name and email address, not all servers support this option - :from "First Last <user@example.com>"
 $config['sieverules_from_format'] = 0;
 
+// Display a shortcut on mail screen to create a rule based on the currently selected message(s)
+// 0 - No shortcut
+// 1 - Show icon on the mail toolbar
+// 2 - Show link in the more actions menu
+$config['sieverules_shortcut'] = 0;
+
+// Display option to add new criteria to an existing rule when creating a rule from the shortcut
+$config['sieverules_rule_setup'] = false;
+
+// List of additional headers to use when creating a rule from the shortcut
+$config['sieverules_additional_headers'] = array('List-Id');
+
 // For information on customising the rule file see "The structure of the rule file" in the README
 
 ?>

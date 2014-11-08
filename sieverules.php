@@ -12,7 +12,7 @@
  */
 class sieverules extends rcube_plugin
 {
-	public $task = 'settings';
+	public $task = 'mail|settings';
 	private $sieve;
 	private $sieve_error;
 	private $script;
@@ -23,6 +23,7 @@ class sieverules extends rcube_plugin
 	private $show_vachandle = false;
 	private $current_ruleset;
 	private $standardops = array();
+	private $additional_headers;
 
 	// default headers
 	private $headers = array(
@@ -178,60 +179,88 @@ class sieverules extends rcube_plugin
 	{
 		$rcmail = rcube::get_instance();
 		$this->load_config();
+		$this->add_texts('localization/');
+		$this->additional_headers = $rcmail->config->get('sieverules_additional_headers', array('List-Id'));
 
-		// load required plugin
-		$this->require_plugin('jqueryui');
+		if ($rcmail->task == 'mail') {
+			if (($rcmail->action == '' || $rcmail->action == 'show') && ($shortcut = $rcmail->config->get('sieverules_shortcut', 0)) > 0) {
+				$this->include_stylesheet($this->local_skin_path() . '/mailstyles.css');
+				$this->include_script('mail.js');
 
-		// set options from config file
-		if ($rcmail->config->get('sieverules_multiplerules') && rcube_utils::get_input_value('_ruleset', rcube_utils::INPUT_GET, true))
-			$this->current_ruleset = rcube_utils::get_input_value('_ruleset', rcube_utils::INPUT_GET, true);
-		elseif ($rcmail->config->get('sieverules_multiplerules') && $_SESSION['sieverules_current_ruleset'])
-			$this->current_ruleset = $_SESSION['sieverules_current_ruleset'];
-		elseif ($rcmail->config->get('sieverules_multiplerules'))
-			$this->current_ruleset = false;
-		else
-			$this->current_ruleset = $rcmail->config->get('sieverules_ruleset_name');
+				if ($shortcut == 1) {
+					$this->add_button(array('command' => 'plugin.sieverules.create', 'type' => 'link', 'class' => 'button buttonPas sieverules disabled', 'classact' => 'button sieverules', 'classsel' => 'button sieverulesSel', 'title' => 'sieverules.createfilterbased', 'label' => 'sieverules.createfilter'), 'toolbar');
+				}
+				else {
+					$button = $this->api->output->button(array('command' => 'plugin.sieverules.create', 'label' => 'sieverules.createfilter', 'class' => 'icon sieverules', 'classact' => 'icon sieverules active', 'innerclass' => 'icon sieverules'));
+					$this->api->add_content(html::tag('li', array('role' => 'menuitem'), $button), 'messagemenu');
+				}
+			}
 
-		// always include all identities when creating vacation messages
-		$this->force_vacto = $rcmail->config->get('sieverules_force_vacto', $this->force_vacto);
+			$this->register_action('plugin.sieverules.add_rule', array($this, 'add_rule'));
+		}
+		elseif ($rcmail->task == 'settings') {
+			// load required plugin
+			$this->require_plugin('jqueryui');
 
-		// include the 'from' option when creating vacation messages
-		$this->show_vacfrom = $rcmail->config->get('sieverules_show_vacfrom', $this->show_vacfrom);
+			// set options from config file
+			if ($rcmail->config->get('sieverules_multiplerules') && rcube_utils::get_input_value('_ruleset', rcube_utils::INPUT_GET, true))
+				$this->current_ruleset = rcube_utils::get_input_value('_ruleset', rcube_utils::INPUT_GET, true);
+			elseif ($rcmail->config->get('sieverules_multiplerules') && $_SESSION['sieverules_current_ruleset'])
+				$this->current_ruleset = $_SESSION['sieverules_current_ruleset'];
+			elseif ($rcmail->config->get('sieverules_multiplerules'))
+				$this->current_ruleset = false;
+			else
+				$this->current_ruleset = $rcmail->config->get('sieverules_ruleset_name');
 
-		// include the 'handle' option when creating vacation messages
-		$this->show_vachandle = $rcmail->config->get('sieverules_show_vachandle', $this->show_vachandle);
+			// always include all identities when creating vacation messages
+			$this->force_vacto = $rcmail->config->get('sieverules_force_vacto', $this->force_vacto);
 
-		// use address command for address tests if configured
-		// use address command by default for backwards compatibility
-		if ($rcmail->config->get('sieverules_address_rules', true)) {
-			$this->headers[1]['value'] = 'address::From';
-			$this->headers[2]['value'] = 'address::To';
-			$this->headers[3]['value'] = 'address::Cc';
-			$this->headers[4]['value'] = 'address::Bcc';
+			// include the 'from' option when creating vacation messages
+			$this->show_vacfrom = $rcmail->config->get('sieverules_show_vacfrom', $this->show_vacfrom);
+
+			// include the 'handle' option when creating vacation messages
+			$this->show_vachandle = $rcmail->config->get('sieverules_show_vachandle', $this->show_vachandle);
+
+			// use address command for address tests if configured
+			// use address command by default for backwards compatibility
+			if ($rcmail->config->get('sieverules_address_rules', true)) {
+				$this->headers[1]['value'] = 'address::From';
+				$this->headers[2]['value'] = 'address::To';
+				$this->headers[3]['value'] = 'address::Cc';
+				$this->headers[4]['value'] = 'address::Bcc';
+			}
+
+			$this->action = $rcmail->action;
+
+			$this->include_stylesheet($this->local_skin_path() . '/tabstyles.css');
+			$this->add_hook('settings_actions', array($this, 'settings_tab'));
+
+			// register internal plugin actions
+			$this->register_action('plugin.sieverules', array($this, 'init_html'));
+			$this->register_action('plugin.sieverules.add', array($this, 'init_html'));
+			$this->register_action('plugin.sieverules.edit', array($this, 'init_html'));
+			$this->register_action('plugin.sieverules.setup', array($this, 'init_setup'));
+			$this->register_action('plugin.sieverules.advanced', array($this, 'init_html'));
+			$this->register_action('plugin.sieverules.move', array($this, 'move'));
+			$this->register_action('plugin.sieverules.save', array($this, 'save'));
+			$this->register_action('plugin.sieverules.delete', array($this, 'delete'));
+			$this->register_action('plugin.sieverules.import', array($this, 'import'));
+			$this->register_action('plugin.sieverules.update_list', array($this, 'gen_js_list'));
+			$this->register_action('plugin.sieverules.del_ruleset', array($this, 'delete_ruleset'));
+			$this->register_action('plugin.sieverules.rename_ruleset', array($this, 'rename_ruleset'));
+			$this->register_action('plugin.sieverules.enable_ruleset', array($this, 'enable_ruleset'));
+			$this->register_action('plugin.sieverules.copy_filter', array($this, 'copy_filter'));
+			$this->register_action('plugin.sieverules.init_rule', array($this, 'init_setup'));
+			$this->register_action('plugin.sieverules.cancel_rule', array($this, 'cancel_rule'));
 		}
 
-		$this->action = $rcmail->action;
+		if ($_SESSION['plugin.sieverules.rule']) {
+			$this->add_hook('storage_init', array($this, 'fetch_headers'));
+			$this->add_hook('sieverules_init', array($this, 'create_rule'));
 
-		$this->add_texts('localization/');
-		$this->include_stylesheet($this->local_skin_path() . '/tabstyles.css');
-		$this->include_script('sieverules.js');
-		$this->add_hook('settings_actions', array($this, 'settings_tab'));
-
-		// register internal plugin actions
-		$this->register_action('plugin.sieverules', array($this, 'init_html'));
-		$this->register_action('plugin.sieverules.add', array($this, 'init_html'));
-		$this->register_action('plugin.sieverules.edit', array($this, 'init_html'));
-		$this->register_action('plugin.sieverules.setup', array($this, 'init_setup'));
-		$this->register_action('plugin.sieverules.advanced', array($this, 'init_html'));
-		$this->register_action('plugin.sieverules.move', array($this, 'move'));
-		$this->register_action('plugin.sieverules.save', array($this, 'save'));
-		$this->register_action('plugin.sieverules.delete', array($this, 'delete'));
-		$this->register_action('plugin.sieverules.import', array($this, 'import'));
-		$this->register_action('plugin.sieverules.update_list', array($this, 'gen_js_list'));
-		$this->register_action('plugin.sieverules.del_ruleset', array($this, 'delete_ruleset'));
-		$this->register_action('plugin.sieverules.rename_ruleset', array($this, 'rename_ruleset'));
-		$this->register_action('plugin.sieverules.enable_ruleset', array($this, 'enable_ruleset'));
-		$this->register_action('plugin.sieverules.copy_filter', array($this, 'copy_filter'));
+			if ($rcmail->action == 'plugin.sieverules')
+				$this->api->output->add_script(rcmail_output::JS_OBJECT_NAME .".add_onload('". rcmail_output::JS_OBJECT_NAME .".sieverules_import_rule(". $rcmail->config->get('sieverules_rule_setup', false) .")');");
+		}
 	}
 
 	function settings_tab($p)
@@ -246,6 +275,7 @@ class sieverules extends rcube_plugin
 		// create SieveRules UI
 		$rcmail = rcube::get_instance();
 		$this->_startup();
+		$this->include_script('sieverules.js');
 
 		if ($rcmail->config->get('sieverules_multiplerules') && $this->current_ruleset === false) {
 			// multiple rulesets enabled and no ruleset specified
@@ -327,12 +357,17 @@ class sieverules extends rcube_plugin
 	{
 		// redirect setup UI, see gen_setup()
 		$this->_startup();
+		$this->include_script('sieverules.js');
 
-		$this->api->output->add_handlers(array(
-			'sieverulessetup' => array($this, 'gen_setup'),
-		));
+		if (rcube::get_instance()->action == 'plugin.sieverules.init_rule') {
+			$this->api->output->add_handlers(array('sieverulessetup' => array($this, 'gen_rule_setup')));
+			$this->api->output->set_pagetitle($this->gettext('createfilter'));
+		}
+		else {
+			$this->api->output->add_handlers(array('sieverulessetup' => array($this, 'gen_setup')));
+			$this->api->output->set_pagetitle($this->gettext('importfilters'));
+		}
 
-		$this->api->output->set_pagetitle($this->gettext('importfilters'));
 		$this->api->output->send('sieverules.setupsieverules');
 	}
 
@@ -668,6 +703,17 @@ class sieverules extends rcube_plugin
 				$this->api->output->send('sieverules.sieverules');
 			}
 		}
+	}
+
+	function gen_rule_setup()
+	{
+		$out = "<br /><br />" . $this->gettext('addtoexisting');
+		$out .= "<br /><br />" . $this->api->output->button(array('command' => 'plugin.sieverules.add_rule', 'type' => 'input', 'class' => 'button', 'label' => 'sieverules.newfilter'));
+		$out .= "&nbsp;&nbsp;" . $this->api->output->button(array('command' => 'plugin.sieverules.cancel_rule', 'type' => 'input', 'class' => 'button', 'label' => 'cancel'));
+
+		$out = html::tag('p', array('style' => 'text-align: center;'), "\n" . $out);
+
+		return $out;
 	}
 
 	function gen_form($attrib)
@@ -1499,6 +1545,80 @@ class sieverules extends rcube_plugin
 
 		$this->api->output->command('display_message', $this->gettext('filtercopied'), 'confirmation');
 		$this->api->output->send();
+	}
+
+	function fetch_headers($attr)
+	{
+		$attr['fetch_headers'] .= trim($attr['fetch_headers'] . join(' ', $this->additional_headers));
+		return($attr);
+	}
+
+	function add_rule()
+	{
+		$_SESSION['plugin.sieverules.rule'] = true;
+		$_SESSION['plugin.sieverules.messageset'] = serialize(rcmail::get_uids());
+		rcube::get_instance()->output->redirect(array('task' => 'settings', 'action' => 'plugin.sieverules'));
+	}
+
+	function create_rule($args)
+	{
+		$rcmail = rcube::get_instance();
+		if ($rcmail->action == 'plugin.sieverules.add' || $rcmail->action == 'plugin.sieverules.edit') {
+			$messageset = unserialize($_SESSION['plugin.sieverules.messageset']);
+			$headers = $args['defaults']['headers'];
+			$rcmail->storage_init();
+
+			foreach ($messageset as $mbox => $uids) {
+				$rcmail->get_storage()->set_folder($mbox);
+
+				foreach ($uids as $uid) {
+					$message = new rcube_message($uid);
+					$this->_add_to_array($args['script']['tests'], array('type' => $rcmail->config->get('sieverules_address_rules', true) ? 'address' : 'header', 'operator' => 'is', 'header' => 'From', 'target' => $message->sender['mailto']));
+
+					$recipients = array();
+					$recipients_array = rcube_mime::decode_address_list($message->headers->to);
+					foreach ($recipients_array as $recipient) {
+						$recipients[] = $recipient['mailto'];
+					}
+
+					$identity = $rcmail->user->get_identity();
+					$recipient_str = join(', ', $recipients);
+					if ($recipient_str != $identity['email']) {
+						$this->_add_to_array($args['script']['tests'], array('type' => $rcmail->config->get('sieverules_address_rules', true) ? 'address' : 'header', 'operator' => 'is', 'header' => 'To', 'target' => $recipient_str));
+					}
+
+					if (strlen($message->subject) > 0) {
+						$this->_add_to_array($args['script']['tests'], array('type' => 'header', 'operator' => 'contains', 'header' => 'Subject', 'target' => $message->subject));
+					}
+
+					foreach ($this->additional_headers as $header) {
+						if (strlen($message->headers->others[strtolower($header)]) > 0) {
+							$this->_add_to_array($args['script']['tests'], array('type' => 'header', 'operator' => 'is', 'header' => $header, 'target' => $message->headers->others[strtolower($header)]));
+						}
+					}
+
+					$this->_add_to_array($args['script']['actions'], array('type' => 'fileinto', 'target' => $mbox));
+
+					foreach ($message->headers->flags as $flag => $value) {
+						if ($flag == 'FLAGGED') {
+							$this->_add_to_array($args['script']['actions'], array('type' => 'imapflags', 'target' => '\\\\Flagged'));
+						}
+					}
+				}
+			}
+
+			$_SESSION['plugin.sieverules.rule'] = false;
+			$_SESSION['plugin.sieverules.messageset'] = null;
+		}
+
+		return $args;
+	}
+
+	function cancel_rule()
+	{
+		$_SESSION['plugin.sieverules.rule'] = false;
+		$_SESSION['plugin.sieverules.messageset'] = null;
+		rcube::get_instance()->output->redirect(array('task' => 'mail', 'action' => ''));
 	}
 
 	private function _startup()
@@ -2538,6 +2658,22 @@ class sieverules extends rcube_plugin
 		}
 
 		return FALSE;
+	}
+
+	private function _add_to_array(&$current, $new)
+	{
+		if (!is_array($current)) {
+			$current[] = $new;
+		}
+		else {
+			foreach ($current as $item) {
+				if (!array_diff($item, $new)) {
+					return;
+				}
+			}
+
+			$current[] = $new;
+		}
 	}
 }
 

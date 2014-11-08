@@ -140,6 +140,8 @@ $labels['headerappend'] = 'Accoda ad un header esistente';
 $labels['headerindex'] = 'Indice header';
 $labels['headerdelall'] = 'Tutte le occorrenze';
 $labels['last'] = 'ultimo';
+$labels['createfilter'] = 'Crea filtro...';
+$labels['createfilterbased'] = 'Crea un filtro basato su questo messaggio';
 
 $messages = array();
 $messages['nosieverules'] = 'Nessun filtro trovato.';

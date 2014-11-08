@@ -1,0 +1,27 @@
+/**
+ * SieveRules plugin styles (mail styles)
+ */
+
+#messagetoolbar a.sieverules,
+#messagetoolbar a.sieverulesSel
+{
+  text-indent: -5000px;
+  background-image: url(images/mail_toolbar.png);
+}
+
+#messagetoolbar a.sieverules,
+{
+  background-position: 0 0;
+}
+
+#messagetoolbar a.sieverulesSel
+{
+  background-position: 0 -32px;
+}
+
+ul.toolbarmenu li a.sieverules
+{
+  background-image: url(images/messageactions.png) !important;
+  background-position: 7px 1px !important;
+  background-repeat: no-repeat;
+}

@@ -117,6 +117,7 @@ $labels['copytoruleset'] = 'Szűrő másolása másik szabálycsoportba';
 $labels['copyfromruleset'] = 'Szűrő(k) másolása másik szabálycsoportból';
 $labels['time'] = 'Idő';
 $labels['weekday'] = 'Hétköznap';
+$labels['createfilter'] = 'Szűrő létrehozása..';
 
 $messages = array();
 $messages['nosieverules'] = 'Nem található szűrő';

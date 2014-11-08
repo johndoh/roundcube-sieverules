@@ -132,6 +132,8 @@ $labels['virusremoved'] = 'Virus gefunden und entfernt';
 $labels['viruscured'] = 'Virus gefunden und kuriert';
 $labels['possiblevirus'] = 'Nachricht enthält möglicherweise einen Virus';
 $labels['definitevirus'] = 'Nachricht enthält definitiv einen Virus';
+$labels['createfilter'] = 'Erstelle Filter...';
+$labels['createfilterbased'] = 'Erstelle einen auf dieser Nachricht basierenden Filter';
 
 $messages = array();
 $messages['nosieverules'] = 'Keine Filter gefunden.';
@@ -188,5 +190,6 @@ $messages['nosieverulesets'] = 'Keine Regelsätze gefunden.';
 $messages['baddateformat'] = 'Fehler: Bitte das Datum im Format JJJJ-MM-TT eingeben.';
 $messages['badtimeformat'] = 'Fehler: Bitte die Uhrzeit im Format HH:MM:SS eingeben.';
 $messages['missingfoldername'] = 'Fehler: Bitte ein Verzeichnisnamen eingeben.';
+$messages['addtoexisting'] = 'Wähle einen bestehenden Filter von der Liste auf der linken Seite um die neuen Kriterien hinzuzufügen oder wähle aus den Optionen unten.';
 
 ?>

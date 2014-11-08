@@ -126,6 +126,7 @@ $labels['copytoruleset'] = 'Copiar o filtro para outro conjunto de regras';
 $labels['copyfromruleset'] = 'Copiar filtros de um conjunto regras existente';
 $labels['time'] = 'Tempo';
 $labels['weekday'] = 'dia da semana';
+$labels['createfilter'] = 'Criar filtro...';
 
 $messages = array();
 $messages['nosieverules'] = 'Nenhum filtro encontrado.';

@@ -858,6 +858,24 @@ rcube_webmail.prototype.sieverules_toggle_eheadlast = function(obj) {
 		selectobj.selectedIndex = 0;
 }
 
+rcube_webmail.prototype.sieverules_import_rule = function(setup) {
+	if (setup) {
+		var add_url = '';
+
+		var target = window;
+		if (rcmail.env.contentframe && window.frames && window.frames[rcmail.env.contentframe]) {
+			add_url = '&_framed=1';
+			target = window.frames[rcmail.env.contentframe];
+			rcube_find_object(rcmail.env.contentframe).style.visibility = 'inherit';
+		}
+
+		target.location.href = rcmail.env.comm_path+'&_action=plugin.sieverules.init_rule' + add_url;
+	}
+	else {
+		rcmail.command('plugin.sieverules.add');
+	}
+}
+
 $(document).ready(function() {
 	if (window.rcmail) {
 		rcmail.addEventListener('init', function(evt) {
@@ -1558,6 +1576,25 @@ $(document).ready(function() {
 
 					}
 				});
+			}
+
+			if (rcmail.env.action == 'plugin.sieverules.init_rule')  {
+				rcmail.register_command('plugin.sieverules.add_rule', function(props, obj) {
+					var target = rcmail;
+					if (rcmail.env.framed)
+						target = parent.rcmail;
+
+					target.command('plugin.sieverules.add');
+				}, true);
+
+				rcmail.register_command('plugin.sieverules.cancel_rule', function(props, obj) {
+					var target = window;
+					if (rcmail.env.framed) {
+						target = parent.window;
+					}
+
+					target.location.href = rcmail.env.comm_path+'&_action=plugin.sieverules.cancel_rule';
+				}, true);
 			}
 		});
 	}

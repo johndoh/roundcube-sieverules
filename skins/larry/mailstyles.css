@@ -1,0 +1,21 @@
+/**
+ * SieveRules plugin styles (mail styles)
+ */
+
+#messagetoolbar a.sieverules,
+#messagetoolbar a.sieverulesSel
+{
+  background-image: url(images/mail_toolbar.png);
+}
+
+#messagetoolbar a.sieverules,
+#messagetoolbar a.sieverulesSel
+{
+  background-position: center -16px;
+}
+
+ul.toolbarmenu li a.sieverules span
+{
+  background-image: url(images/messageactions.png) !important;
+  background-position: -2px 5px !important;
+}

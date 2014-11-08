@@ -143,6 +143,7 @@ $labels['headerappend'] = 'Dodaj do istniejącego nagłówka wiadomości';
 $labels['headerindex'] = 'Indeks nagłówka';
 $labels['headerdelall'] = 'wszystkie zdarzenia';
 $labels['last'] = 'ostatni';
+$labels['createfilter'] = 'Utwórz filtr...';
 
 $messages = array();
 $messages['nosieverules'] = 'Nie znaleziono filtrów.';

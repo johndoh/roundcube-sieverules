@@ -135,6 +135,7 @@ $labels['virusremoved'] = 'virus nalezen a odstraněn';
 $labels['viruscured'] = 'virus nalezen a vyléčen';
 $labels['possiblevirus'] = 'zpráva pravděpodobně obsahuje virus';
 $labels['definitevirus'] = 'zpráva určitě obsahuje virus';
+$labels['createfilter'] = 'Vytvořit filtr...';
 
 $messages = array();
 $messages['nosieverules'] = 'Nenalezeny žádné filtry.';
