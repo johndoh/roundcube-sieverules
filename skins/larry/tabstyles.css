@@ -13,3 +13,15 @@
   background-image: url(images/listicons.png);
   background-position: 6px -25px;
 }
+
+#settings-sections #settingstabpluginsieverulesvacation a
+{
+  background-image: url(images/listicons.png);
+  background-position: 6px -72px;
+}
+
+#settings-sections #settingstabpluginsieverulesvacation.selected a
+{
+  background-image: url(images/listicons.png);
+  background-position: 6px -91px;
+}

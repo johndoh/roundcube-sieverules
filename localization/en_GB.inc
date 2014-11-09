@@ -151,6 +151,10 @@ $labels['last'] = 'last';
 $labels['arialabelfiltersform'] = 'Filters edit form';
 $labels['createfilter'] = 'Create filter';
 $labels['createfilterbased'] = 'Create a filter based on this message';
+$labels['automaticreply'] = 'Automatic reply';
+$labels['manageautoreply'] = 'Manage automatic reply';
+$labels['enableautoreply'] = 'Enable automatic reply';
+$labels['sendonlyperiod'] = 'Send message only during this period:';
 
 $messages = array();
 $messages['nosieverules'] = 'No filters found.';
@@ -212,5 +216,6 @@ $messages['missingfoldername'] = 'Error: Please enter a folder name';
 $messages['eheadernoname'] = 'Error: Please enter a header name';
 $messages['eheadernoval'] = 'Error: Please enter a header value';
 $messages['addtoexisting'] = 'Select an existing filter from the list on the left hand side to add the new criteria to it or select from the options below.';
+$messages['autoreplysaved'] = 'Automatic reply saved';
 
 ?>

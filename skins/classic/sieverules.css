@@ -83,7 +83,8 @@
   border: 1px solid #999999;
 }
 
-#sieverules-advanced
+#sieverules-advanced,
+#sieverules-vacation
 {
   position: absolute;
   top: 0;
@@ -408,4 +409,15 @@ input.inputmask
   position: absolute;
   left: 0;
   bottom: 0;
+}
+
+#sieverules-vacation .boxcontent {
+  background-color: transparent;
+}
+
+#sieverules-vacation textarea,
+#sieverules-vacation #actions-table select,
+#sieverules-vacation #actions-table input[type=text] {
+  width: 99%;
+  min-width: 390px;
 }

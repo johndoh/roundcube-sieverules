@@ -1,0 +1,35 @@
+<roundcube:object name="doctype" value="html5" />
+<html>
+<head>
+<title><roundcube:object name="pagetitle" /></title>
+<roundcube:include file="/includes/links.html" />
+<link rel="stylesheet" type="text/css" href="/this/sieverules.css" />
+</head>
+<roundcube:if condition="env:extwin" /><body class="noscroll extwin"><roundcube:else /><body class="noscroll"><roundcube:endif />
+
+<roundcube:include file="/includes/header.html" />
+
+<div id="mainscreen" class="offset">
+
+<roundcube:include file="/includes/settingstabs.html" />
+
+<div id="sieverules-vacation" class="uibox contentbox">
+
+<h1 class="boxtitle"><roundcube:object name="steptitle" /></h1>
+
+<div class="boxcontent">
+<roundcube:object name="vacation" class="propform" helpIcon="/this/images/help.png" />
+</div>
+
+<div class="footerleft formbuttons">
+<roundcube:button command="plugin.sieverules.save_vacation" type="input" label="save" class="button mainaction" />
+</div>
+
+</div>
+
+</div>
+
+<roundcube:include file="/includes/footer.html" />
+
+</body>
+</html>

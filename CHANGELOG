@@ -1,6 +1,7 @@
 Roundcube Webmail SieveRules
 ============================
 
+ * Merge sievevacation plugin into this one
  * Merge quickrules plugin into this one
  * Add connection options like 109bcce
  * Update after dev-accessibility merged to RC master

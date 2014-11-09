@@ -53,7 +53,8 @@
   bottom: 0;
 }
 
-#sieverules-advanced
+#sieverules-advanced,
+#sieverules-vacation
 {
   position: absolute;
   top: 0;
@@ -418,4 +419,11 @@ input.inputmask
   height: 20px;
   background-image: url(images/listicons.png);
   background-position: 5px -52px;
+}
+
+#sieverules-vacation textarea,
+#sieverules-vacation #actions-table select,
+#sieverules-vacation #actions-table input[type=text] {
+  width: 99%;
+  min-width: 390px;
 }
