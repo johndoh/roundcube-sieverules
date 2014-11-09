@@ -333,6 +333,13 @@ class sieverules extends rcube_plugin
 		if (sizeof($this->examples) > 0)
 			$this->api->output->set_env('examples', 'true');
 
+		if (rcube_utils::get_input_value('_action', rcube_utils::INPUT_GET) == 'plugin.sieverules.vacation' && $this->action == 'plugin.sieverules.setup') {
+			// override setup mode for vacation UI
+			$rcmail->overwrite_action('plugin.sieverules.vacation');
+			$this->action = 'plugin.sieverules.vacation';
+			$this->sieve_error = true;
+		}
+
 		if ($this->action == 'plugin.sieverules.add' || $this->action == 'plugin.sieverules.edit' || $this->action == 'plugin.sieverules.vacation') {
 			// show add/edit rule UI
 			$rcmail->html_editor('sieverules');
@@ -938,6 +945,11 @@ class sieverules extends rcube_plugin
 
 	function gen_vacation_form($attrib)
 	{
+		// check for sieve error
+		if ($this->sieve_error) {
+			return $this->gettext('pleaseinitialise'). '<br /><br />';
+		}
+
 		$rcmail = rcube::get_instance();
 		$ext = $this->sieve->get_extensions();
 

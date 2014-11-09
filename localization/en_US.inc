@@ -217,5 +217,6 @@ $messages['eheadernoname'] = 'Error: Please enter a header name';
 $messages['eheadernoval'] = 'Error: Please enter a header value';
 $messages['addtoexisting'] = 'Select an existing filter from the list on the left hand side to add the new criteria to it or select from the options below.';
 $messages['autoreplysaved'] = 'Automatic reply saved';
+$messages['pleaseinitialise'] = 'Please go to the \'Filters\' tab to initialise your filters before setting up an automatic reply';
 
 ?>

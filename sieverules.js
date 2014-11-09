@@ -1499,7 +1499,7 @@ $(document).ready(function() {
 					}
 
 					rcmail.gui_objects.editform.submit();
-				}, true);
+				}, false);
 
 				rcmail.register_command('plugin.sieverules.vacation_sig', function(id) {
 					var obj = document.getElementById("rcmfd_sievevacfrom_" + id);
@@ -1645,6 +1645,10 @@ $(document).ready(function() {
 				if ($('#rcmfd_sievevac_period').is(':checked')) {
 					$('#rcmfd_sievevac_period_from').removeAttr('disabled');
 					$('#rcmfd_sievevac_period_to').removeAttr('disabled');
+				}
+
+				if ($('#rcmfd_sievevac_enabled').length == 1) {
+					rcmail.enable_command('plugin.sieverules.save_vacation', true);
 				}
 			});
 
