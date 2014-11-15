@@ -13,15 +13,17 @@
 class sieverules extends rcube_plugin
 {
 	public $task = 'mail|settings';
-	private $sieve;
-	private $sieve_error;
-	private $script;
-	private $action;
+
+	protected $sieve;
+	protected $sieve_error;
+	protected $script;
+	protected $action;
+	protected $current_ruleset;
+
 	private $examples = array();
 	private $force_vacto = false;
 	private $show_vacfrom = false;
 	private $show_vachandle = false;
-	private $current_ruleset;
 	private $standardops = array();
 	private $additional_headers;
 	private $vacation_ui = false;
@@ -258,7 +260,9 @@ class sieverules extends rcube_plugin
 			$this->register_action('plugin.sieverules.copy_filter', array($this, 'copy_filter'));
 			$this->register_action('plugin.sieverules.init_rule', array($this, 'init_setup'));
 			$this->register_action('plugin.sieverules.cancel_rule', array($this, 'cancel_rule'));
-			$this->register_action('plugin.sieverules.vacation', array($this, 'init_html'));
+
+			if ($this->vacation_ui)
+				$this->register_action('plugin.sieverules.vacation', array($this, 'init_html'));
 		}
 
 		if ($_SESSION['plugin.sieverules.rule']) {
@@ -454,12 +458,14 @@ class sieverules extends rcube_plugin
 			$table->add(array('colspan' => '2'), rcube_utils::rep_specialchars_output($this->gettext('nosieverules')));
 		}
 		else foreach($this->script as $idx => $filter) {
+			$args = rcube::get_instance()->plugins->exec_hook('sieverules_list_rules', array('idx' => $idx, 'name' => $filter['name']));
+
 			// skip the vacation
 			if ($this->vacation_ui && $idx == $this->vacation_rule_position && $filter['name'] == $this->vacation_rule_name)
-				continue;
+				$args['abort'] == true;
 
 			$parts = $this->_rule_list_parts($idx, $filter);
-			$table->set_row_attribs(array('id' => 'rcmrow' . $idx));
+			$table->set_row_attribs(array('id' => 'rcmrow' . $idx, 'style' => $args['abort'] ? 'display: none;' : ''));
 			$table->add(null, rcmail::Q($parts['name']));
 			$table->add('control', $parts['control']);
 		}
@@ -477,6 +483,10 @@ class sieverules extends rcube_plugin
 			$this->api->output->command('sieverules_update_list', 'add-first', -1, rcube_utils::rep_specialchars_output($this->gettext('nosieverules')));
 		}
 		else foreach($this->script as $idx => $filter) {
+			$args = rcube::get_instance()->plugins->exec_hook('sieverules_list_rules', array('idx' => $idx, 'name' => $filter['name']));
+			if ($args['abort'] === true)
+				continue;
+
 			// skip the vacation
 			if ($this->vacation_ui && $idx == $this->vacation_rule_position && $filter['name'] == $this->vacation_rule_name)
 				continue;
@@ -485,7 +495,7 @@ class sieverules extends rcube_plugin
 			$parts['control'] = str_replace("'", "\'", $parts['control']);
 
 			// send rule to UI
-			$this->api->output->command('sieverules_update_list', $idx == 0 ? 'add-first' : 'add', 'rcmrow' . $idx, rcmail::JQ($parts['name']), $parts['control']);
+			$this->api->output->command('sieverules_update_list', $idx == 0 ? 'add-first' : 'add', 'rcmrow' . $idx, rcmail::JQ($parts['name']), $parts['control'], $args['abort']);
 		}
 
 		$this->api->output->send();
@@ -532,6 +542,10 @@ class sieverules extends rcube_plugin
 		// get all the rulesets on the server
 		$rulesets = array();
 		foreach ($this->sieve->list as $ruleset) {
+			$args = rcube::get_instance()->plugins->exec_hook('sieverules_list_rulesets', array('ruleset' => $ruleset));
+			if ($args['abort'] === true)
+				continue;
+
 			array_push($rulesets, $ruleset);
 		}
 		sort($rulesets);
@@ -1496,7 +1510,7 @@ class sieverules extends rcube_plugin
 				$i++;
 			}
 
-			if ($vacation_mode && (!isset($this->script[$iid]) || $this->script[$iid]['name'] != $this->vacation_rule_name))
+			if ($vacation_mode && !isset($this->script[$iid]))
 				$result = $this->sieve->script->add_rule($script, $iid);
 			elseif (!isset($this->script[$iid]))
 				$result = $this->sieve->script->add_rule($script);
@@ -1854,7 +1868,7 @@ class sieverules extends rcube_plugin
 		rcube::get_instance()->output->redirect(array('task' => 'mail', 'action' => ''));
 	}
 
-	private function _startup()
+	protected function _startup()
 	{
 		$rcmail = rcube::get_instance();
 
@@ -2697,7 +2711,7 @@ class sieverules extends rcube_plugin
 		return $actions_table;
 	}
 
-	private function _vacation_table($ext, $rowid, $defaults, $display, $help_icon)
+	protected function _vacation_table($ext, $rowid, $defaults, $display, $help_icon)
 	{
 		$rcmail = rcube::get_instance();
 
@@ -2878,7 +2892,7 @@ class sieverules extends rcube_plugin
 	}
 
 	// get identity record
-	private function _rcmail_get_identity($id)
+	protected function _rcmail_get_identity($id)
 	{
 		$rcmail = rcube::get_instance();
 

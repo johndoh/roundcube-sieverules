@@ -20,7 +20,7 @@ define('SIEVE_ERROR_OTHER', 255);		// other/unknown error
 
 class rcube_sieve
 {
-	private $sieve;
+	public $sieve;
 	private $ruleset;
 	private $importers = array();
 	private $elsif;
@@ -115,7 +115,7 @@ class rcube_sieve
 
 		// allow additional actions before ruleset is saved
 		$data = rcube::get_instance()->plugins->exec_hook('sieverules_save', array(
-			'ruleset' => $this->ruleset, 'script' => $script));
+			'ruleset' => $this->ruleset, 'script' => $script, 'obj' => $this));
 
 		if ($data['abort'])
 			return $data['message'] ? $data['message'] : false;
@@ -198,7 +198,7 @@ class rcube_sieve
 		}
 
 		$data = rcube::get_instance()->plugins->exec_hook('sieverules_load', array(
-			'ruleset' => $this->ruleset, 'script' => $script));
+			'ruleset' => $this->ruleset, 'script' => $script, 'obj' => $this));
 
 		$this->script = new rcube_sieve_script($data['script'], $this->get_extensions(), $this->elsif);
 

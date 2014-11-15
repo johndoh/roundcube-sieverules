@@ -187,7 +187,7 @@ rcube_webmail.prototype.sieverules_ready = function(id) {
 	return true;
 }
 
-rcube_webmail.prototype.sieverules_update_list = function(action, param1, param2, param3) {
+rcube_webmail.prototype.sieverules_update_list = function(action, param1, param2, param3, param4) {
 	var sid = rcmail.sieverules_list.get_single_selection();
 	var selection;
 	var rows = rcmail.sieverules_list.rows;
@@ -239,6 +239,10 @@ rcube_webmail.prototype.sieverules_update_list = function(action, param1, param2
 			cell.setAttribute('colspan', '2');
 			cell.appendChild(document.createTextNode(rcmail.gettext('loading','')));
 			newrow.appendChild(cell);
+
+			if (param4)
+				$(newrow).hide();
+
 			rcmail.sieverules_list.insert_row(newrow);
 
 			rcmail.http_request('plugin.sieverules.update_list', '', false);
@@ -961,7 +965,7 @@ $(document).ready(function() {
 
 				if (rcmail.env.action == 'plugin.sieverules') {
 					rcmail.register_command('plugin.sieverules.move', function(props, obj) {
-						var args = (props.source) ? props : { source:obj.parentNode.parentNode.rowIndex - 1, dest:props };
+						var args = (props.source) ? props : { source:obj.parentNode.parentNode.rowIndex, dest:props };
 
 						if (args.dest > -1 && args.dest <= rcmail.sieverules_list.rowcount) {
 							var lock = rcmail.set_busy(true, 'sieverules.movingfilter');
