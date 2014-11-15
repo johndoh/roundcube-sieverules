@@ -267,6 +267,7 @@ sieverules_save hook if you want to keep them on the server.
 Arguments:
 * ruleset - (string) the name of the ruleset file
 * script - (string) the raw sieve script
+* obj - (object) the rcube_sieve object
 
 Return:
 * script - (string) the raw sieve script
@@ -279,12 +280,36 @@ like updating another system or performing further validation.
 Arguments:
 * ruleset - (string) the name of the ruleset file
 * script - (string) the raw sieve script
+* obj - (object) the rcube_sieve object
 
 Return:
 * script - (string) the raw sieve script
 * abort - (boolean) if true the script will not be saved
 * message - (string) optional reason why the script was not saved which
   will be shown to the user
+
+sieverules_list_rules hook
+--------------------------
+Before the list of rules is displayed in the UI the plugin hook
+sieverules_list_rules is executed, this allows you to hide rules from the
+list. It affects display only not the raw rules.
+Arguments:
+* idx - (int) the index of the rule being listed
+* name - (string) the name of the rule being listed
+
+Return:
+* abort - (boolean) if true the rule will be hidden from the list in the UI
+
+sieverules_list_rulesets hook
+-----------------------------
+Before the list of rulesets is displayed in the UI the plugin hook
+sieverules_list_rulesets is executed, this allows you to hide rulesets from the
+list. It affects display only not the raw rules.
+Arguments:
+* ruleset - (string) the name of the ruleset file
+
+Return:
+* abort - (boolean) if true the ruleset will be hidden from the list in the UI
 
 [alec]: mailto:alec@alec.pl
 [rcplugrepo]: http://plugins.roundcube.net/packages/johndoh/sieverules
