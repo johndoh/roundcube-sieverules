@@ -763,7 +763,7 @@ class sieverules extends rcube_plugin
 	function gen_form($attrib)
 	{
 		$rcmail = rcube::get_instance();
-		$this->include_script('jquery.maskedinput.min.js');
+		$this->include_script('jquery.maskedinput.js');
 		$this->api->output->add_label(
 			'sieverules.norulename', 'sieverules.ruleexists', 'sieverules.noheader',
 			'sieverules.headerbadchars', 'sieverules.noheadervalue', 'sieverules.sizewrongformat',
