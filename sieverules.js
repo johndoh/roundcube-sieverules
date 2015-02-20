@@ -878,6 +878,8 @@ rcube_webmail.prototype.sieverules_toggle_eheadlast = function(obj) {
 }
 
 rcube_webmail.prototype.validate_vacation = function(i, sender, alias, period, subject, msg) {
+	var period_test = new RegExp('^[0-9]+$');
+
 	if (sender.value != '' && sender.value != 'auto' && !rcube_check_email(sender.value.replace(/^\s+/, '').replace(/[\s,;]+$/, ''), true) && !$.isNumeric(sender.value)) {
 		alert(rcmail.gettext('redirectaddresserror','sieverules'));
 		sender.focus();
@@ -896,7 +898,7 @@ rcube_webmail.prototype.validate_vacation = function(i, sender, alias, period, s
 	//	return false;
 	//}
 
-	if (period.value != '' && (!size_test.test(period.value) || period.value < 1)) {
+	if (period.value != '' && (!period_test.test(period.value) || period.value < 1)) {
 		alert(rcmail.gettext('vacperiodwrongformat','sieverules'));
 		period.focus();
 		return false;
@@ -1266,7 +1268,6 @@ $(document).ready(function() {
 					var eheadernames = document.getElementsByName('_eheadname[]');
 					var eheadervals = document.getElementsByName('_eheadval[]');
 					var size_test = new RegExp('^[0-9]+$');
-					var spamtest_test = new RegExp('^[0-9]+$');
 					var header_test = new RegExp('^[a-zA-Z0-9\-]+( ?, ?[a-zA-Z0-9\-]+)*$');
 					var date_test = new RegExp('^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$');
 					var time_test = new RegExp('^[0-9]{2}:[0-9]{2}:[0-9]{2}$');
