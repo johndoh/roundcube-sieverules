@@ -67,7 +67,8 @@ class rcube_sieve
 		$auth_pw = $data['auth_pw'];
 		$socket_options = $data['socket_options'];
 
-		if (PEAR::isError($this->sieve->connect($host, $port, $socket_options, $usetls)))
+		$conn = $this->sieve->connect($host, $port, $socket_options, $usetls);
+		if ($conn instanceof PEAR_Error)
 			return $this->_set_error(SIEVE_ERROR_CONNECTION);
 
 		if (!empty($auth_cid)) {
@@ -76,7 +77,8 @@ class rcube_sieve
 			$password = $auth_pw;
 		}
 
-		if (PEAR::isError($this->sieve->login($username, $password, $auth_type ? strtoupper($auth_type) : NULL, $authz)))
+		$login = $this->sieve->login($username, $password, $auth_type ? strtoupper($auth_type) : NULL, $authz);
+		if ($login instanceof PEAR_Error)
 			return $this->_set_error(SIEVE_ERROR_LOGIN);
 
 		$this->ruleset = $ruleset;
@@ -136,7 +138,8 @@ class rcube_sieve
 		if ($data['abort'])
 			return $data['message'] ? $data['message'] : false;
 
-		if (PEAR::isError($this->sieve->installScript($this->ruleset, $data['script'])))
+		$result = $this->sieve->installScript($this->ruleset, $data['script']);
+		if ($result instanceof PEAR_Error)
 			return $this->_set_error(SIEVE_ERROR_INSTALL);
 
 		if ($this->cache) $_SESSION['sieverules_script_cache_' . $this->ruleset] = serialize($this->script);
@@ -199,13 +202,13 @@ class rcube_sieve
 
 		$this->list = $this->sieve->listScripts();
 
-		if (PEAR::isError($this->list))
+		if ($this->list instanceof PEAR_Error)
 			return $this->_set_error(SIEVE_ERROR_OTHER);
 
 		if (in_array($this->ruleset, $this->list)) {
 			$script = $this->sieve->getScript($this->ruleset);
 
-			if (PEAR::isError($script))
+			if ($script instanceof PEAR_Error)
 				return $this->_set_error(SIEVE_ERROR_OTHER);
 		}
 		else {
@@ -231,7 +234,8 @@ class rcube_sieve
 
 	public function set_active($ruleset)
 	{
-		if (PEAR::isError($this->sieve->setActive($ruleset)))
+		$active = $this->sieve->setActive($ruleset);
+		if ($active instanceof PEAR_Error)
 			return $this->_set_error(SIEVE_ERROR_ACTIVATE);
 
 		return true;
