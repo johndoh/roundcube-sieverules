@@ -29,6 +29,8 @@ $labels['filterunder'] = 'is less than';
 $labels['filterover'] = 'is more than';
 $labels['filterbefore'] = 'is before';
 $labels['filterafter'] = 'is after';
+$labels['filterbeforeequal'] = 'is before or equal to';
+$labels['filterafterequal'] = 'is after or equal to';
 $labels['filteradvoptions'] = 'more options...';
 $labels['spamtest'] = 'Spam Probability';
 $labels['operator'] = 'Operator';
@@ -155,6 +157,8 @@ $labels['automaticreply'] = 'Automatic reply';
 $labels['manageautoreply'] = 'Manage automatic reply';
 $labels['enableautoreply'] = 'Enable automatic reply';
 $labels['sendonlyperiod'] = 'Send message only during this period:';
+$labels['datefrom'] = 'From';
+$labels['dateto'] = 'To';
 
 $messages = array();
 $messages['nosieverules'] = 'No filters found.';

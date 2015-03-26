@@ -47,7 +47,6 @@ class sieverules extends rcube_plugin
 	private $additional_headers;
 	private $vacation_ui = false;
 	private $vacation_rule_position = 0;
-	private $vacation_rule_name = '{{_automatic_reply_}}';
 
 	// default headers
 	private $headers = array(
@@ -101,7 +100,9 @@ class sieverules extends rcube_plugin
 					array('text' => 'filteris', 'value' => 'is', 'ext' => null),
 					array('text' => 'filterisnot', 'value' => 'notis', 'ext' => null),
 					array('text' => 'filterbefore', 'value' => 'value "lt"', 'ext' => 'relational'),
-					array('text' => 'filterafter', 'value' => 'value "gt"', 'ext' => 'relational')
+					array('text' => 'filterafter', 'value' => 'value "gt"', 'ext' => 'relational'),
+					array('text' => 'filterbeforeequal', 'value' => 'value "le"', 'ext' => 'relational'),
+					array('text' => 'filterafterequal', 'value' => 'value "ge"', 'ext' => 'relational')
 					);
 
 	// default spamoperators
@@ -480,7 +481,7 @@ class sieverules extends rcube_plugin
 			$args = rcube::get_instance()->plugins->exec_hook('sieverules_list_rules', array('idx' => $idx, 'name' => $filter['name']));
 
 			// skip the vacation
-			if ($this->vacation_ui && $idx == $this->vacation_rule_position && $filter['name'] == $this->vacation_rule_name)
+			if ($this->vacation_ui && $idx == $this->vacation_rule_position && $filter['name'] == $this->gettext('messagevacation'))
 				$args['abort'] == true;
 
 			$parts = $this->_rule_list_parts($idx, $filter);
@@ -507,7 +508,7 @@ class sieverules extends rcube_plugin
 				continue;
 
 			// skip the vacation
-			if ($this->vacation_ui && $idx == $this->vacation_rule_position && $filter['name'] == $this->vacation_rule_name)
+			if ($this->vacation_ui && $idx == $this->vacation_rule_position && $filter['name'] == $this->gettext('messagevacation'))
 				continue;
 
 			$parts = $this->_rule_list_parts($idx, $filter);
@@ -1035,7 +1036,7 @@ class sieverules extends rcube_plugin
 
 		$this->identities = $coredefaults['identities'];
 
-		if ($cur_script['name'] == $this->vacation_rule_name) {
+		if ($cur_script['name'] == $this->gettext('messagevacation')) {
 			if (sizeof($cur_script['tests']) == 2) {
 				$defaults['limitperiod'] = 1;
 				$defaults['periodfrom'] = $cur_script['tests'][0]['target'];
@@ -1087,7 +1088,7 @@ class sieverules extends rcube_plugin
 		list($form_start, $form_end) = get_form_tags(array('id' => 'sievevacation-form') + $attrib, 'plugin.sieverules.save');
 		$rcmail->output->add_gui_object('sieveform', 'sievevacation-form');
 
-		$input_name = new html_hiddenfield(array('name' => '_name', 'value' => $this->vacation_rule_name));
+		$input_name = new html_hiddenfield(array('name' => '_name', 'value' => $this->gettext('messagevacation')));
 		$enable = $input_name->show();
 
 		$input_mode = new html_hiddenfield(array('name' => '_vacation_mode', 'value' => 1));
@@ -1133,8 +1134,8 @@ class sieverules extends rcube_plugin
 
 		$input_period_from = new html_inputfield(array('name' => '_target[]', 'id' => $field_id .'_from', 'disabled' => 'disabled'));
 		$input_period_to = new html_inputfield(array('name' => '_target[]', 'id' => $field_id .'_to', 'disabled' => 'disabled'));
-		$enable .= "&nbsp;" . html::label($field_id .'_from', rcmail::Q($this->gettext('from'))) . $input_period_from->show($defaults['periodfrom']);
-		$enable .= "&nbsp;" . html::label($field_id .'_to', rcmail::Q($this->gettext('to'))) . $input_period_to->show($defaults['periodto']);
+		$enable .= "&nbsp;" . html::label($field_id .'_from', rcmail::Q($this->gettext('datefrom'))) . $input_period_from->show($defaults['periodfrom']);
+		$enable .= "&nbsp;" . html::label($field_id .'_to', rcmail::Q($this->gettext('dateto'))) . $input_period_to->show($defaults['periodto']);
 
 		$input_act = new html_hiddenfield(array('name' => '_act[]', 'value' => 'vacation'));
 		$enable .= $input_act->show();
