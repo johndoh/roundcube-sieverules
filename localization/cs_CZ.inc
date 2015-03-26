@@ -157,6 +157,8 @@ $labels['automaticreply'] = 'Automatická odpověď';
 $labels['manageautoreply'] = 'Spravovat automatickou odpověď';
 $labels['enableautoreply'] = 'Zapnout automatickou odpověď';
 $labels['sendonlyperiod'] = 'Automatickou odpověď odesílat pouze v tomto období:';
+$labels['datefrom'] = 'Od';
+$labels['dateto'] = 'Do';
 
 $messages = array();
 $messages['nosieverules'] = 'Nenalezeny žádné filtry.';
