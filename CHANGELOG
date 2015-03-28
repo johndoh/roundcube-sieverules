@@ -2,6 +2,7 @@ Roundcube Webmail SieveRules
 ============================
 
  * Fix missing size_test function in vacation validation
+ * Fix buggy display of auto reply rule
 
 Version 2.2 (2015-01-06, rc-1.1)
 =================================================

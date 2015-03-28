@@ -299,6 +299,7 @@ class sieverules extends rcube_plugin
 			$p['actions'][] = array('action' => 'plugin.sieverules.vacation', 'class' => 'sieveautoreply', 'label' => 'sieverules.automaticreply', 'title' => 'sieverules.manageautoreply', 'role' => 'button', 'aria-disabled' => 'false', 'tabindex' => '0');
 
 		$p['actions'][] = array('action' => 'plugin.sieverules', 'class' => 'sieverules', 'label' => 'sieverules.filters', 'title' => 'sieverules.managefilters', 'role' => 'button', 'aria-disabled' => 'false', 'tabindex' => '0');
+
 		return $p;
 	}
 
@@ -481,7 +482,7 @@ class sieverules extends rcube_plugin
 
 			// skip the vacation
 			if ($this->vacation_ui && $idx == $this->vacation_rule_position && $filter['name'] == $this->vacation_rule_name)
-				$args['abort'] == true;
+				continue;
 
 			$parts = $this->_rule_list_parts($idx, $filter);
 			$table->set_row_attribs(array('id' => 'rcmrow' . $idx, 'style' => $args['abort'] ? 'display: none;' : ''));
@@ -2932,7 +2933,7 @@ class sieverules extends rcube_plugin
 			return $out;
 		}
 
-		return FALSE;
+		return false;
 	}
 
 	private function _add_to_array(&$current, $new)
