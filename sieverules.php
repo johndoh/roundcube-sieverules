@@ -82,7 +82,9 @@ class sieverules extends rcube_plugin
 					array('text' => 'filteris', 'value' => 'is', 'ext' => null),
 					array('text' => 'filterisnot', 'value' => 'notis', 'ext' => null),
 					array('text' => 'filterbefore', 'value' => 'value "lt"', 'ext' => 'relational'),
-					array('text' => 'filterafter', 'value' => 'value "gt"', 'ext' => 'relational')
+					array('text' => 'filterbeforeequal', 'value' => 'value "le"', 'ext' => 'relational'),
+					array('text' => 'filterafter', 'value' => 'value "gt"', 'ext' => 'relational'),
+					array('text' => 'filterafterequal', 'value' => 'value "ge"', 'ext' => 'relational')
 					);
 
 	// default spamoperators
