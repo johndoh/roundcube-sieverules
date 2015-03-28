@@ -155,6 +155,8 @@ $labels['automaticreply'] = 'Automatic reply';
 $labels['manageautoreply'] = 'Manage automatic reply';
 $labels['enableautoreply'] = 'Enable automatic reply';
 $labels['sendonlyperiod'] = 'Send message only during this period:';
+$labels['datefrom'] = 'From';
+$labels['dateto'] = 'To';
 
 $messages = array();
 $messages['nosieverules'] = 'No filters found.';
