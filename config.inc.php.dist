@@ -169,7 +169,7 @@ $config['sieverules_rule_setup'] = FALSE;
 // List of additional headers to use when creating a rule from the shortcut
 $config['sieverules_additional_headers'] = array('List-Id');
 
-// Show separate interfact for setting auto reply message
+// Show separate interface for setting auto reply message
 // Note: sieverules_multiplerules must be set to false and sieverules_use_elsif should be set to false
 $config['sieverules_autoreply_ui'] = FALSE;
 
