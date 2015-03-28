@@ -1115,8 +1115,8 @@ class sieverules extends rcube_plugin
 
 		$input_period_from = new html_inputfield(array('name' => '_target[]', 'id' => $field_id .'_from', 'disabled' => 'disabled'));
 		$input_period_to = new html_inputfield(array('name' => '_target[]', 'id' => $field_id .'_to', 'disabled' => 'disabled'));
-		$enable .= "&nbsp;" . html::label($field_id .'_from', rcmail::Q($this->gettext('from'))) . $input_period_from->show($defaults['periodfrom']);
-		$enable .= "&nbsp;" . html::label($field_id .'_to', rcmail::Q($this->gettext('to'))) . $input_period_to->show($defaults['periodto']);
+		$enable .= "&nbsp;" . html::label($field_id .'_from', rcmail::Q($this->gettext('datefrom'))) . $input_period_from->show($defaults['periodfrom']);
+		$enable .= "&nbsp;" . html::label($field_id .'_to', rcmail::Q($this->gettext('dateto'))) . $input_period_to->show($defaults['periodto']);
 
 		$input_act = new html_hiddenfield(array('name' => '_act[]', 'value' => 'vacation'));
 		$enable .= $input_act->show();
