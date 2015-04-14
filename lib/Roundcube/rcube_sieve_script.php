@@ -937,7 +937,7 @@ class rcube_sieve_script
 		$result = array();
 
 		if ($regex) {
-			if (preg_match('/^"(.*)"$/', $content, $matches));
+			if (preg_match('/^"(.*)"$/', $content, $matches))
 				$content = $matches[1];
 
 			$content = str_replace('\"', '"', $content);
