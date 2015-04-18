@@ -1,27 +1,43 @@
 <?php
 
 /*
- +-----------------------------------------------------------------------+
- | rcube_sieve_script class for sieverules script parsing                |
- |                                                                       |
- | Author: Aleksander Machniak <alec@alec.pl>                            |
- | Modifications by: Philip Weir                                         |
- |   * Changed name of keys in script array                              |
- |   * Added support for address and envelope                            |
- |   * Added support for vacation                                        |
- |   * Added support for disabled rules (written to file as comment)     |
- |   * Added support for regex tests                                     |
- |   * Added support for imapflags                                       |
- |   * Added support for relational operators and comparators            |
- |   * Added support for subaddress tests                                |
- |   * Added support for notify action                                   |
- |   * Added support for stop action                                     |
- |   * Added support for body and copy                                   |
- |   * Added support for spamtest and virustest                          |
- |   * Added support for date                                            |
- |   * Added support for editheader                                      |
- +-----------------------------------------------------------------------+
-*/
+ * rcube_sieve_script class for sieverules script parsing
+ *
+ * @author Aleksander Machniak <alec@alec.pl>
+ * @modified by Philip Weir
+ *   * Changed name of keys in script array
+ *   * Added support for address and envelope
+ *   * Added support for vacation
+ *   * Added support for disabled rules (written to file as comment)
+ *   * Added support for regex tests
+ *   * Added support for imapflags
+ *   * Added support for relational operators and comparators
+ *   * Added support for subaddress tests
+ *   * Added support for notify action
+ *   * Added support for stop action
+ *   * Added support for body and copy
+ *   * Added support for spamtest and virustest
+ *   * Added support for date
+ *   * Added support for editheader
+ *
+ * Copyright (C) 2009-2014 Philip Weir
+ *
+ * This program is a Roundcube (http://www.roundcube.net) plugin.
+ * For configuration see config.inc.php.dist.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Roundcube. If not, see http://www.gnu.org/licenses/.
+ */
 
 define('SIEVE_ERROR_BAD_ACTION', 1);
 define('SIEVE_ERROR_NOT_FOUND', 2);
@@ -921,7 +937,7 @@ class rcube_sieve_script
 		$result = array();
 
 		if ($regex) {
-			if (preg_match('/^"(.*)"$/', $content, $matches));
+			if (preg_match('/^"(.*)"$/', $content, $matches))
 				$content = $matches[1];
 
 			$content = str_replace('\"', '"', $content);
