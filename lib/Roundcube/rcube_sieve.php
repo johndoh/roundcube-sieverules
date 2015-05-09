@@ -52,7 +52,7 @@ class rcube_sieve
 		$data = rcube::get_instance()->plugins->exec_hook('sieverules_connect', array(
 			'username' => $username, 'password' => $password, 'host' => $host, 'port' => $port,
 			'auth_type' => $auth_type, 'usetls' => $usetls, 'ruleset' => $ruleset, 'dir' => $dir,
-			'elsif' => $elsif, 'auth_cid' => $auth_cid, 'auth_pw' => $auth_pw, 'socket_options' => $options));
+			'elsif' => $elsif, 'auth_cid' => $auth_cid, 'auth_pw' => $auth_pw, 'socket_options' => $socket_options));
 
 		$username = $data['username'];
 		$password = $data['password'];
