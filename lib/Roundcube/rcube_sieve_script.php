@@ -411,13 +411,15 @@ class rcube_sieve_script
 //							}
 
 							// detect original recipient
-							if ($action['from'] == 'auto' && strpos($variables, 'set "from"') === false) {
-								array_push($exts, 'variables');
+							if ($action['from'] == 'auto') {
+								if (strpos($variables, 'set "from"') === false) {
+									array_push($exts, 'variables');
 
-								$variables .= 'set "from" "";' . RCUBE_SIEVE_NEWLINE;
-								$variables .= 'if header :matches "to" "*" {' . RCUBE_SIEVE_NEWLINE;
-								$variables .= RCUBE_SIEVE_INDENT . 'set "from" "${1}";' . RCUBE_SIEVE_NEWLINE;
-								$variables .= '}' . RCUBE_SIEVE_NEWLINE;
+									$variables .= 'set "from" "";' . RCUBE_SIEVE_NEWLINE;
+									$variables .= 'if header :matches "to" "*" {' . RCUBE_SIEVE_NEWLINE;
+									$variables .= RCUBE_SIEVE_INDENT . 'set "from" "${1}";' . RCUBE_SIEVE_NEWLINE;
+									$variables .= '}' . RCUBE_SIEVE_NEWLINE;
+								}
 
 								$action['from'] = "\${from}";
 							}
@@ -426,13 +428,15 @@ class rcube_sieve_script
 							}
 
 							// append original subject
-							if ($action['origsubject'] == '1' && strpos($variables, 'set "subject"') === false) {
-								array_push($exts, 'variables');
+							if ($action['origsubject'] == '1') {
+								if (strpos($variables, 'set "subject"') === false) {
+									array_push($exts, 'variables');
 
-								$variables .= 'set "subject" "";' . RCUBE_SIEVE_NEWLINE;
-								$variables .= 'if header :matches "subject" "*" {' . RCUBE_SIEVE_NEWLINE;
-								$variables .= RCUBE_SIEVE_INDENT . 'set "subject" "${1}";' . RCUBE_SIEVE_NEWLINE;
-								$variables .= '}' . RCUBE_SIEVE_NEWLINE;
+									$variables .= 'set "subject" "";' . RCUBE_SIEVE_NEWLINE;
+									$variables .= 'if header :matches "subject" "*" {' . RCUBE_SIEVE_NEWLINE;
+									$variables .= RCUBE_SIEVE_INDENT . 'set "subject" "${1}";' . RCUBE_SIEVE_NEWLINE;
+									$variables .= '}' . RCUBE_SIEVE_NEWLINE;
+								}
 
 								$action['subject'] = trim($action['subject']);
 								if (substr($action['subject'], -1, 1) != ":") $action['subject'] .= ":";
