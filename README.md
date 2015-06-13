@@ -202,9 +202,9 @@ directory. The file must contain a class named 'srimport_[filename]'. Each
 import filter must have:
 * An attribute called name - this should be the user friendly name of the
 import e.g. Squirrelmail (Avelsieve)
-* A pubic function called detector - used to detect of if current rule file
+* A public function called detector - used to detect of if current rule file
 was genereted with the software
-* A pubic function called importer - converts the rule file to SieveRules
+* A public function called importer - converts the rule file to SieveRules
 format
 
 The importer function can return either a string to be parsed by the SieveRules
