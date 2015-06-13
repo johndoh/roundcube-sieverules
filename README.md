@@ -175,16 +175,21 @@ Default sieve rule file
 If a default sieve rule file is specified then when a user has no sieve rules
 defined this file is loaded instead and the rules are displayed just as if they
 belong to the user. The file can be stored any where on your server and the
-user under which your web server runs must have permission to read it.
+user under which your web server runs must have permission to read it. The file
+must be in a the format that SieveRules can understand the easiest way to do
+this is to create the initial file using this plugin.
 
 Example sieve rule file
 -----------------------
 If an example sieve rule file is specified then the filters from this script
-are loaded and displayed in a drop down in the bottom right of the screen.
-Users can select one of these example rules, it will load in the just as one of
+are loaded and displayed in a list in the bottom right of the screen. Users
+can select one of these example rules, it will load in the just as one of
 their rules, edit it and then save it to their rule set. The file can be stored
 any where on your server and the user under which your web server runs must
-have permission to read it.
+have permission to read it. The file can be stored any where on your server and the
+user under which your web server runs must have permission to read it. The file
+must be in a the format that SieveRules can understand the easiest way to do
+this is to create the initial file using this plugin.
 
 Import existing rulesets
 ------------------------

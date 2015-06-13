@@ -112,13 +112,17 @@ $config['sieverules_adveditor'] = 0;
 $config['sieverules_multiplerules'] = FALSE;
 
 // Default (or global) sieve rule file
-$config['sieverules_default_file'] = '/etc/dovecot/sieve/default';
+// An absolute path to a default rule file, see README for more information
+// For example '/etc/dovecot/sieve/default';
+$config['sieverules_default_file'] = null;
 
 // Auto load default sieve rule file if no rules exist and no import filters match
 $config['sieverules_auto_load_default'] = FALSE;
 
 // Example sieve rule file
-$config['sieverules_example_file'] = '/etc/dovecot/sieve/example';
+// An absolute path to an example rule file, see README for more information
+// For example '/etc/dovecot/sieve/example'
+$config['sieverules_example_file'] = null;
 
 // By default the "header" command is used for email address based tests: from/to/cc/bcc
 // to use "address" command instead set this option to false
