@@ -157,8 +157,8 @@ $labels['automaticreply'] = 'Risposta automatica';
 $labels['manageautoreply'] = 'Gestisci risposta automatica';
 $labels['enableautoreply'] = 'Attiva risposta automatica';
 $labels['sendonlyperiod'] = 'Invio messaggio unicamente durante questo periodo:';
-$labels['datefrom'] = 'Da';
-$labels['dateto'] = 'A';
+$labels['datefrom'] = 'dal';
+$labels['dateto'] = 'al';
 
 $messages = array();
 $messages['nosieverules'] = 'Nessun filtro trovato.';
