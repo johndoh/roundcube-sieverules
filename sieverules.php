@@ -322,6 +322,7 @@ class sieverules extends rcube_plugin
 			}
 			else {
 				// no active ruleset exists, create one with default name and reinitialise
+				$this->current_ruleset = $rcmail->config->get('sieverules_ruleset_name');
 				$this->_startup();
 				$rcmail->overwrite_action('plugin.sieverules.setup');
 				$this->action = 'plugin.sieverules.setup';
