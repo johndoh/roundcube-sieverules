@@ -1,6 +1,8 @@
 Roundcube Webmail SieveRules
 ============================
 
+ * Fix initial ruleset creation when multiple rulesets enabled
+
 Version 2.3 (2015-04-18, rc-1.1)
 =================================================
  * Fix missing size_test function in vacation validation
