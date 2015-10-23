@@ -215,6 +215,9 @@ rcube_webmail.prototype.sieverules_update_list = function(action, param1, param2
 
 			var newrow = document.createElement('tr');
 
+			if (param4)
+				newrow.setAttribute('style', 'display: none;');
+
 			if (param1 == -1) {
 				var cell = document.createElement('td');
 				cell.setAttribute('colspan', '2');
@@ -979,8 +982,8 @@ $(document).ready(function() {
 				}
 
 				if (rcmail.env.action == 'plugin.sieverules') {
-					rcmail.register_command('plugin.sieverules.move', function(props, obj) {
-						var args = (props.source) ? props : { source:obj.parentNode.parentNode.rowIndex, dest:props };
+					rcmail.register_command('plugin.sieverules.move', function(props, obj, e) {
+						var args = (props.source) ? props : { source:$('#sieverules-table tbody tr').index($(obj).parents('tr')), dest:props };
 
 						if (args.dest > -1 && args.dest <= rcmail.sieverules_list.rowcount) {
 							var lock = rcmail.set_busy(true, 'sieverules.movingfilter');

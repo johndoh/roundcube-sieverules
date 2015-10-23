@@ -484,14 +484,18 @@ class sieverules extends rcube_plugin
 		else foreach($this->script as $idx => $filter) {
 			$args = rcube::get_instance()->plugins->exec_hook('sieverules_list_rules', array('idx' => $idx, 'name' => $filter['name']));
 
-			// skip the vacation
-			if ($this->vacation_ui && $idx == $this->vacation_rule_position && $filter['name'] == $this->vacation_rule_name)
-				continue;
-
-			$parts = $this->_rule_list_parts($idx, $filter);
-			$table->set_row_attribs(array('id' => 'rcmrow' . $idx, 'style' => $args['abort'] ? 'display: none;' : ''));
-			$table->add(null, rcmail::Q($parts['name']));
-			$table->add('control', $parts['control']);
+			// skip the vacation and aborted rules
+			if ($args['abort'] || ($this->vacation_ui && $idx == $this->vacation_rule_position && $filter['name'] == $this->vacation_rule_name)) {
+				$table->set_row_attribs(array('id' => 'rcmrow' . $idx, 'style' => 'display: none;'));
+				$table->add(null, '');
+				$table->add('control', '');
+			}
+			else {
+				$parts = $this->_rule_list_parts($idx, $filter);
+				$table->set_row_attribs(array('id' => 'rcmrow' . $idx));
+				$table->add(null, rcmail::Q($parts['name']));
+				$table->add('control', $parts['control']);
+			}
 		}
 
 		return html::tag('div', array('id' => 'sieverules-list-filters'), $table->show($attrib));
@@ -508,18 +512,18 @@ class sieverules extends rcube_plugin
 		}
 		else foreach($this->script as $idx => $filter) {
 			$args = rcube::get_instance()->plugins->exec_hook('sieverules_list_rules', array('idx' => $idx, 'name' => $filter['name']));
-			if ($args['abort'] === true)
-				continue;
 
-			// skip the vacation
-			if ($this->vacation_ui && $idx == $this->vacation_rule_position && $filter['name'] == $this->vacation_rule_name)
-				continue;
+			// skip the vacation and aborted rules
+			if ($args['abort'] || ($this->vacation_ui && $idx == $this->vacation_rule_position && $filter['name'] == $this->vacation_rule_name)) {
+				$this->api->output->command('sieverules_update_list', $idx == 0 ? 'add-first' : 'add', 'rcmrow' . $idx, '', '', true);
+			}
+			else {
+				$parts = $this->_rule_list_parts($idx, $filter);
+				$parts['control'] = str_replace("'", "\'", $parts['control']);
 
-			$parts = $this->_rule_list_parts($idx, $filter);
-			$parts['control'] = str_replace("'", "\'", $parts['control']);
-
-			// send rule to UI
-			$this->api->output->command('sieverules_update_list', $idx == 0 ? 'add-first' : 'add', 'rcmrow' . $idx, rcmail::JQ($parts['name']), $parts['control'], $args['abort']);
+				// send rule to UI
+				$this->api->output->command('sieverules_update_list', $idx == 0 ? 'add-first' : 'add', 'rcmrow' . $idx, rcmail::JQ($parts['name']), $parts['control'], $args['abort']);
+			}
 		}
 
 		$this->api->output->send();
