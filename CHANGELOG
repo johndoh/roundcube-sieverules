@@ -2,6 +2,7 @@ Roundcube Webmail SieveRules
 ============================
 
  * Fix initial ruleset creation when multiple rulesets enabled
+ * Fix rule moving using arrows in Classic skin and also when auto reply UI is enabled
 
 Version 2.3 (2015-04-18, rc-1.1)
 =================================================
