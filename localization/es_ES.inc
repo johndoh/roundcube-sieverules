@@ -132,6 +132,12 @@ $labels['time'] = 'Tiempo';
 $labels['weekday'] = 'Día de la semana';
 $labels['createfilter'] = 'Crear Filtro';
 $labels['createfilterbased'] = 'Crear un filtro basado en este mensaje';
+$labels['automaticreply'] = 'Respuesta automática';
+$labels['manageautoreply'] = 'Gestionar respuesta automática';
+$labels['enableautoreply'] = 'Habilitar respuesta automática';
+$labels['sendonlyperiod'] = 'Enviar mensaje solo durante este período:';
+$labels['datefrom'] = 'Desde';
+$labels['dateto'] = 'Hasta';
 
 $messages = array();
 $messages['nosieverules'] = 'No se han encontrado filtros.';
