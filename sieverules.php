@@ -258,7 +258,6 @@ class sieverules extends rcube_plugin
 				$this->headers[1]['value'] = 'address::From';
 				$this->headers[2]['value'] = 'address::To';
 				$this->headers[3]['value'] = 'address::Cc';
-				$this->headers[4]['value'] = 'address::Bcc';
 			}
 
 			$this->action = $rcmail->action;
