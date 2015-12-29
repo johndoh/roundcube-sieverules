@@ -91,6 +91,10 @@ $config['sieverules_other_headers'] = array(
 											'X-Spam-Flag', 'X-Spam-Tests', 'Sender',
 											);
 
+// convert all UTF8 data entered as the target for From/To/Cc tests to punycode
+// for exmaple if testing the from address of a message and the address entered is IDN automatically convert it to punycode when saving the rule
+$config['sieverules_hdr_idn2ascii'] = false;
+
 // Predefined rules
 // each rule should be in it own array - examples provided in README
 // 'name' => name of the rule, displayed in the rule type select box

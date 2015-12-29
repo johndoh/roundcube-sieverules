@@ -1375,6 +1375,11 @@ class sieverules extends rcube_plugin
 						$advop = preg_replace('/^not/', '', $advop);
 						$header = preg_match('/[\s,]+/', $header) ? preg_split('/[\s,]+/', $header, -1, PREG_SPLIT_NO_EMPTY) : $header;
 
+						if ($rcmail->config->get('sieverules_hdr_idn2ascii', false) && in_array($header, array('From', 'To', 'Cc'))) {
+							$target = rcube_utils::idn_to_ascii($target);
+							$advtarget = rcube_utils::idn_to_ascii($advtarget);
+						}
+
 						if ($op == 'exists') {
 							$script['tests'][$i]['type'] = 'exists';
 							$script['tests'][$i]['operator'] = 'exists';
