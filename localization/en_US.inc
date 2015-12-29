@@ -189,6 +189,7 @@ $messages['vacnoperiod'] = 'Please enter a number of days for the period in whic
 $messages['vacperiodwrongformat'] = 'Error: The period must be a number greater than or equal to 1';
 $messages['vacnomsg'] = 'Please enter some text for your message';
 $messages['vacmsgone'] = 'Error: Only one Out of Office Message per filter permitted';
+$messages['flagwarning'] = 'Please set all \'Mark message\' actions before any other actions';
 $messages['notifynomethod'] = 'Please enter a method by which the notification should be sent';
 $messages['notifynomsg'] = 'Please enter some text for your message';
 $messages['sieveruleexp'] = 'Please define one or more rules against which each message will be tested. Filters are run in the order in which they appear on the left of this screen, if a match is found no further filters will be tested.';

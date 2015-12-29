@@ -780,8 +780,8 @@ class sieverules extends rcube_plugin
 			'sieverules.norulename', 'sieverules.ruleexists', 'sieverules.noheader',
 			'sieverules.headerbadchars', 'sieverules.noheadervalue', 'sieverules.sizewrongformat',
 			'sieverules.noredirect', 'sieverules.redirectaddresserror', 'sieverules.noreject', 'sieverules.vacnoperiod',
-			'sieverules.vacperiodwrongformat', 'sieverules.vacnomsg', 'sieverules.vacmsgone', 'sieverules.notifynomethod',
-			'sieverules.missingfoldername', 'sieverules.notifynomsg', 'sieverules.ruledeleteconfirm',
+			'sieverules.vacperiodwrongformat', 'sieverules.vacnomsg', 'sieverules.vacmsgone', 'sieverules.flagwarning',
+			'sieverules.notifynomethod', 'sieverules.missingfoldername', 'sieverules.notifynomsg', 'sieverules.ruledeleteconfirm',
 			'sieverules.actiondeleteconfirm', 'sieverules.notifyinvalidmethod', 'sieverules.nobodycontentpart',
 			'sieverules.badoperator','sieverules.baddateformat','sieverules.badtimeformat','sieverules.vactoexp_err','editorwarning',
 			'sieverules.eheadernoname','sieverules.eheadernoval');

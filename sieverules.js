@@ -634,8 +634,16 @@ rcube_webmail.prototype.sieverules_action_select = function(sel) {
 		document.getElementsByName('_nmethod[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
 	else if (obj.value == 'redirect' || obj.value == 'redirect_copy')
 		document.getElementsByName('_redirect[]')[idx].style.display = '';
-	else if (obj.value == 'imapflags' || obj.value == 'imap4flags')
+	else if (obj.value == 'imapflags' || obj.value == 'imap4flags') {
+		for (var i = 1; i < idx; i++) {
+			if (document.getElementsByName('_act[]')[i].value != 'imapflags' && document.getElementsByName('_act[]')[i].value != 'imap4flags') {
+				alert(rcmail.get_label('flagwarning','sieverules'));
+				return;
+			}
+		}
+
 		document.getElementsByName('_imapflags[]')[idx].style.display = '';
+	}
 	else if (obj.value == 'editheaderadd' || obj.value == 'editheaderrem') {
 		document.getElementsByName('_eheadname[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
 
