@@ -134,6 +134,11 @@ $labels['possiblevirus'] = 'Nachricht enthält möglicherweise einen Virus';
 $labels['definitevirus'] = 'Nachricht enthält definitiv einen Virus';
 $labels['createfilter'] = 'Erstelle Filter...';
 $labels['createfilterbased'] = 'Erstelle einen auf dieser Nachricht basierenden Filter';
+$labels['automaticreply'] = 'Abwesenheit';
+$labels['enableautoreply'] = 'Aktiviere die Abwesenheitsnotiz';
+$labels['sendonlyperiod'] = 'Sende Nachrichten nur innerhalb von diesem Zeitraum:';
+$labels['datefrom'] = 'Von';
+$labels['dateto'] = 'Bis';
 
 $messages = array();
 $messages['nosieverules'] = 'Keine Filter gefunden.';
@@ -191,5 +196,6 @@ $messages['baddateformat'] = 'Fehler: Bitte geben Sie das Datum im Format JJJJ-M
 $messages['badtimeformat'] = 'Fehler: Bitte geben Sie die Uhrzeit im Format HH:MM:SS ein.';
 $messages['missingfoldername'] = 'Fehler: Bitte ein Verzeichnisnamen eingeben.';
 $messages['addtoexisting'] = 'Bitte wählen Sie einen bestehenden Filter von der Liste auf der linken Seite aus, um die neuen Kriterien hinzuzufügen oder wählen Sie aus den Optionen unten.';
+$messages['pleaseinitialise'] = 'Bitte gehen sie zuerst zu \'Filter\' auf der linken Seite um diese zu initialisieren, bevor sie die Abwesenheit aktivieren können.';
 
 ?>
