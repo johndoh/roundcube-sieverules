@@ -52,7 +52,9 @@ class srimport_ingo
 					$content .= "# rule:[" . $name[$i] . "]\n";
 				}
 				elseif (isset($name[$i])) {
-					$token = str_replace(":comparator \"i;ascii-casemap\" ", "", $token);
+					$patterns = array('/:comparator "i;ascii-casemap" /', '/address :all :contains "(From|To)"/');
+					$replacements = array('', 'header :contains "${1}"');
+					$token = preg_replace($patterns, $replacements, $token);
 					$content .= $token . "\n";
 					$i++;
 				}
