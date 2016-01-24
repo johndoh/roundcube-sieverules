@@ -110,6 +110,7 @@ $config['sieverules_predefined_rules'] = array();
 // 0 - Disabled, option not shown in the UI
 // 1 - Enabled, option shown in the UI
 // 2 - Option shown in the UI and used by default
+// NOTE: The 'last used' editor is remembered in user prefs. Add this option to 'dont_override' in main Roundcube config file to prevent this.
 $config['sieverules_adveditor'] = 0;
 
 // Allow users to use multiple rulesets

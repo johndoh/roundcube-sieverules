@@ -1198,6 +1198,9 @@ class sieverules extends rcube_plugin
 				$this->api->output->command('display_message', $save !== false ? $save : $this->gettext('filtersaveerror'), 'error');
 			}
 
+			// remember editor type for next time
+			$rcmail->user->save_prefs(array('sieverules_adveditor' => 2));
+
 			// go to next step
 			$rcmail->overwrite_action('plugin.sieverules.advanced');
 			$this->action = 'plugin.sieverules.advanced';
@@ -1573,6 +1576,9 @@ class sieverules extends rcube_plugin
 				$this->script = array();
 			else
 				$this->script = $this->sieve->script->as_array();
+
+			// remember editor type for next time (only when simple is not the default)
+			$rcmail->user->save_prefs(array('sieverules_adveditor' => $rcmail->config->get('sieverules_adveditor') == 2 ? 1 : null));
 
 			// go to next step
 			if ($vacation_mode) {
