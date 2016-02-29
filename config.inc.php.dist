@@ -51,7 +51,7 @@ $config['sieverules_conn_options'] = null;
 $config['sieverules_folder_delimiter'] = null;
 
 // Sieve RFC says that we should use UTF-8 encoding for mailbox names,
-// but some implementations do not covert UTF-8 to modified UTF-7.
+// but some implementations do not convert UTF-8 to modified UTF-7.
 // set to null for default behaviour
 $config['sieverules_folder_encoding'] = null;
 
