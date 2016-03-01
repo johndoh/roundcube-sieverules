@@ -203,7 +203,7 @@ import filter must have:
 * An attribute called name - this should be the user friendly name of the
 import e.g. Squirrelmail (Avelsieve)
 * A public function called detector - used to detect of if current rule file
-was genereted with the software
+was generated with the software
 * A public function called importer - converts the rule file to SieveRules
 format
 
