@@ -222,5 +222,3 @@ $messages['eheadernoval'] = 'Chyba: Zadejte prosím hodnotu hlavičky';
 $messages['addtoexisting'] = 'Vyberte ze sloupce vlevo filtr, který chcete upravit, nebo pokračujte výběrem níže.';
 $messages['autoreplysaved'] = 'Automatická odpověď úspěšně uložena';
 $messages['pleaseinitialise'] = 'Před nastavením automatické odpovědi je třeba inicializovat filtry. Navštivte prosím položku \'Filtry\'.';
-
-?>

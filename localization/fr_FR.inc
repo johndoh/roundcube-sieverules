@@ -181,5 +181,3 @@ $messages['filtercopied'] = 'Filtre copié avec succès';
 $messages['nosieverulesets'] = 'Aucun groupe de règles trouvé.';
 $messages['baddateformat'] = 'Erreur: Veuillez entrer une date sous la forme AAAA-MM-JJ';
 $messages['badtimeformat'] = 'Erreur: Veuillez entrer une heure sous la forme HH:MM:SS';
-
-?>

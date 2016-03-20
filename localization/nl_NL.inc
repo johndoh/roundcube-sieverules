@@ -201,5 +201,3 @@ $messages['badtimeformat'] = 'Fout: Vul de tijd in het format UU:MM:SS in';
 $messages['missingfoldername'] = 'Fout: Vul een mapnaam in';
 $messages['eheadernoname'] = 'Fout: Vul een header naam in';
 $messages['eheadernoval'] = 'Fout: Vul een header waarde in';
-
-?>

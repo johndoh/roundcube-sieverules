@@ -181,5 +181,3 @@ $messages['filtercopied'] = 'Pravilo uspešno prekopirano';
 $messages['nosieverulesets'] = 'Ni zbirk.';
 $messages['baddateformat'] = 'Napaka: vnesite datum v obliki LLLL-MM-DD';
 $messages['badtimeformat'] = 'Napaka: vnesite čas v obliki UU:MM:SS';
-
-?>

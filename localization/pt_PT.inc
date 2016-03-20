@@ -180,5 +180,3 @@ $messages['filtercopied'] = 'Filtro copiado com sucesso';
 $messages['nosieverulesets'] = 'Nenhum conjunto de regras encontrado.';
 $messages['baddateformat'] = 'Erro: Indique a data no formato AAAA-MM-DD';
 $messages['badtimeformat'] = 'Erro: Indique a hora no formato HH:MM:SS';
-
-?>

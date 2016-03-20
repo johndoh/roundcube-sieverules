@@ -155,5 +155,3 @@ $messages['badoperator'] = 'Den valda operatorn kan inte användas i den här re
 $messages['filteractionerror'] = 'Den valda åtgärden stöds inte av servern';
 $messages['filtermissingerror'] = 'Kan inte hitta den önskade regeln';
 $messages['contentpartexp'] = 'Fyll i MIME-typ eller specifik del av meddelandet som ska testas. Exempel: `message/rfc822`, `text/html`, `audio/mp3`';
-
-?>

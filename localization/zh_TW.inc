@@ -188,5 +188,3 @@ $messages['nosieverulesets'] = 'No rulesets found.';
 $messages['baddateformat'] = 'Error: Please enter the date in the format YYYY-MM-DD';
 $messages['badtimeformat'] = 'Error: Please enter the time in the format HH:MM:SS';
 $messages['missingfoldername'] = '錯誤: 請輸入資料夾名稱';
-
-?>

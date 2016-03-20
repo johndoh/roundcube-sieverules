@@ -168,5 +168,3 @@ $messages['nosieverulesets'] = 'Nincs ilyen szabálycsoport.';
 $messages['baddateformat'] = 'Hiba: a dátumot ÉÉÉÉ-HH-NN formátumban kell megadni.';
 $messages['badtimeformat'] = 'Hiba: az időt ÓÓ:PP:MP fromátumban kell megadni';
 $messages['missingfoldername'] = 'Hiba! Írjon be egy mappanevet.';
-
-?>

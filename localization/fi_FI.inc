@@ -182,5 +182,3 @@ $messages['nosieverulesets'] = 'Säännöstöä ei löytynyt.';
 $messages['baddateformat'] = 'Virhe: anna päivämäärä muodossa VVVV-KK-PP';
 $messages['badtimeformat'] = 'Virhe: anna aika muodossa TT:MM:SS';
 $messages['missingfoldername'] = 'Virhe: anna kansiolle nimi';
-
-?>

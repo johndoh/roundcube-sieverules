@@ -163,5 +163,3 @@ $messages['importother'] = '<b>Importar filtros:</b> Se ha encontrado otro juego
 $messages['switchtoadveditor'] = 'El editor avanzado le permite editar las reglas de sieve directamente. Cualquier cambio que haga será ilegible para el editor normal de reglas y se parderá si graba modificaciones con el editor normal. ¿Quiere continuar?';
 $messages['filterimported'] = 'Filtro importado correctamente';
 $messages['filterimporterror'] = 'No se pudo importar el filtro. Error en el servidor';
-
-?>

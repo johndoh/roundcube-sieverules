@@ -197,5 +197,3 @@ $messages['badtimeformat'] = 'Fehler: Bitte geben Sie die Uhrzeit im Format HH:M
 $messages['missingfoldername'] = 'Fehler: Bitte ein Verzeichnisnamen eingeben.';
 $messages['addtoexisting'] = 'Bitte wählen Sie einen bestehenden Filter von der Liste auf der linken Seite aus, um die neuen Kriterien hinzuzufügen oder wählen Sie aus den Optionen unten.';
 $messages['pleaseinitialise'] = 'Bitte gehen sie zuerst zu \'Filter\' auf der linken Seite um diese zu initialisieren, bevor sie die Abwesenheit aktivieren können.';
-
-?>

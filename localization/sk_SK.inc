@@ -155,5 +155,3 @@ $messages['badoperator'] = 'Prepáčte, ale operátor ktorý ste vybrali nemôž
 $messages['filteractionerror'] = 'Akcia, ktorú ste vybrali nie je podporovaná serverom';
 $messages['filtermissingerror'] = 'Nepodarilo sa nájsť požadovanú podmienku';
 $messages['contentpartexp'] = 'Typ MIME, alebo špecifická časť správy, ktorá má byť testovaná. Napr.: `message/rfc822`, `text/html`, `audio/mp3` či `image`.';
-
-?>

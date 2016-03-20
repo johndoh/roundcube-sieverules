@@ -183,5 +183,3 @@ $config['sieverules_additional_headers'] = array('List-Id');
 $config['sieverules_autoreply_ui'] = FALSE;
 
 // For information on customising the rule file see "The structure of the rule file" in the README
-
-?>

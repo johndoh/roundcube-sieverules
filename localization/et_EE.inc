@@ -75,5 +75,3 @@ $labels['importance1'] = 'Kõrge';
 $labels['importance2'] = 'Normaalne';
 
 $messages = array();
-
-?>

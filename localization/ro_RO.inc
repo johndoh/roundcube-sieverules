@@ -171,5 +171,3 @@ $messages['rulesetexists'] = 'Un set de reguli cu acest nume există deja. Intro
 $messages['copyexisting'] = '<b>Copiază setul de reguli existent:</b> Doreşti să copiezi filtrele dintr-un set de reguli existent in setul tău curent?';
 $messages['filtercopied'] = 'Filtrul copiat cu succes.';
 $messages['nosieverulesets'] = 'Niciun set de reguli găsit.';
-
-?>

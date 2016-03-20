@@ -165,5 +165,3 @@ $messages['rulesetexists'] = 'Ja existeix un conjunt de regles amb aquest nom. E
 $messages['copyexisting'] = '<b> Copia el següent conjunt de regles:</b> Voleu importar els filtres d\'un conjunt de regles existents al conjunt actual?';
 $messages['filtercopied'] = 'Filtre copiat correctament';
 $messages['nosieverulesets'] = 'No s\'han trobat regles.';
-
-?>

@@ -222,5 +222,3 @@ $messages['eheadernoval'] = 'Errore: Per favore inserisci il contenuto di un hea
 $messages['addtoexisting'] = 'Seleziona un filtro esistente dalla lista sulla sinistra per aggiungerci i nuovi criteri, oppure seleziona una delle opzioni sottostanti.';
 $messages['autoreplysaved'] = 'Risposta automatica salvata';
 $messages['pleaseinitialise'] = 'Per favore vai nella rubrica \'Filtri\' per inizializzare i tuoi filtri prima di impostare una risposta automatica';
-
-?>

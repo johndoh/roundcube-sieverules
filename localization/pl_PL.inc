@@ -202,5 +202,3 @@ $messages['badtimeformat'] = 'Błąd: Podaj czas w formacie HH:MM:SS';
 $messages['missingfoldername'] = 'Błąd: Podaj nazwę folderu';
 $messages['eheadernoname'] = 'Błąd: Podaj nazwę nagłówka';
 $messages['eheadernoval'] = 'Błąd: Podaj wartość nagłówka';
-
-?>
