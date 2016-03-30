@@ -1185,8 +1185,9 @@ class sieverules extends rcube_plugin
 		$this->_startup();
 		$vacation_mode = rcube_utils::get_input_value('_vacation_mode', rcube_utils::INPUT_POST) == 1 ? true : false;
 
-		$script = trim(rcube_utils::get_input_value('_script', rcube_utils::INPUT_POST, true));
-		if ($script != '' && in_array($rcmail->config->get('sieverules_adveditor'), array(1, 2))) {
+		if (isset($_POST['_script']) && in_array($rcmail->config->get('sieverules_adveditor'), array(1, 2))) {
+			$script = trim(rcube_utils::get_input_value('_script', rcube_utils::INPUT_POST, true));
+			$script = strlen($script) > 0 ? $script : '/* empty script */';
 			$script = $this->_strip_val($script);
 			$save = $this->sieve->save($script);
 
