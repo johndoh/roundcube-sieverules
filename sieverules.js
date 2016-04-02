@@ -607,6 +607,7 @@ rcube_webmail.prototype.sieverules_action_select = function(sel) {
 	document.getElementsByName('_period[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
 	document.getElementsByName('_nmethod[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
 	document.getElementsByName('_eheadname[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+	document.getElementsByName('_varname[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = 'none';
 
 	if (obj.value == 'fileinto' || obj.value == 'fileinto_copy')
 		document.getElementsByName('_folder[]')[idx].style.display = '';
@@ -660,6 +661,8 @@ rcube_webmail.prototype.sieverules_action_select = function(sel) {
 			document.getElementsByName('_hadv_opts[]')[idx].parentNode.parentNode.style.display = 'none';
 		}
 	}
+	else if (obj.value == 'variables')
+		document.getElementsByName('_varname[]')[idx].parentNode.parentNode.parentNode.parentNode.style.display = '';
 
 	if ($(document.getElementsByName('_folder[]')[idx]).is(':visible') && document.getElementsByName('_folder[]')[idx].value == '@@newfolder')
 		$(document.getElementsByName('_customfolder[]')[idx]).parent().show();
@@ -1278,6 +1281,8 @@ $(document).ready(function() {
 					var nmsgs = document.getElementsByName('_nmsg[]');
 					var eheadernames = document.getElementsByName('_eheadname[]');
 					var eheadervals = document.getElementsByName('_eheadval[]');
+					var varnames = document.getElementsByName('_varname[]');
+					var varvals = document.getElementsByName('_varval[]');
 					var size_test = new RegExp('^[0-9]+$');
 					var header_test = new RegExp('^[a-zA-Z0-9\-]+( ?, ?[a-zA-Z0-9\-]+)*$');
 					var date_test = new RegExp('^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$');
@@ -1429,6 +1434,19 @@ $(document).ready(function() {
 									eheadervals[i].focus();
 									return false;
 								}
+							}
+						}
+						else if (acts[i][idx].value == 'variables') {
+							if (varnames[i].value == '') {
+								alert(rcmail.get_label('varnoname','sieverules'));
+								varnames[i].focus();
+								return false;
+							}
+
+							if (varvals[i].value == '') {
+								alert(rcmail.get_label('varnoval','sieverules'));
+								varvals[i].focus();
+								return false;
 							}
 						}
 					}

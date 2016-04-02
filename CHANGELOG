@@ -1,6 +1,7 @@
 Roundcube Webmail SieveRules
 ============================
 
+ * Add support for Variables 'set' function (Note: This is disabled by default)
  * Fix initial ruleset creation when multiple rulesets enabled
  * Fix rule moving using arrows in Classic skin and also when auto reply UI is enabled
 

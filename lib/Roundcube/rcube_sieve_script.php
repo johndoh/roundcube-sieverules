@@ -69,7 +69,8 @@ class rcube_sieve_script
 						'spamtest',
 						'virustest',
 						'date',
-						'editheader'
+						'editheader',
+						'variables'
 						);
 	public $raw = '';
 
@@ -555,6 +556,10 @@ class rcube_sieve_script
 
 							$actions .= ";" . RCUBE_SIEVE_NEWLINE;
 							break;
+						case 'variables':
+							array_push($exts, 'variables');
+							$actions .= RCUBE_SIEVE_INDENT . "set \"" . $this->_escape_string($action['name']) . "\" \"" . $this->_escape_string($action['value']) . "\";" . RCUBE_SIEVE_NEWLINE;
+							break;
 						case 'keep':
 						case 'discard':
 						case 'stop':
@@ -663,6 +668,7 @@ class rcube_sieve_script
 		$patterns[] = '^\s*notify\s+(:options\s+\[(.*?[^\\\])\]\s+)?(:from\s+(".*?[^"\\\]")\s+)?(:importance\s+(".*?[^"\\\]")\s+)?:message\s+(".*?[^"\\\]")\s+(.*?[^\\\]);';
 		$patterns[] = '^\s*addheader\s+(:(last))?\s*(".*?[^"\\\]")\s+(".*?[^"\\\]");';
 		$patterns[] = '^\s*deleteheader\s+(:(last)|:index\s([0-9])+)?\s*(:(contains))?\s*(".*?[^"\\\]")\s*(".*?[^"\\\]")?;';
+		$patterns[] = '^\s*set\s+(".*?[^"\\\]")\s+(".*?[^"\\\]");';
 
 		$pattern = '/(' . implode('$)|(', $patterns) . '$)/ms';
 
@@ -762,6 +768,11 @@ class rcube_sieve_script
 									'operator' => $m[sizeof($m)-3],
 									'name' => strlen($m[sizeof($m)-2]) == 0 ? $this->_parse_string($m[sizeof($m)-1]) : $this->_parse_string($m[sizeof($m)-2]),
 									'value' => strlen($m[sizeof($m)-2]) == 0 ? '' : $this->_parse_string($m[sizeof($m)-1]));
+				}
+				elseif (preg_match('/^set/', $content)) {
+					$result[] = array('type' => 'variables',
+									'name' => $this->_parse_string($m[sizeof($m)-2]),
+									'value' => $this->_parse_string($m[sizeof($m)-1]));
 				}
 			}
 		}

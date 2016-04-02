@@ -78,7 +78,8 @@ $config['sieverules_allowed_actions'] = array(
 											'notify' => TRUE,
 											'stop' => TRUE,
 											'editheaderadd' => TRUE,
-											'editheaderrem' => TRUE
+											'editheaderrem' => TRUE,
+											'variables' => FALSE
 											);
 
 // headers listed as examples of "Other headers"
