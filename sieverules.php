@@ -1541,7 +1541,7 @@ class sieverules extends rcube_plugin
 				$i++;
 			}
 
-			if ($vacation_mode && !isset($this->script[$iid]))
+			if ($vacation_mode && (!isset($this->script[$iid]) || (isset($this->script[$iid]) && $this->script[$iid]['name'] != $this->vacation_rule_name)))
 				$result = $this->sieve->script->add_rule($script, $iid);
 			elseif (!isset($this->script[$iid]))
 				$result = $this->sieve->script->add_rule($script);
