@@ -37,10 +37,15 @@ $config['sieverules_usetls'] = FALSE;
 // Connection context options
 // See http://php.net/manual/en/context.ssl.php
 // The example below enables server certificate validation
+// maybe you will need to set: 'verify_peer'  => false;
 // $config['sieverules_conn_options'] = array(
 //   'ssl'         => array(
 //     'verify_peer'  => true,
-//     'verify_depth' => 3,
+//     'peer_name'    => 'example.com',
+//     'SNI_enabled'  => true,
+//     'disable_compression' => true,
+//     'verify_depth' => 4,
+//     'ciphers'      => 'ALL!EXPORT!EXPORT40!EXPORT56!aNULL!LOW!RC4',
 //     'cafile'       => '/etc/openssl/certs/ca.crt',
 //   )
 // );
