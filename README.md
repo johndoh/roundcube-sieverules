@@ -1,5 +1,12 @@
 Roundcube Webmail SieveRules
 ============================
+
+THIS PLUGIN IS NO LONGER MAINTAINED
+-----------------------------------
+Originally created to provide functionality not available in the Managesieve
+plugin shipped with Roundcube, Managesieve now provides more and so this
+plugin is defunct.
+
 This plugin adds the ability for users to manage their sieve mail filter rules.
 Inspiration and most of the code for this plugin was taken from:
 [Aleksander Machniak][alec] - original Roundcube managesieve patch
